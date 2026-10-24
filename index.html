@@ -621,11 +621,13 @@ button:disabled{opacity:.35;cursor:default}
 <sc-if value="{{formOk}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
 <nav aria-label="Entries" style="flex: 1 1 260px; min-width: 0; display: flex; flex-direction: column; gap: 6px">
-<div style="display: flex; flex-wrap: wrap; gap: 6px">
-<button class="rr-hover" onClick="{{formNewRisk}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">+ New risk</button>
-<button class="rr-hover" onClick="{{formNewOpp}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">+ New opportunity</button>
+<div role="group" aria-label="Entry kind" style="display: flex; gap: 4px; padding: 3px; align-self: flex-start; border: 1px solid var(--ink); border-radius: 999px; background: var(--card)">
+<sc-for list="{{formKinds}}" as="fk" hint-placeholder-count="2">
+<button class="rr-hover" onClick="{{fk.pick}}" aria-pressed="{{fk.pressed}}" style="display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; border: 0; border-radius: 999px; background: {{fk.bg}}; color: {{fk.fg}}; cursor: pointer; font-size: 13px; font-weight: 600">{{fk.label}}<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: {{fk.countFg}}">{{fk.count}}</span></button>
+</sc-for>
 </div>
-<sc-if value="{{formEmpty}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 13px; color: var(--ink2)">No entries in this file yet.</p></sc-if>
+<button class="rr-hover" onClick="{{formNew}}" style="align-self: flex-start; height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">{{formNewLabel}}</button>
+<sc-if value="{{formEmpty}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 13px; color: var(--ink2)">{{formEmptyNote}}</p></sc-if>
 <sc-for list="{{formEntries}}" as="fe" hint-placeholder-count="6">
 <button class="rr-hover" onClick="{{fe.pick}}" aria-pressed="{{fe.pressed}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 12px; border: 1px solid {{fe.bd}}; border-radius: 6px; background: {{fe.bg}}; color: {{fe.fg}}; cursor: pointer; text-align: left"><span style="font-size: 13px; font-weight: 600; line-height: 1.3"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; margin-right: 6px">{{fe.id}}</span>{{fe.title}}</span><span style="font-size: 11px; color: {{fe.subFg}}">{{fe.sub}}</span></button>
 </sc-for>
@@ -692,24 +694,30 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px">
 <label for="rr-f-cat" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">Category</label>
+<div style="display: flex; gap: 8px; align-items: center; max-width: 520px">
+<input id="rr-f-cat" type="text" value="{{formCatDraft}}" onChange="{{onFormCat}}" onKeyDown="{{onFormCatKey}}" placeholder="New category…" autocomplete="off" style="flex: 1 1 auto; min-width: 0; font: inherit; height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-size: 14px; box-sizing: border-box">
+<button class="rr-hover" onClick="{{formAddCat}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">Add</button>
+</div>
 <div role="group" aria-label="Category" style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center">
 <sc-for list="{{formCats}}" as="fc" hint-placeholder-count="4">
 <button class="rr-hover" onClick="{{fc.pick}}" aria-pressed="{{fc.pressed}}" style="height: 32px; padding: 0 12px; border: 1px solid {{fc.bd}}; border-radius: 999px; background: {{fc.bg}}; color: {{fc.fg}}; cursor: pointer; font-size: 13px; font-weight: 500">{{fc.label}}</button>
 </sc-for>
-<input id="rr-f-cat" type="text" value="{{formCatDraft}}" onChange="{{onFormCat}}" onKeyDown="{{onFormCatKey}}" placeholder="New category…" autocomplete="off" style="flex: 0 1 180px; min-width: 0; height: 32px; padding: 0 10px; border: 1px solid var(--control); border-radius: 999px; background: var(--card); color: var(--ink); font: inherit; font-size: 13px">
-<button class="rr-hover" onClick="{{formAddCat}}" style="height: 32px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Add</button>
 </div>
 <span style="font-size: 12px; color: var(--ink3)">Pick one; click it again to clear. Enter adds a new one and selects it.</span>
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px">
 <label for="rr-f-slug" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">Slugs</label>
-<div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px; border: 1px solid var(--control); border-radius: 6px">
+<div style="display: flex; gap: 8px; align-items: center; max-width: 520px">
+<input id="rr-f-slug" type="text" value="{{formSlugDraft}}" onChange="{{onFormSlug}}" onKeyDown="{{onFormSlugKey}}" placeholder="Add a slug…" spellcheck="false" autocomplete="off" style="flex: 1 1 auto; min-width: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-size: 14px; box-sizing: border-box">
+<button class="rr-hover" onClick="{{formAddSlug}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">Add</button>
+</div>
+<sc-if value="{{formHasSlugs}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center">
 <sc-for list="{{formSlugs}}" as="sl" hint-placeholder-count="2">
 <span style="display: inline-flex; align-items: center; gap: 2px; padding: 0 2px 0 10px; height: 30px; border-radius: 999px; background: var(--neutral-bg); color: var(--neutral-fg); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px">{{sl.label}}<button class="rr-hover" onClick="{{sl.remove}}" aria-label="{{sl.aria}}" style="width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 999px; background: transparent; cursor: pointer"><svg width="10" height="10" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4 L12 12 M12 4 L4 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></button></span>
 </sc-for>
-<input id="rr-f-slug" type="text" value="{{formSlugDraft}}" onChange="{{onFormSlug}}" onKeyDown="{{onFormSlugKey}}" placeholder="Add a slug…" spellcheck="false" autocomplete="off" style="flex: 1 1 160px; min-width: 0; height: 30px; padding: 0 6px; border: 0; background: transparent; color: var(--ink); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px">
-<button class="rr-hover" onClick="{{formAddSlug}}" style="height: 30px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Add</button>
 </div>
+</sc-if>
 <span style="font-size: 12px; color: var(--ink3)">Tags that match this entry across registers. Enter, comma or ; adds one; text is turned into kebab-case. {{formSlugPreview}}</span>
 <sc-if value="{{formHasSlugError}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 12px; color: var(--bad-fg)">{{formSlugError}}</span></sc-if>
 </div>
@@ -2140,8 +2148,8 @@ function topEntry(M, kind, toIdx) {
 }
 
 /** View state derived from a freshly loaded model: the top risk in B selected. */
-function initialFromModel(M) {
-  const top = topEntry(M, 'risk', M.snapshots.length - 1);
+function initialFromModel(M, kind) {
+  const top = topEntry(M, kind, M.snapshots.length - 1);
   return { selectedId: top === null ? null : top.id, drawerOpen: top !== null };
 }
 /** Starting sources: ?ours/?theirs → A = ours, B = theirs; otherwise B = risks.md and A = its latest snapshot, if any. */
@@ -2354,7 +2362,10 @@ function buildForm(st, fr, name, text, go, setState) {
   if (!fr.ok) return { isForm: true, formOk: false, formFailed: true, formError: fr.error, formFix: go({ dataMode: 'source', formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '' }) };
   const file = fr.file;
   const n = file.risks.length;
-  const idx = Math.min(st.formIdx, n - 1);
+  /* The list shows the active lens only (the same Risks/Opportunities toggle as the register); formIdx stays a position in the file. */
+  const shown = file.risks.map((r, k) => ({ r, k })).filter((x) => x.r.kind === st.lens);
+  const idx = shown.some((x) => x.k === st.formIdx) ? st.formIdx : shown.length === 0 ? -1 : shown[0].k;
+  const formReset = { formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '' };
   const commit = (next, extra) => setState(Object.assign(reconcile(st, Object.freeze(Object.assign({}, st.drafts, { [name]: next }))), extra));
   const newEntry = (kind) => () => {
     const [a, b] = REQUIRED_FIELDS[kind];
@@ -2362,18 +2373,26 @@ function buildForm(st, fr, name, text, go, setState) {
   };
   const common = {
     isForm: true, formOk: true, formFailed: false,
-    formNewRisk: newEntry('risk'), formNewOpp: newEntry('opportunity'),
-    formEmpty: n === 0, formHasEntry: n > 0,
-    formEntries: file.risks.map((r, k) => {
+    formKinds: ['risk', 'opportunity'].map((kind) => {
+      const on = kind === st.lens;
+      return {
+        label: LENS[kind].Nouns, count: file.risks.filter((r) => r.kind === kind).length, pressed: String(on),
+        bg: on ? INK : 'transparent', fg: on ? 'var(--on-ink)' : INK, countFg: on ? 'var(--on-ink-muted)' : INK2,
+        pick: go(on ? {} : Object.assign({ lens: kind, formIdx: 0, selectedId: null, drawerOpen: false, categories: [], cellFilter: null, kindFilter: null, cmpFocus: null, cmpPeer: null, cmpImpact: [], cmpLik: [] }, formReset)),
+      };
+    }),
+    formNew: newEntry(st.lens), formNewLabel: '+ New ' + LENS[st.lens].noun,
+    formEmpty: idx === -1, formEmptyNote: 'No ' + LENS[st.lens].nouns + ' in this file yet.', formHasEntry: idx !== -1,
+    formEntries: shown.map(({ r, k }) => {
       const on = k === idx;
       return {
         id: r.id, title: r.title, pressed: String(on), bg: on ? INK : 'var(--card)', fg: on ? 'var(--on-ink)' : INK, subFg: on ? 'var(--on-ink-muted)' : INK2, bd: on ? INK : 'var(--control)',
-        sub: dotJoin([capitalise(LENS[r.kind].noun), 'score ' + r.impact * r.likelihood, r.status === 'closed' ? 'closed' : null]),
+        sub: dotJoin(['score ' + r.impact * r.likelihood, r.category === 'Uncategorised' ? null : r.category, r.status === 'closed' ? 'closed' : null]),
         pick: go({ formIdx: k, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '' }),
       };
     }),
   };
-  if (n === 0) return common;
+  if (idx === -1) return common;
   const r = file.risks[idx];
   const L = lensOf(r.kind);
   const p = sectionParts(text.replace(/\r\n?/g, '\n').split('\n'), r);
@@ -2472,7 +2491,7 @@ function buildForm(st, fr, name, text, go, setState) {
     onFormCatKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); addCat(); } },
     formAddCat: addCat,
     formSlugs: slugs.map((x) => ({ label: x, aria: 'Remove slug ' + x, remove: () => writeSlugs(slugs.filter((y) => y !== x)) })),
-    formNoSlugs: slugs.length === 0,
+    formNoSlugs: slugs.length === 0, formHasSlugs: slugs.length > 0,
     formSlugDraft: st.formSlugDraft, formSlugError: st.formSlugError, formHasSlugError: st.formSlugError !== '',
     formSlugPreview: st.formSlugDraft.trim() === '' || slugify(st.formSlugDraft) === st.formSlugDraft.trim() ? '' : 'Adds as ' + slugify(st.formSlugDraft),
     onFormSlug: (e) => setState({ formSlugDraft: e.target.value, formSlugError: '' }),
@@ -2909,6 +2928,25 @@ function buildCompare(st, an, go, applyDrafts, setState) {
   });
 }
 
+/** ?theme=, ?kind= (risk | opportunity) and ?view= preset those controls; unknown values are ignored. A view opens the Register side. */
+function queryPrefs() {
+  const q = new URLSearchParams(location.search);
+  const ok = (key, ids) => (ids.includes(q.get(key)) ? q.get(key) : undefined);
+  const view = ok('view', VIEWS.map((v) => v.id));
+  return Object.fromEntries(Object.entries({
+    theme: ok('theme', THEMES.map((t) => t.id)), lens: ok('kind', ['risk', 'opportunity']), view, side: view && 'front',
+  }).filter(([, v]) => v !== undefined));
+}
+/** Mirrors theme, kind and view into the URL (defaults left out) so the address bar is a shareable link. */
+function syncQuery(theme, kind, view) {
+  const q = new URLSearchParams(location.search);
+  for (const [k, v, dflt] of [['theme', theme, 'paper'], ['kind', kind, 'risk'], ['view', view, 'matrix']]) {
+    if (v === dflt) q.delete(k); else q.set(k, v);
+  }
+  const url = location.pathname + (q.size ? '?' + q.toString().replace(/=(?=&|$)/g, '').replace(/%2F/gi, '/').replace(/%3A/gi, ':') : '') + location.hash;
+  if (url !== location.pathname + location.search + location.hash) history.replaceState(null, '', url);
+}
+
 function initialState() {
   const src = initialSources();
   const a = analyseDrafts(ORIGINALS, src.cmpA, src.cmpB);
@@ -2924,8 +2962,9 @@ function initialState() {
     cmpPickOpen: null, cmpPickQuery: '',
     copyOpen: false, copyName: '', copyError: '',
     lens: 'risk',
+    ...queryPrefs(),
   };
-  return Object.assign(base, a.model.ok ? initialFromModel(a.model.model) : { selectedId: null, drawerOpen: false });
+  return Object.assign(base, a.model.ok ? initialFromModel(a.model.model, base.lens) : { selectedId: null, drawerOpen: false });
 }
 
 class Component extends DCLogic {
@@ -2966,6 +3005,7 @@ class Component extends DCLogic {
     const views = VIEWS.filter((v) => N > 1 || !pairOnly.includes(v.id));
     const view = views.some((v) => v.id === st.view) ? st.view : 'matrix';
     const sv = Object.assign({}, st, { fromIdx, toIdx, view, showMovement: st.showMovement && N > 1 });
+    syncQuery(st.theme, st.lens, view);
 
     const L = lensOf(st.lens);
     const everything = M.risks.map((r) => viewRisk(r, toIdx));

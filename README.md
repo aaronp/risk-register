@@ -9,6 +9,16 @@ only the layout; point it at your markdown with query parameters.
 | `?src=<url>` | The register as B, with its latest listed snapshot as A. Snapshots listed in its front matter are fetched from the same directory. |
 | `?ours=<url>&theirs=<url>` | The Diff view from A = ours to B = theirs. |
 
+Add any of these to preset the controls (unknown values are ignored):
+
+| Query | Values |
+|-------|--------|
+| `theme` | `paper` (default), `slate`, `night`, `contrast` |
+| `kind` | `risk` (default), `opportunity` |
+| `view` | `matrix` (default), `distribution`, `table`, `diff`, `trajectories`; opens the Register side |
+
+The address bar keeps up with these as you change them, so you can copy it to share the current view.
+
 Two pickers at the top choose the sources: **B** is the register on view and
 **A** is an optional baseline. Every view shows B, with changes measured from A;
 with A set to None, Diff, Trajectories and Compare are hidden.
