@@ -2,16 +2,6 @@
 register: Sample register (fictional organisation)
 as_at: 2026-10-20
 scale: 5x5
-snapshots:
-  - risks-2026-01-20.md
-  - risks-2026-02-17.md
-  - risks-2026-03-17.md
-  - risks-2026-04-21.md
-  - risks-2026-05-19.md
-  - risks-2026-06-16.md
-  - risks-2026-07-21.md
-  - risks-2026-08-18.md
-  - risks-2026-09-15.md
 ---
 
 # Risk register

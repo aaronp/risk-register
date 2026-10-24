@@ -2,7 +2,6 @@
 register: Registre des risques — partenaire logistique (fictif)
 as_at: 2026-10-15
 scale: 5x5
-snapshots: []
 ---
 
 # Registre des risques

@@ -2,7 +2,7 @@
 
 **[▶ View the register](https://aaronp.github.io/risk-register-example/)**
 
-The data lives in [`risks.md`](risks.md) and the dated snapshots it lists. The
+The data lives in [`risks.md`](risks.md). The
 UI comes from [aaronp/risk-register](https://github.com/aaronp/risk-register).
 
 ## Using this as a template

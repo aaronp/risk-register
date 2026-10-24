@@ -11,7 +11,7 @@ at with query parameters.
 | Query | Shows |
 |-------|-------|
 | _(none)_ | Data → Form on a new register (`examples/minimal.md`), ready to fill in. |
-| `?src=<url>` | The register as B, with its latest listed snapshot as A. Snapshots listed in its front matter are fetched from the same directory. |
+| `?src=<url>` | The register on its own; Compare lets you pick a second source in the page. |
 | `?ours=<url>&theirs=<url>` | The Compare view from A = ours to B = theirs. |
 
 Add any of these to preset the controls (unknown values are ignored):
@@ -51,13 +51,13 @@ with its score and, optionally, some text:
 `value`/`effort` instead of `impact`/`likelihood` makes it an opportunity.
 Every other field, section and table is optional, and the views hide whatever
 is missing. Entry ids come from the heading (`## R01 · Title`), else the first
-slug, else are auto-numbered in file order (R01, O01…). Across snapshots,
-give entries an id or slug so they stay matched if the order changes.
+slug, else are auto-numbered in file order (R01, O01…). When comparing two
+registers, give entries an id or slug so they stay matched if the order changes.
 
 Data → Form edits entries field by field; each change rewrites only that
 entry's lines in the markdown (tables are edited in Data → Source).
 
-`examples/acme-risks/` is a fictional register with snapshots, laid out as a
+`examples/acme-risks/` is a fictional register, laid out as a
 standalone data repo; `examples/partenaire.md` is a second register to compare
 it with, and `examples/minimal.md` is the smallest valid one.
 
@@ -78,7 +78,7 @@ The source must allow CORS (GitHub Pages and raw.githubusercontent.com do).
 
 ## Publishing your own register
 
-Your register lives in its own data-only repo (`risks.md`, its snapshots, a
+Your register lives in its own data-only repo (`risks.md`, a
 redirecting `index.html` and a Pages workflow); this repo stays the viewer.
 Create an empty repo on GitHub, then either:
 
