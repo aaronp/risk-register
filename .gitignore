@@ -1,3 +1,4 @@
 .DS_Store
 # reference project, cloned locally
 template/
+examples/ai

@@ -35,12 +35,9 @@ works for public repos; private repos won't.
 
 ## Format
 
-The minimum is front matter with `as_at`, then one `##` section per entry
-with its score and, optionally, some text:
-
-    ---
-    as_at: 2026-01-01
-    ---
+The full format is in **[spec.md](spec.md)**. The minimum is a `##` heading
+per entry with its two scores; front matter, ids, people, prose and tables are
+all optional, and anything unrecognised is ignored:
 
     ## Supplier fails
     - impact: 4
@@ -49,10 +46,6 @@ with its score and, optionally, some text:
     Our only supplier of X goes under.
 
 `value`/`effort` instead of `impact`/`likelihood` makes it an opportunity.
-Every other field, section and table is optional, and the views hide whatever
-is missing. Entry ids come from the heading (`## R01 · Title`), else the first
-slug, else are auto-numbered in file order (R01, O01…). When comparing two
-registers, give entries an id or slug so they stay matched if the order changes.
 
 Data → Form edits entries field by field; each change rewrites only that
 entry's lines in the markdown (tables are edited in Data → Source).

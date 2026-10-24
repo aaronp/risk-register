@@ -13,7 +13,6 @@ Risks: `impact` and `likelihood` are 1–5 (score = impact × likelihood); `inhe
 Opportunities: `value` and `effort` are 1–5 (score = value × (6 − effort), so 25 = most value for least effort); `target` is `VxE`; `target_value` is the lowest acceptable score; `cost` is free text; `realisation` is the date the value should land. Sections: **Rationale:**, **Benefit:**, ### Enablers.
 `status` is `open` or `closed` (a closed risk also carries `closed: YYYY-MM-DD`).
 `slugs` are stable kebab-case tags that identify the same risk across documents, whatever its wording or language; separate several with `; `, or write `[]` for none.
-Snapshots are dated copies of this file named `risks-YYYY-MM-DD.md`, listed under `snapshots` above.
 
 ## R01 · Ransomware compromise of core systems
 - slugs: ransomware-core-systems
@@ -26,9 +25,9 @@ Snapshots are dated copies of this file named `risks-YYYY-MM-DD.md`, listed unde
 - inherent: 5x5
 - target: 5x2
 - appetite: 10
-- responsible: D. Mensah (Head of SRE)
-- accountable: A. Okafor (CISO)
-- consulted: J. Patel (CTO); E. Walsh (General Counsel)
+- driver: D. Mensah (Head of SRE)
+- approver: A. Okafor (CISO)
+- contributors: J. Patel (CTO); E. Walsh (General Counsel)
 - informed: Risk Committee; Board
 
 Encryption or exfiltration of core operational systems by a ransomware actor, halting order processing.
@@ -67,9 +66,9 @@ Encryption or exfiltration of core operational systems by a ransomware actor, ha
 - inherent: 5x4
 - target: 4x2
 - appetite: 12
-- responsible: F. Grant (Procurement Lead)
-- accountable: T. Byrne (COO)
-- consulted: M. Lindqvist (CFO); E. Walsh (General Counsel)
+- driver: F. Grant (Procurement Lead)
+- approver: T. Byrne (COO)
+- contributors: M. Lindqvist (CFO); E. Walsh (General Counsel)
 - informed: Risk Committee
 
 Our principal last-mile carrier fails financially, leaving most deliveries without a contracted provider.
@@ -106,9 +105,9 @@ Our principal last-mile carrier fails financially, leaving most deliveries witho
 - inherent: 4x4
 - target: 3x2
 - appetite: 9
-- responsible: D. Mensah (Head of SRE)
-- accountable: J. Patel (CTO)
-- consulted: T. Byrne (COO)
+- driver: D. Mensah (Head of SRE)
+- approver: J. Patel (CTO)
+- contributors: T. Byrne (COO)
 - informed: Risk Committee
 
 Extended loss of our primary cloud region takes customer-facing services offline.
@@ -144,9 +143,9 @@ Extended loss of our primary cloud region takes customer-facing services offline
 - inherent: 5x4
 - target: 4x2
 - appetite: 8
-- responsible: S. Moreau (Data Protection Officer)
-- accountable: E. Walsh (General Counsel)
-- consulted: A. Okafor (CISO); K. Novak (Head of Product)
+- driver: S. Moreau (Data Protection Officer)
+- approver: E. Walsh (General Counsel)
+- contributors: A. Okafor (CISO); K. Novak (Head of Product)
 - informed: Audit Committee
 
 Customer personal data leaves the organisation through uncontrolled report exports.
@@ -184,9 +183,9 @@ Customer personal data leaves the organisation through uncontrolled report expor
 - inherent: 4x4
 - target: 3x2
 - appetite: 9
-- responsible: R. Chen (Chief People Officer)
-- accountable: J. Patel (CTO)
-- consulted: M. Lindqvist (CFO)
+- driver: R. Chen (Chief People Officer)
+- approver: J. Patel (CTO)
+- contributors: M. Lindqvist (CFO)
 - informed: Risk Committee
 
 Departure of a small number of engineers who hold critical platform knowledge.
@@ -223,9 +222,9 @@ Departure of a small number of engineers who hold critical platform knowledge.
 - inherent: 3x4
 - target: 3x2
 - appetite: 9
-- responsible: M. Lindqvist (CFO)
-- accountable: M. Lindqvist (CFO)
-- consulted: F. Grant (Procurement Lead)
+- driver: M. Lindqvist (CFO)
+- approver: M. Lindqvist (CFO)
+- contributors: F. Grant (Procurement Lead)
 - informed: Audit Committee
 
 Sterling weakens against the dollar, raising the cost of USD-denominated supplier contracts.
@@ -261,9 +260,9 @@ Sterling weakens against the dollar, raising the cost of USD-denominated supplie
 - inherent: 4x4
 - target: 3x2
 - appetite: 12
-- responsible: L. Haddad (ERP Programme Director)
-- accountable: T. Byrne (COO)
-- consulted: J. Patel (CTO); M. Lindqvist (CFO)
+- driver: L. Haddad (ERP Programme Director)
+- approver: T. Byrne (COO)
+- contributors: J. Patel (CTO); M. Lindqvist (CFO)
 - informed: Board; Risk Committee
 
 The ERP migration slips past the legacy system’s end-of-support date.
@@ -301,9 +300,9 @@ The ERP migration slips past the legacy system’s end-of-support date.
 - inherent: 4x4
 - target: 4x1
 - appetite: 8
-- responsible: K. Novak (Head of Product)
-- accountable: K. Novak (Head of Product)
-- consulted: E. Walsh (General Counsel); A. Okafor (CISO)
+- driver: K. Novak (Head of Product)
+- approver: K. Novak (Head of Product)
+- contributors: E. Walsh (General Counsel); A. Okafor (CISO)
 - informed: Risk Committee
 
 The AI customer assistant gives incorrect or harmful guidance on shipments and claims.
@@ -339,9 +338,9 @@ The AI customer assistant gives incorrect or harmful guidance on shipments and c
 - inherent: 3x5
 - target: 3x2
 - appetite: 9
-- responsible: M. Lindqvist (CFO)
-- accountable: M. Lindqvist (CFO)
-- consulted: A. Okafor (CISO)
+- driver: M. Lindqvist (CFO)
+- approver: M. Lindqvist (CFO)
+- contributors: A. Okafor (CISO)
 - informed: Audit Committee
 
 Fraudsters impersonate suppliers and redirect payments to accounts they control.
@@ -377,9 +376,9 @@ Fraudsters impersonate suppliers and redirect payments to accounts they control.
 - inherent: 3x5
 - target: 2x2
 - appetite: 9
-- responsible: E. Walsh (General Counsel)
-- accountable: T. Byrne (COO)
-- consulted: M. Lindqvist (CFO); J. Patel (CTO)
+- driver: E. Walsh (General Counsel)
+- approver: T. Byrne (COO)
+- contributors: M. Lindqvist (CFO); J. Patel (CTO)
 - informed: Board
 
 A new sector reporting requirement takes effect before our data and processes can meet it.
@@ -417,9 +416,9 @@ A new sector reporting requirement takes effect before our data and processes ca
 - inherent: 4x4
 - target: 2x1
 - appetite: 8
-- responsible: J. Patel (CTO)
-- accountable: T. Byrne (COO)
-- consulted: E. Walsh (General Counsel)
+- driver: J. Patel (CTO)
+- approver: T. Byrne (COO)
+- contributors: E. Walsh (General Counsel)
 - informed: Risk Committee
 
 Our remaining co-location lease ends before workloads have moved out.
@@ -454,9 +453,9 @@ Our remaining co-location lease ends before workloads have moved out.
 - inherent: 3x4
 - target: 2x2
 - appetite: 6
-- responsible: D. Mensah (Head of SRE)
-- accountable: J. Patel (CTO)
-- consulted: R. Chen (Chief People Officer)
+- driver: D. Mensah (Head of SRE)
+- approver: J. Patel (CTO)
+- contributors: R. Chen (Chief People Officer)
 - informed: Risk Committee
 
 Out-of-hours incidents depend on one engineer per critical system.
@@ -492,9 +491,9 @@ Out-of-hours incidents depend on one engineer per critical system.
 - inherent: 4x3
 - target: 3x2
 - appetite: 8
-- responsible: P. Ito (Communications Director)
-- accountable: T. Byrne (COO)
-- consulted: E. Walsh (General Counsel); K. Novak (Head of Product)
+- driver: P. Ito (Communications Director)
+- approver: T. Byrne (COO)
+- contributors: E. Walsh (General Counsel); K. Novak (Head of Product)
 - informed: Board
 
 A customer complaint or staff post spreads widely and damages trust in the brand.
@@ -529,9 +528,9 @@ A customer complaint or staff post spreads widely and damages trust in the brand
 - inherent: 3x3
 - target: 2x1
 - appetite: 6
-- responsible: J. Patel (CTO)
-- accountable: E. Walsh (General Counsel)
-- consulted: K. Novak (Head of Product)
+- driver: J. Patel (CTO)
+- approver: E. Walsh (General Counsel)
+- contributors: K. Novak (Head of Product)
 - informed: Risk Committee
 
 Shipped software includes components whose licence terms we do not meet.
@@ -565,9 +564,9 @@ Shipped software includes components whose licence terms we do not meet.
 - inherent: 5x4
 - target: 5x2
 - appetite: 10
-- responsible: J. Patel (CTO)
-- accountable: A. Okafor (CISO)
-- consulted: K. Novak (Head of Product)
+- driver: J. Patel (CTO)
+- approver: A. Okafor (CISO)
+- contributors: K. Novak (Head of Product)
 - informed: Board; Risk Committee
 
 A compromised third-party package or build tool inserts malicious code into our releases.
@@ -604,9 +603,9 @@ A compromised third-party package or build tool inserts malicious code into our 
 - inherent: 4x3
 - target: 4x1
 - appetite: 8
-- responsible: T. Byrne (COO)
-- accountable: T. Byrne (COO)
-- consulted: M. Lindqvist (CFO)
+- driver: T. Byrne (COO)
+- approver: T. Byrne (COO)
+- contributors: M. Lindqvist (CFO)
 - informed: Risk Committee
 
 Heavy rainfall floods the main warehouse, damaging stock and halting dispatch.
@@ -643,9 +642,9 @@ Heavy rainfall floods the main warehouse, damaging stock and halting dispatch.
 - target_value: 16
 - cost: £140k one-off, £30k a year
 - realisation: 2027-03-31
-- responsible: D. Mensah (Head of SRE)
-- accountable: T. Byrne (COO)
-- consulted: F. Grant (Procurement Lead); M. Lindqvist (CFO)
+- driver: D. Mensah (Head of SRE)
+- approver: T. Byrne (COO)
+- contributors: F. Grant (Procurement Lead); M. Lindqvist (CFO)
 - informed: Risk Committee
 
 Plan delivery routes with an optimisation engine instead of fixed rounds, cutting mileage and missed slots.
@@ -682,9 +681,9 @@ Plan delivery routes with an optimisation engine instead of fixed rounds, cuttin
 - target_value: 12
 - cost: £20k legal and onboarding
 - realisation: 2027-01-31
-- responsible: F. Grant (Procurement Lead)
-- accountable: T. Byrne (COO)
-- consulted: M. Lindqvist (CFO); E. Walsh (General Counsel)
+- driver: F. Grant (Procurement Lead)
+- approver: T. Byrne (COO)
+- contributors: M. Lindqvist (CFO); E. Walsh (General Counsel)
 - informed: Risk Committee
 
 Contract a second carrier on committed volumes, using competition to lower rates as well as reduce dependence on one provider.
@@ -720,9 +719,9 @@ Contract a second carrier on committed volumes, using competition to lower rates
 - target_value: 9
 - cost: £15k marketing and contracts
 - realisation: 2026-12-31
-- responsible: T. Byrne (COO)
-- accountable: T. Byrne (COO)
-- consulted: M. Lindqvist (CFO)
+- driver: T. Byrne (COO)
+- approver: T. Byrne (COO)
+- contributors: M. Lindqvist (CFO)
 - informed: Risk Committee
 
 Rent unused racking at the main warehouse to local businesses outside our peak season.
@@ -757,9 +756,9 @@ Rent unused racking at the main warehouse to local businesses outside our peak s
 - target_value: 12
 - cost: £260k build, £40k a year
 - realisation: 2027-09-30
-- responsible: J. Patel (CTO)
-- accountable: T. Byrne (COO)
-- consulted: E. Walsh (General Counsel)
+- driver: J. Patel (CTO)
+- approver: T. Byrne (COO)
+- contributors: E. Walsh (General Counsel)
 - informed: Risk Committee
 
 Generate customs declarations automatically from order data instead of re-keying them.
@@ -796,9 +795,9 @@ Generate customs declarations automatically from order data instead of re-keying
 - target_value: 12
 - cost: £10k application costs
 - realisation: 2026-09-01
-- responsible: M. Lindqvist (CFO)
-- accountable: M. Lindqvist (CFO)
-- consulted: T. Byrne (COO)
+- driver: M. Lindqvist (CFO)
+- approver: M. Lindqvist (CFO)
+- contributors: T. Byrne (COO)
 - informed: Board
 
 Apply for a government grant towards converting the delivery fleet to electric vans.
@@ -833,9 +832,9 @@ Apply for a government grant towards converting the delivery fleet to electric v
 - target_value: 12
 - cost: £420k build, £90k a year
 - realisation: 2027-12-31
-- responsible: K. Novak (Head of Product)
-- accountable: J. Patel (CTO)
-- consulted: S. Moreau (Data Protection Officer); E. Walsh (General Counsel)
+- driver: K. Novak (Head of Product)
+- approver: J. Patel (CTO)
+- contributors: S. Moreau (Data Protection Officer); E. Walsh (General Counsel)
 - informed: Board
 
 Sell customers a dashboard of their own shipment performance and delivery trends.
@@ -872,9 +871,9 @@ Sell customers a dashboard of their own shipment performance and delivery trends
 - target_value: 9
 - cost: Internal effort only
 - realisation: 2027-02-28
-- responsible: D. Mensah (Head of SRE)
-- accountable: J. Patel (CTO)
-- consulted: F. Grant (Procurement Lead)
+- driver: D. Mensah (Head of SRE)
+- approver: J. Patel (CTO)
+- contributors: F. Grant (Procurement Lead)
 - informed: Audit Committee
 
 Move to a single committed-spend cloud agreement while redesigning for multi-region resilience.
@@ -909,9 +908,9 @@ Move to a single committed-spend cloud agreement while redesigning for multi-reg
 - target_value: 9
 - cost: Internal effort only
 - realisation: 2027-04-30
-- responsible: M. Lindqvist (CFO)
-- accountable: M. Lindqvist (CFO)
-- consulted: F. Grant (Procurement Lead)
+- driver: M. Lindqvist (CFO)
+- approver: M. Lindqvist (CFO)
+- contributors: F. Grant (Procurement Lead)
 - informed: Audit Committee
 
 Quote customer contracts in dollars with a hedged margin, turning currency exposure into a priced service.
@@ -944,9 +943,9 @@ Quote customer contracts in dollars with a hedged margin, turning currency expos
 - target_value: 9
 - cost: £310k, unfunded
 - realisation: 2028-03-31
-- responsible: L. Haddad (ERP Programme Director)
-- accountable: T. Byrne (COO)
-- consulted: F. Grant (Procurement Lead)
+- driver: L. Haddad (ERP Programme Director)
+- approver: T. Byrne (COO)
+- contributors: F. Grant (Procurement Lead)
 - informed: Risk Committee
 
 Let suppliers manage orders, invoices and bank details themselves through an ERP portal.
@@ -981,9 +980,9 @@ Let suppliers manage orders, invoices and bank details themselves through an ERP
 - target_value: 12
 - cost: £95k a year
 - realisation: 2027-09-30
-- responsible: R. Chen (Chief People Officer)
-- accountable: J. Patel (CTO)
-- consulted: M. Lindqvist (CFO)
+- driver: R. Chen (Chief People Officer)
+- approver: J. Patel (CTO)
+- contributors: M. Lindqvist (CFO)
 - informed: Risk Committee
 
 Grow our own platform engineers through a funded apprenticeship scheme.

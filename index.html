@@ -522,11 +522,11 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 </sc-if>
 
-<sc-if value="{{sel.hasRaci}}" hint-placeholder-val="{{ true }}">
+<sc-if value="{{sel.hasDaci}}" hint-placeholder-val="{{ true }}">
 <div style="display: flex; flex-direction: column; gap: 8px">
-<h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">RACI</h3>
+<h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">DACI</h3>
 <div style="display: flex; flex-direction: column; border: 1px solid var(--rule-soft); border-radius: 6px">
-<sc-for list="{{sel.raci}}" as="ra" hint-placeholder-count="4">
+<sc-for list="{{sel.daci}}" as="ra" hint-placeholder-count="4">
 <div style="display: grid; grid-template-columns: 32px 100px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 12px; border-top: {{ra.rule}}">
 <span style="width: 26px; height: 26px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; background: {{ra.bg}}; color: {{ra.fg}}">{{ra.letter}}</span>
 <span style="font-size: 13px; color: var(--ink2); padding-top: 4px">{{ra.role}}</span>
@@ -1290,56 +1290,35 @@ function bandOf(score) {
 /* ---------- Markdown parsing (pure: text in, frozen records out) ---------- */
 function fail(file, line, msg) { return new Error(file + ':' + line + ': ' + msg); }
 
-/** Front matter: `key: value` lines, or `key:` followed by `  - item` lines; `key: []` is an empty list. */
-function parseFrontMatter(lines, file) {
-  if (lines[0] !== '---') throw fail(file, 1, 'expected front matter starting with ---');
-  const end = lines.indexOf('---', 1);
-  if (end === -1) throw fail(file, 1, 'front matter is not closed with ---');
+/** Optional front matter between --- lines: `key: value` lines; anything else in it is ignored. */
+function parseFrontMatter(lines) {
+  const end = lines[0] === '---' ? lines.indexOf('---', 1) : -1;
+  if (end === -1) return { meta: {}, bodyStart: 0 };
   const meta = {};
-  let i = 1;
-  while (i < end) {
-    const kv = /^([a-z_]+):(?: (.*))?$/.exec(lines[i]);
-    if (kv === null) throw fail(file, i + 1, 'unrecognised front-matter line "' + lines[i] + '"');
-    const key = kv[1];
-    if (Object.prototype.hasOwnProperty.call(meta, key)) throw fail(file, i + 1, 'duplicate front-matter key "' + key + '"');
-    const value = kv[2] === undefined ? '' : kv[2].trim();
-    if (value === '[]') { meta[key] = []; i += 1; continue; }
-    if (value !== '') { meta[key] = value; i += 1; continue; }
-    const items = [];
-    let j = i + 1;
-    while (j < end && /^ {2}- /.test(lines[j])) { items.push(lines[j].slice(4).trim()); j += 1; }
-    if (items.length === 0) throw fail(file, i + 1, '"' + key + '" has no value (use [] for an empty list)');
-    meta[key] = items;
-    i = j;
-  }
+  lines.slice(1, end).forEach((l) => {
+    const kv = /^([A-Za-z_]+):\s*(.*)$/.exec(l);
+    if (kv !== null && kv[2].trim() !== '' && !Object.prototype.hasOwnProperty.call(meta, kv[1].toLowerCase())) meta[kv[1].toLowerCase()] = kv[2].trim();
+  });
   return { meta, bodyStart: end + 1 };
 }
 
-function requireMeta(meta, key, kind, file) {
-  if (!Object.prototype.hasOwnProperty.call(meta, key)) throw fail(file, 1, 'front matter is missing "' + key + '"');
-  const v = meta[key];
-  if (kind === 'list' && !Array.isArray(v)) throw fail(file, 1, '"' + key + '" must be a list');
-  if (kind === 'string' && typeof v !== 'string') throw fail(file, 1, '"' + key + '" must be a single value');
-  return v;
+/** "Name (Role)" → { name, role }; anything else is a name with no role. Empty → null. */
+function parsePerson(s) {
+  const t = s.trim();
+  if (t === '') return null;
+  const withRole = /^(.+?) \(([^()]+)\)$/.exec(t);
+  return Object.freeze(withRole === null ? { name: t, role: null } : { name: withRole[1].trim(), role: withRole[2].trim() });
 }
-
-function parsePerson(s, file, line) {
-  const withRole = /^(.+?) \(([^()]+)\)$/.exec(s.trim());
-  if (withRole !== null) return Object.freeze({ name: withRole[1].trim(), role: withRole[2].trim() });
-  if (/^[^();]+$/.test(s.trim()) && s.trim() !== '') return Object.freeze({ name: s.trim(), role: null });
-  throw fail(file, line, 'expected a person as "Name (Role)" or a group name, got "' + s + '"');
-}
-function parsePeople(s, file, line) {
-  const parts = s.split(';').map((x) => x.trim()).filter((x) => x !== '');
-  if (parts.length === 0) throw fail(file, line, 'expected at least one person');
-  return Object.freeze(parts.map((p) => parsePerson(p, file, line)));
+/** People separated by ";" (or "[]" for none). */
+function parsePeople(s) {
+  return Object.freeze(s.split(';').map(parsePerson).filter((p) => p !== null && p.name !== '[]'));
 }
 function parseLevel(s, file, line, what) {
   if (!/^[1-5]$/.test(s)) throw fail(file, line, what + ' must be 1–5, got "' + s + '"');
   return Number(s);
 }
 function parsePair(s, file, line, what) {
-  const m = /^([1-5])x([1-5])$/.exec(s);
+  const m = /^([1-5])\s*[x×*X]\s*([1-5])$/.exec(s);
   if (m === null) throw fail(file, line, what + ' must look like 4x2 (impact x likelihood), got "' + s + '"');
   return Object.freeze([Number(m[1]), Number(m[2])]);
 }
@@ -1349,40 +1328,51 @@ function parseDate(s, file, line, what) {
   return s;
 }
 
-function splitRow(line, file, n) {
-  const t = line.trim();
-  if (!t.startsWith('|') || !t.endsWith('|')) throw fail(file, n, 'table row must start and end with |');
-  return t.slice(1, -1).split('|').map((c) => c.trim());
+function splitRow(line) {
+  return line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((c) => c.trim());
 }
 
-/** A pipe table starting at index i: header, separator, then rows until the first non-table line. */
+/** A pipe table starting at index i (blank lines before it are skipped): header, optional separator, then rows.
+    Columns are found by header name (any case, any order); missing columns read as ''. */
 function parseTable(lines, i, header, file) {
-  const got = splitRow(lines[i], file, i + 1);
-  if (got.join('|') !== header.join('|')) throw fail(file, i + 1, 'expected table header | ' + header.join(' | ') + ' |');
-  if (!/^\|(\s*:?-+:?\s*\|)+$/.test((lines[i + 1] === undefined ? '' : lines[i + 1]).trim())) throw fail(file, i + 2, 'expected a |---| separator row');
+  while (i < lines.length && lines[i].trim() === '') i += 1;
+  if (i >= lines.length || !lines[i].trim().startsWith('|')) return { rows: [], next: i };
+  const names = splitRow(lines[i], file, i + 1).map((c) => c.toLowerCase());
+  const cols = header.map((h) => names.indexOf(h.toLowerCase()));
+  let j = i + 1;
+  if (j < lines.length && /^\|?(\s*:?-+:?\s*\|?)+$/.test(lines[j].trim())) j += 1;
   const rows = [];
-  let j = i + 2;
   while (j < lines.length && lines[j].trim().startsWith('|')) {
     const cells = splitRow(lines[j], file, j + 1);
-    if (cells.length !== header.length) throw fail(file, j + 1, 'expected ' + header.length + ' cells, found ' + cells.length);
-    rows.push({ cells, line: j + 1 });
+    rows.push({ cells: cols.map((k) => (k === -1 || cells[k] === undefined ? '' : cells[k])), line: j + 1 });
     j += 1;
   }
   return { rows, next: j };
 }
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-/** "- slugs: a-b; c-d" or "- slugs: []" → frozen list of unique kebab-case slugs. */
-function parseSlugs(s, file, line) {
-  if (s === '[]') return Object.freeze([]);
-  const xs = s.split(';').map((x) => x.trim());
-  xs.forEach((x) => { if (!SLUG_RE.test(x)) throw fail(file, line, 'slug "' + x + '" must be lower-case kebab-case, e.g. carrier-insolvency (use [] for none)'); });
-  if (new Set(xs).size !== xs.length) throw fail(file, line, 'a slug is listed twice');
-  return Object.freeze(xs);
+/** "- slugs: a-b; c-d" (or "[]") → unique kebab-case slugs; other text is slugified ("Carrier Insolvency" → carrier-insolvency). */
+function parseSlugs(s) {
+  return Object.freeze(Array.from(new Set(s.split(/[;,]/).map(slugify).filter((x) => x !== ''))));
+}
+
+/** A field line "- key: value"; keys are matched in any case, with spaces or dashes read as _. */
+const FIELD_RE = /^- ([A-Za-z][A-Za-z0-9 _-]*?):(?:\s+(.*))?$/;
+/** Older RACI keys still read as their DACI equivalents. */
+const FIELD_ALIASES = Object.freeze({ responsible: 'driver', accountable: 'approver', consulted: 'contributors', contributor: 'contributors' });
+function fieldKey(k) {
+  const key = k.trim().toLowerCase().replace(/[ -]+/g, '_');
+  return FIELD_ALIASES[key] ?? key;
+}
+/** Index of the first field line after a heading (blank lines between are allowed), or the line after the heading. */
+function firstFieldLine(lines, start, end) {
+  let i = start + 1;
+  while (i < end && lines[i].trim() === '') i += 1;
+  return i < end && FIELD_RE.test(lines[i]) ? i : start + 1;
 }
 
 /** Fields every entry has, then the fields only one kind has. */
-const COMMON_FIELDS = ['slugs', 'kind', 'status', 'closed', 'category', 'owner', 'target', 'responsible', 'accountable', 'consulted', 'informed'];
+const COMMON_FIELDS = ['slugs', 'kind', 'status', 'closed', 'category', 'owner', 'target', 'driver', 'approver', 'contributors', 'informed'];
 const KIND_FIELDS = Object.freeze({
   risk: ['impact', 'likelihood', 'inherent', 'appetite'],
   opportunity: ['value', 'effort', 'target_value', 'cost', 'realisation'],
@@ -1406,35 +1396,26 @@ function parseRiskSection(lines, start, end, file) {
   if (h === null || h[2].trim() === '') throw fail(file, start + 1, 'heading must look like "## Title" or "## R01 · Title"');
   /* Until the file assigns ids, messages name the entry by its heading. */
   const id = h[1] === undefined ? '"' + h[2].trim() + '"' : h[1];
+  /* Fields: "- key: value" lines under the heading. Unknown keys and empty values are ignored; the first of a repeated key wins. */
   const fields = {};
   const fieldLine = {};
-  let i = start + 1;
-  while (i < end && lines[i].startsWith('- ')) {
-    const kv = /^- ([a-z_]+): (.*)$/.exec(lines[i]);
-    if (kv === null) throw fail(file, i + 1, 'field must look like "- key: value"');
-    if (!ALL_FIELDS.includes(kv[1])) throw fail(file, i + 1, 'unknown field "' + kv[1] + '"');
-    if (Object.prototype.hasOwnProperty.call(fields, kv[1])) throw fail(file, i + 1, 'duplicate field "' + kv[1] + '"');
-    fields[kv[1]] = kv[2].trim();
-    fieldLine[kv[1]] = i + 1;
-    i += 1;
+  let i = firstFieldLine(lines, start, end);
+  for (let kv; i < end && (kv = FIELD_RE.exec(lines[i])) !== null; i += 1) {
+    const k = fieldKey(kv[1]);
+    if (kv[2] !== undefined && kv[2].trim() !== '' && !Object.prototype.hasOwnProperty.call(fields, k)) { fields[k] = kv[2].trim(); fieldLine[k] = i + 1; }
   }
   const at = (k) => fieldLine[k];
   const has = (k) => Object.prototype.hasOwnProperty.call(fields, k);
-  /* kind is optional: value/effort make an opportunity, anything else is a risk. */
-  const kind = has('kind') ? fields.kind : has('value') || has('effort') ? 'opportunity' : 'risk';
-  if (kind !== 'risk' && kind !== 'opportunity') throw fail(file, at('kind'), 'kind must be risk or opportunity, got "' + kind + '"');
-  const otherKind = kind === 'risk' ? 'opportunity' : 'risk';
-  KIND_FIELDS[otherKind].forEach((k) => { if (Object.prototype.hasOwnProperty.call(fields, k)) throw fail(file, at(k), '"' + k + '" belongs to ' + otherKind + ' entries, but ' + id + ' is ' + (kind === 'risk' ? 'a risk' : 'an opportunity') + ' (expected: ' + KIND_FIELDS[kind].join(', ') + ')'); });
-  REQUIRED_FIELDS[kind].forEach((k) => { if (!has(k)) throw fail(file, start + 1, id + ' is missing field "' + k + '"'); });
-  if (!has('status')) fields.status = 'open';
-  if (fields.status !== 'open' && fields.status !== 'closed') throw fail(file, at('status'), 'status must be open or closed');
-  if (fields.status === 'closed' && !Object.prototype.hasOwnProperty.call(fields, 'closed')) throw fail(file, at('status'), 'a closed entry needs "- closed: YYYY-MM-DD"');
-  if (fields.status === 'open' && Object.prototype.hasOwnProperty.call(fields, 'closed')) throw fail(file, at('closed'), 'an open entry must not have a closed date');
+  /* kind is optional: value/effort make an opportunity, anything else is a risk. Fields of the other kind are ignored. */
+  const kindWord = has('kind') ? fields.kind.toLowerCase() : '';
+  const kind = kindWord.startsWith('opp') ? 'opportunity' : kindWord === 'risk' ? 'risk' : has('value') || has('effort') ? 'opportunity' : 'risk';
+  REQUIRED_FIELDS[kind].forEach((k) => { if (!has(k)) throw fail(file, start + 1, id + ' needs "- ' + k + ': 1–5" (' + REQUIRED_FIELDS[kind].join(' and ') + ' are the only required fields)'); });
+  /* Any status but "closed" is open; a closed entry's date is optional. */
+  const closed = has('status') && fields.status.toLowerCase() === 'closed';
+  const closedOn = closed && has('closed') && isIsoDate(fields.closed) ? fields.closed : null;
   const limitKey = kind === 'risk' ? 'appetite' : 'target_value';
-  if (has(limitKey) && (!/^\d+$/.test(fields[limitKey]) || Number(fields[limitKey]) < 1 || Number(fields[limitKey]) > 25)) throw fail(file, at(limitKey), limitKey + ' must be a score 1–25');
-  const people = (k) => (has(k) && fields[k] !== '[]' ? parsePeople(fields[k], file, at(k)) : Object.freeze([]));
-  const accountable = people('accountable');
-  if (accountable.length > 1) throw fail(file, at('accountable'), 'exactly one person is accountable');
+  const limit = has(limitKey) && /^\d+$/.test(fields[limitKey]) && Number(fields[limitKey]) >= 1 && Number(fields[limitKey]) <= 25 ? Number(fields[limitKey]) : null;
+  const people = (k) => (has(k) ? parsePeople(fields[k]) : Object.freeze([]));
   const syn = KIND_SYNTAX[kind];
 
   const description = [];
@@ -1448,35 +1429,33 @@ function parseRiskSection(lines, start, end, file) {
     if (line.trim() === '') { i += 1; continue; }
     if (line.startsWith(syn.cause)) { cause = line.slice(syn.cause.length).trim(); i += 1; continue; }
     if (line.startsWith(syn.effect)) { consequence = line.slice(syn.effect.length).trim(); i += 1; continue; }
-    if (line === syn.table) {
+    /* Tables: cells are free text; a date that isn't YYYY-MM-DD, or a non-numeric "valid days", reads as blank. */
+    const heading = /^#{3,}\s*(.*?)\s*$/.exec(line);
+    const table = heading === null ? null : heading[1].toLowerCase();
+    if (table === syn.table.slice(4).toLowerCase()) {
       const t = parseTable(lines, i + 1, syn.header, file);
-      controls = t.rows.map((r) => {
-        if (!syn.types.includes(r.cells[1])) throw fail(file, r.line, syn.header[0].toLowerCase() + ' type must be one of ' + syn.types.join(', '));
-        lookup(syn.states, r.cells[2], syn.stateWhat);
-        return Object.freeze({ name: r.cells[0], type: r.cells[1], eff: r.cells[2] });
-      });
+      controls = t.rows.filter((r) => r.cells[0] !== '').map((r) => Object.freeze({ name: r.cells[0], type: r.cells[1], eff: r.cells[2] }));
       i = t.next; continue;
     }
-    if (line === '### Evidence') {
+    if (table === 'evidence') {
       const t = parseTable(lines, i + 1, ['Ref', 'Title', 'Kind', 'Date', 'Valid days'], file);
-      evidence = t.rows.map((r) => {
-        if (!/^\d+$/.test(r.cells[4]) || Number(r.cells[4]) < 1) throw fail(file, r.line, 'valid days must be a whole number ≥ 1');
-        return Object.freeze({ ref: r.cells[0], title: r.cells[1], kind: r.cells[2], date: parseDate(r.cells[3], file, r.line, 'evidence date'), validDays: Number(r.cells[4]) });
-      });
-      i = t.next; continue;
-    }
-    if (line === '### Actions') {
-      const t = parseTable(lines, i + 1, ['Action', 'Owner', 'Due', 'Done'], file);
-      actions = t.rows.map((r) => Object.freeze({
-        title: r.cells[0], owner: parsePerson(r.cells[1], file, r.line),
-        due: parseDate(r.cells[2], file, r.line, 'due date'),
-        done: r.cells[3] === '' ? null : parseDate(r.cells[3], file, r.line, 'done date'),
+      evidence = t.rows.filter((r) => r.cells[0] !== '' || r.cells[1] !== '').map((r) => Object.freeze({
+        ref: r.cells[0], title: r.cells[1], kind: r.cells[2],
+        date: isIsoDate(r.cells[3]) ? r.cells[3] : null, validDays: /^\d+$/.test(r.cells[4]) && Number(r.cells[4]) >= 1 ? Number(r.cells[4]) : null,
       }));
       i = t.next; continue;
     }
-    if (line.startsWith('#')) throw fail(file, i + 1, 'unexpected heading "' + line + '" (expected ' + syn.table + ', ### Evidence or ### Actions)');
-    if (cause !== null || controls !== null || evidence !== null || actions !== null) throw fail(file, i + 1, 'description text must come before ' + syn.cause.trim());
-    description.push(line.trim());
+    if (table === 'actions') {
+      const t = parseTable(lines, i + 1, ['Action', 'Owner', 'Due', 'Done'], file);
+      actions = t.rows.filter((r) => r.cells[0] !== '').map((r) => Object.freeze({
+        title: r.cells[0], owner: parsePerson(r.cells[1]),
+        due: isIsoDate(r.cells[2]) ? r.cells[2] : null,
+        done: isIsoDate(r.cells[3]) ? r.cells[3] : null,
+      }));
+      i = t.next; continue;
+    }
+    /* Any other text — including other headings and text after the cause or tables — is description. */
+    description.push(heading === null ? line.trim() : heading[1]);
     i += 1;
   }
 
@@ -1485,21 +1464,21 @@ function parseRiskSection(lines, start, end, file) {
   const effort = isRisk ? null : parseLevel(fields.effort, file, at('effort'), 'effort');
   const targetRaw = has('target') ? parsePair(fields.target, file, at('target'), isRisk ? 'target (impact x likelihood)' : 'target (value x effort)') : null;
   return Object.freeze({
-    id: h[1] === undefined ? null : h[1], kind, title: h[2].trim(), status: fields.status,
-    slugs: has('slugs') ? parseSlugs(fields.slugs, file, at('slugs')) : Object.freeze([]), slugsLine: at('slugs'),
-    closed: fields.status === 'closed' ? parseDate(fields.closed, file, at('closed'), 'closed') : null,
+    id: h[1] === undefined ? null : h[1], kind, title: h[2].trim(), status: closed ? 'closed' : 'open',
+    slugs: has('slugs') ? parseSlugs(fields.slugs) : Object.freeze([]), slugsLine: at('slugs'),
+    closed: closedOn,
     category: has('category') ? fields.category : 'Uncategorised',
-    owner: has('owner') ? parsePerson(fields.owner, file, at('owner')) : null,
+    owner: has('owner') ? parsePerson(fields.owner) : null,
     value, effort,
     impact: isRisk ? parseLevel(fields.impact, file, at('impact'), 'impact') : SCALE + 1 - effort,
     likelihood: isRisk ? parseLevel(fields.likelihood, file, at('likelihood'), 'likelihood') : value,
-    inherent: isRisk && has('inherent') ? parsePair(fields.inherent, file, at('inherent'), 'inherent') : null,
+    inherent: isRisk && has('inherent') ? parsePair(fields.inherent, file, at('inherent'), 'inherent (impact x likelihood)') : null,
     target: targetRaw === null || isRisk ? targetRaw : Object.freeze([SCALE + 1 - targetRaw[1], targetRaw[0]]),
     targetRaw,
-    limit: has(limitKey) ? Number(fields[limitKey]) : null,
+    limit,
     cost: !isRisk && has('cost') ? fields.cost : null,
-    realisation: !isRisk && has('realisation') ? parseDate(fields.realisation, file, at('realisation'), 'realisation') : null,
-    raci: Object.freeze({ R: people('responsible'), A: accountable.length === 0 ? null : accountable[0], C: people('consulted'), I: people('informed') }),
+    realisation: !isRisk && has('realisation') && isIsoDate(fields.realisation) ? fields.realisation : null,
+    daci: Object.freeze({ D: people('driver'), A: people('approver'), C: people('contributors'), I: people('informed') }),
     description: description.join(' '), cause, consequence,
     controls: Object.freeze(controls ?? []), evidence: Object.freeze(evidence ?? []), actions: Object.freeze(actions ?? []),
     file, line: start + 1, endLine: end,
@@ -1510,11 +1489,12 @@ function parseRiskSection(lines, start, end, file) {
 function parseRegisterFile(name, rawText) {
   const text = rawText.replace(/\r\n?/g, '\n');
   const lines = text.split('\n');
-  const { meta, bodyStart } = parseFrontMatter(lines, name);
-  const asAt = parseDate(requireMeta(meta, 'as_at', 'string', name), name, 1, 'as_at');
-  const scale = meta.scale ?? '5x5';
-  if (scale !== '5x5') throw fail(name, 1, 'only scale: 5x5 is supported, got "' + scale + '"');
-  const register = meta.register === undefined ? 'Register' : requireMeta(meta, 'register', 'string', name);
+  /* Front matter is optional: as_at defaults to today and register to "Register". */
+  const { meta, bodyStart } = parseFrontMatter(lines);
+  const asAt = meta.as_at === undefined ? todayIso() : parseDate(meta.as_at, name, 1, 'as_at');
+  const scale = (meta.scale ?? '5x5').replace(/\s/g, '').toLowerCase();
+  if (scale !== '5x5') throw fail(name, 1, 'only scale: 5x5 is supported, got "' + meta.scale + '"');
+  const register = meta.register ?? 'Register';
   if (!/^[a-z0-9][a-z0-9._-]*\.md$/.test(name)) throw fail(name, 1, 'file names must be lower-case and end in .md');
   const starts = lines.map((l, k) => (l.startsWith('## ') ? k : -1)).filter((k) => k >= bodyStart);
   const counts = { risk: 0, opportunity: 0 };
@@ -1526,9 +1506,15 @@ function parseRegisterFile(name, rawText) {
     const id = r.id ?? (r.slugs.length > 0 ? r.slugs[0] : auto);
     return Object.freeze(Object.assign({}, r, { id, tag: r.id === null ? String(n) : r.id.replace(/^[A-Z]+-?/, '') }));
   });
+  /* A repeated id gets a -2, -3… suffix so both entries still show. */
   const seen = new Set();
-  risks.forEach((r) => { if (seen.has(r.id)) throw fail(name, r.line, 'duplicate risk id ' + r.id); seen.add(r.id); });
-  return Object.freeze({ name, text, register, asAt, risks: Object.freeze(risks) });
+  const unique = risks.map((r) => {
+    let id = r.id;
+    for (let n = 2; seen.has(id); n += 1) id = r.id + '-' + n;
+    seen.add(id);
+    return id === r.id ? r : Object.freeze(Object.assign({}, r, { id }));
+  });
+  return Object.freeze({ name, text, register, asAt, risks: Object.freeze(unique) });
 }
 
 /**
@@ -1624,7 +1610,7 @@ function evidenceStatus(e, asAtDay) {
 
 function actionStatus(a, asAtDay) {
   if (a.done !== null && dayNumber(a.done) <= asAtDay) return 'done';
-  return dayNumber(a.due) < asAtDay ? 'overdue' : 'open';
+  return a.due !== null && dayNumber(a.due) < asAtDay ? 'overdue' : 'open';
 }
 
 function cellCentre(i, l) { return { x: (i - 0.5) * (100 / SCALE), y: (SCALE - l + 0.5) * (100 / SCALE) }; }
@@ -1859,7 +1845,7 @@ function buildTrajectories(st, S, accent, go, risks) {
         endX: xAt(end.k).toFixed(1), endY: yAt(end.s).toFixed(1), endFill: lc === 'open' ? INK : 'var(--card)',
         fromX: xAt(fromIdx).toFixed(1), hasLimit: r.limit !== null, appY: r.limit === null ? '0' : yAt(r.limit).toFixed(1),
         span: S[first].month + ' ' + pts[0].s + ' → ' + S[end.k].month + ' ' + end.s,
-        status: lc === 'closed' ? (r.closed === null ? 'Not in B' : 'Closed ' + shortMonth(r.closed)) : r.limit === null ? 'Open' : capitalise(above ? L.outsideWord : L.insideWord),
+        status: lc === 'closed' ? (r.status !== 'closed' ? 'Not in B' : r.closed === null ? 'Closed' : 'Closed ' + shortMonth(r.closed)) : r.limit === null ? 'Open' : capitalise(above ? L.outsideWord : L.insideWord),
         statusColor: lc === 'closed' ? INK2 : above ? ESCALATE : IMPROVE,
         ring: sel ? '0 0 0 2px ' + accent : 'none',
         pressed: String(sel), pick: go(sel ? { selectedId: null, drawerOpen: false } : { selectedId: r.id, drawerOpen: true }),
@@ -1889,19 +1875,20 @@ function buildDetail(st, S, viewRisks, others, go) {
     sourceRef: 'Source: ' + r.file + ' · line ' + r.line,
     hasCause: r.cause !== null, hasEffect: r.consequence !== null, hasControls: r.controls.length > 0,
     hasEvidence: r.evidence.length > 0, hasActions: r.actions.length > 0,
-    hasRaci: r.raci.A !== null || ['R', 'C', 'I'].some((k) => r.raci[k].length > 0),
+    hasDaci: ['D', 'A', 'C', 'I'].some((k) => r.daci[k].length > 0),
     lcLabel: lcStyle.label, lcBg: lcStyle.bg, lcFg: lcStyle.fg,
     isPending: lc === 'pending', hasPosition: lc !== 'pending',
     pendingNote: 'Not on the register as at ' + asAt.label + '. First recorded at the ' + S[firstOpenIdx(r)].label + ' review.',
-    raci: [
-      { letter: 'R', role: 'Responsible', people: r.raci.R },
-      { letter: 'A', role: 'Accountable', people: r.raci.A === null ? [] : [r.raci.A] },
-      { letter: 'C', role: 'Consulted', people: r.raci.C },
-      { letter: 'I', role: 'Informed', people: r.raci.I },
+    daci: [
+      { letter: 'D', role: 'Driver', people: r.daci.D },
+      { letter: 'A', role: 'Approver', people: r.daci.A },
+      { letter: 'C', role: 'Contributors', people: r.daci.C },
+      { letter: 'I', role: 'Informed', people: r.daci.I },
     ].filter((x) => x.people.length > 0).map((x, j) => ({ letter: x.letter, role: x.role, people: x.people.map(personLine).join('\n'), bg: x.letter === 'A' ? INK : 'var(--neutral-bg)', fg: x.letter === 'A' ? 'var(--on-ink)' : INK, rule: j === 0 ? '0' : '1px solid var(--rule-soft)' })),
     causeLabel: L.causeLabel, effectLabel: L.effectLabel,
     controlsTitle: L.supportsLabel + ' · ' + r.controls.length,
-    controls: r.controls.map((c) => { const e = lookup(KIND_SYNTAX[r.kind].states, c.eff, KIND_SYNTAX[r.kind].stateWhat); return { name: c.name, type: c.type, eff: c.eff, bg: e.bg, fg: e.fg }; }),
+    /* Known effectiveness/status words get their colour; any other wording shows neutral. */
+    controls: r.controls.map((c) => { const e = KIND_SYNTAX[r.kind].states[c.eff] ?? { bg: 'var(--neutral-bg)', fg: 'var(--neutral-fg)' }; return { name: c.name, type: c.type, eff: c.eff, bg: e.bg, fg: e.fg }; }),
     hasRelated: related.length > 0,
     relatedTitle: 'Related ' + OL.nouns + ' · shared slugs',
     related: related.map((o) => {
@@ -1915,16 +1902,21 @@ function buildDetail(st, S, viewRisks, others, go) {
       };
     }),
   };
+  /* Undated evidence is listed last with no freshness pill; dated evidence from after the as-at date is left out. */
   const evidence = r.evidence
-    .filter((e) => dayNumber(e.date) <= asAt.day)
-    .slice().sort((a, b) => dayNumber(b.date) - dayNumber(a.date))
+    .filter((e) => e.date === null || dayNumber(e.date) <= asAt.day)
+    .slice().sort((a, b) => (b.date === null ? -Infinity : dayNumber(b.date)) - (a.date === null ? -Infinity : dayNumber(a.date)))
     .map((e) => {
-      const status = lookup(PILLS, evidenceStatus(e, asAt.day), 'pill');
-      return { title: e.title, meta: e.ref + ' · ' + e.kind + ' · ' + formatDate(e.date), validity: 'Valid ' + e.validDays + ' days, to ' + formatDay(dayNumber(e.date) + e.validDays), status: status.label, bg: status.bg, fg: status.fg };
+      const known = e.date !== null && e.validDays !== null;
+      const status = known ? lookup(PILLS, evidenceStatus(e, asAt.day), 'pill') : { label: '', bg: 'transparent', fg: INK2 };
+      return {
+        title: e.title || e.ref, meta: dotJoin([e.title === '' ? null : e.ref, e.kind, e.date === null ? null : formatDate(e.date)]),
+        validity: known ? 'Valid ' + e.validDays + ' days, to ' + formatDay(dayNumber(e.date) + e.validDays) : '', status: status.label, bg: status.bg, fg: status.fg,
+      };
     });
   const actions = r.actions.map((a) => {
     const status = lookup(PILLS, actionStatus(a, asAt.day), 'pill');
-    return { title: a.title, meta: a.owner.name + ' · due ' + formatDate(a.due), status: status.label, bg: status.bg, fg: status.fg };
+    return { title: a.title, meta: dotJoin([a.owner === null ? null : a.owner.name, a.due === null ? null : 'due ' + formatDate(a.due)]), status: status.label, bg: status.bg, fg: status.fg };
   });
   const withLists = Object.assign({}, base, {
     evidenceTitle: 'Evidence as at ' + asAt.label + ' · ' + evidence.length,
@@ -1947,7 +1939,7 @@ function buildDetail(st, S, viewRisks, others, go) {
   const iScore = origin[0] * origin[1];
   const outside = lc === 'open' && L.outside(now.score, r.limit);
   const sinceLabel = 'Since ' + S[fromIdx].month;
-  const change = lc === 'closed' ? { k: 'Status', v: r.closed === null ? 'Not in B' : 'Closed ' + formatDate(r.closed), color: INK2 }
+  const change = lc === 'closed' ? { k: 'Status', v: r.status !== 'closed' ? 'Not in B' : r.closed === null ? 'Closed' : 'Closed ' + formatDate(r.closed), color: INK2 }
     : before === null ? { k: sinceLabel, v: S.length > 1 ? 'New — not in A' : 'Open', color: INK }
     : { k: sinceLabel, v: (now.score > before.score ? '▲ ' : now.score < before.score ? '▼ ' : '') + Math.abs(now.score - before.score) + ' (' + before.score + ' → ' + now.score + ')', color: lookup(KINDS, kind, 'kind').color };
   const hist = r.path.slice(0, toIdx + 1).filter((p) => p !== null);
@@ -2296,7 +2288,8 @@ function withSlugs(drafts, fileName, file, riskId, slugs) {
   /* No slugs line yet: add one straight under the heading. */
   if (r.slugsLine === undefined) lines.splice(r.line, 0, line);
   else {
-    if (!/^- slugs: /.test(lines[r.slugsLine - 1])) throw new Error('bug: ' + fileName + ':' + r.slugsLine + ' is not a slugs line');
+    const kv = FIELD_RE.exec(lines[r.slugsLine - 1]);
+    if (kv === null || fieldKey(kv[1]) !== 'slugs') throw new Error('bug: ' + fileName + ':' + r.slugsLine + ' is not a slugs line');
     lines[r.slugsLine - 1] = line;
   }
   return Object.freeze(Object.assign({}, drafts, { [fileName]: lines.join('\n') }));
@@ -2310,11 +2303,10 @@ function sectionParts(lines, r) {
   const end = r.endLine;
   const syn = KIND_SYNTAX[r.kind];
   const fields = {};
-  let i = start + 1;
-  while (i < end && lines[i].startsWith('- ')) {
-    const kv = /^- ([a-z_]+): (.*)$/.exec(lines[i]);
-    if (kv !== null) fields[kv[1]] = kv[2];
-    i += 1;
+  let i = firstFieldLine(lines, start, end);
+  for (let kv; i < end && (kv = FIELD_RE.exec(lines[i])) !== null; i += 1) {
+    const k = fieldKey(kv[1]);
+    if (kv[2] !== undefined && !Object.prototype.hasOwnProperty.call(fields, k)) fields[k] = kv[2];
   }
   let descEnd = i;
   while (descEnd < end && !lines[descEnd].startsWith(syn.cause) && !lines[descEnd].startsWith(syn.effect) && !lines[descEnd].startsWith('#')) descEnd += 1;
@@ -2334,10 +2326,11 @@ function patchSection(text, r, patch) {
   const syn = KIND_SYNTAX[r.kind];
   const has = (k) => Object.prototype.hasOwnProperty.call(patch, k);
   const heading = has('title') ? lines[p.start].replace(/^(## (?:[A-Z]+-?\d{2,} · )?).*$/, (_, pre) => pre + patch.title) : lines[p.start];
-  const fieldLines = lines.slice(p.start + 1, p.fieldEnd).flatMap((l) => {
-    const kv = /^- ([a-z_]+): /.exec(l);
-    if (kv === null || !has(kv[1])) return [l];
-    return patch[kv[1]].trim() === '' ? [] : ['- ' + kv[1] + ': ' + patch[kv[1]]];
+  const fieldLines = lines.slice(p.start + 1, p.fieldEnd).filter((l) => l.trim() !== '').flatMap((l) => {
+    const kv = FIELD_RE.exec(l);
+    const k = kv === null ? null : fieldKey(kv[1]);
+    if (k === null || !has(k)) return [l];
+    return patch[k].trim() === '' ? [] : ['- ' + k + ': ' + patch[k]];
   });
   ALL_FIELDS.filter((k) => has(k) && !Object.prototype.hasOwnProperty.call(p.fields, k) && patch[k].trim() !== '').forEach((k) => fieldLines.push('- ' + k + ': ' + patch[k]));
   const desc = (has('description') ? patch.description : p.description).trim();
@@ -2364,7 +2357,7 @@ const FORM_DETAILS = Object.freeze({
 });
 /** Free text → a kebab-case slug: "Supplier Failure!" → "supplier-failure". */
 function slugify(t) { return t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
-const FORM_RACI = [['responsible', 'Responsible'], ['accountable', 'Accountable'], ['consulted', 'Consulted'], ['informed', 'Informed']];
+const FORM_DACI = [['driver', 'Driver'], ['approver', 'Approver'], ['contributors', 'Contributors'], ['informed', 'Informed']];
 
 /** Form mode on the data side: entry list plus a form for one entry. Values that would not parse stay in formPending with the error. */
 function buildForm(st, fr, name, text, go, setState) {
@@ -2488,7 +2481,7 @@ function buildForm(st, fr, name, text, go, setState) {
       ] },
       { title: 'Details', fields: (r.status === 'closed' ? [field('closed', 'Closed on', 'date', raw('closed'), '')] : [])
         .concat(FORM_DETAILS[r.kind].map(([k, label, type, hint]) => field(k, label, type, raw(k), hint))) },
-      { title: 'RACI', fields: FORM_RACI.map(([k, label]) => field(k, label, 'text', raw(k), k === 'accountable' ? 'One person: Name (Role)' : 'Name (Role); separate several with ;')) },
+      { title: 'DACI', fields: FORM_DACI.map(([k, label]) => field(k, label, 'text', raw(k), 'Name (Role); separate several with ;')) },
     ],
     formPairs: (r.kind === 'risk' ? [pairCard('inherent', 'Inherent', 'Rating before controls')] : [])
       .concat([pairCard('target', 'Target', r.kind === 'risk' ? 'Rating once actions land' : 'Rating once enablers are in place')]),

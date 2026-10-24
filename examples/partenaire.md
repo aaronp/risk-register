@@ -19,9 +19,9 @@ Registre d’un partenaire, rédigé en français. Même format que risks.md ; l
 - inherent: 5x4
 - target: 4x2
 - appetite: 12
-- responsible: M. Laurent (Directeur des opérations)
-- accountable: H. Bernard (Directeur général)
-- consulted: A. Petit (Directrice financière)
+- driver: M. Laurent (Directeur des opérations)
+- approver: H. Bernard (Directeur général)
+- contributors: A. Petit (Directrice financière)
 - informed: Comité des risques
 
 Le transporteur principal fait faillite et la plupart des livraisons restent sans prestataire sous contrat.
@@ -55,9 +55,9 @@ Le transporteur principal fait faillite et la plupart des livraisons restent san
 - inherent: 5x4
 - target: 4x2
 - appetite: 10
-- responsible: C. Dubois (Déléguée à la protection des données)
-- accountable: H. Bernard (Directeur général)
-- consulted: S. Roux (RSSI)
+- driver: C. Dubois (Déléguée à la protection des données)
+- approver: H. Bernard (Directeur général)
+- contributors: S. Roux (RSSI)
 - informed: Comité d’audit
 
 Des données personnelles de clients sont exposées lors d’exports ou d’échanges de fichiers non maîtrisés.
@@ -92,9 +92,9 @@ Des données personnelles de clients sont exposées lors d’exports ou d’éch
 - inherent: 5x5
 - target: 5x2
 - appetite: 10
-- responsible: S. Roux (RSSI)
-- accountable: H. Bernard (Directeur général)
-- consulted: A. Petit (Directrice financière)
+- driver: S. Roux (RSSI)
+- approver: H. Bernard (Directeur général)
+- contributors: A. Petit (Directrice financière)
 - informed: Conseil d’administration
 
 Un rançongiciel ou un composant logiciel compromis paralyse les systèmes de gestion d’entrepôt et de transport.
@@ -129,9 +129,9 @@ Un rançongiciel ou un composant logiciel compromis paralyse les systèmes de ge
 - inherent: 4x4
 - target: 3x2
 - appetite: 9
-- responsible: J. Moreau (DSI)
-- accountable: H. Bernard (Directeur général)
-- consulted: M. Laurent (Directeur des opérations)
+- driver: J. Moreau (DSI)
+- approver: H. Bernard (Directeur général)
+- contributors: M. Laurent (Directeur des opérations)
 - informed: Comité des risques
 
 L’indisponibilité prolongée de la région cloud principale interrompt le suivi des expéditions.
@@ -164,9 +164,9 @@ L’indisponibilité prolongée de la région cloud principale interrompt le sui
 - inherent: 3x4
 - target: 3x2
 - appetite: 9
-- responsible: A. Petit (Directrice financière)
-- accountable: A. Petit (Directrice financière)
-- consulted: M. Laurent (Directeur des opérations)
+- driver: A. Petit (Directrice financière)
+- approver: A. Petit (Directrice financière)
+- contributors: M. Laurent (Directeur des opérations)
 - informed: Comité d’audit
 
 La baisse de l’euro face au dollar renchérit les contrats de fret libellés en dollars.
@@ -198,9 +198,9 @@ La baisse de l’euro face au dollar renchérit les contrats de fret libellés e
 - inherent: 4x5
 - target: 3x2
 - appetite: 9
-- responsible: A. Petit (Directrice financière)
-- accountable: A. Petit (Directrice financière)
-- consulted: S. Roux (RSSI)
+- driver: A. Petit (Directrice financière)
+- approver: A. Petit (Directrice financière)
+- contributors: S. Roux (RSSI)
 - informed: Comité d’audit
 
 Des escrocs se font passer pour un fournisseur et obtiennent un changement de coordonnées bancaires.
@@ -232,9 +232,9 @@ Des escrocs se font passer pour un fournisseur et obtiennent un changement de co
 - inherent: 4x4
 - target: 3x3
 - appetite: 9
-- responsible: M. Laurent (Directeur des opérations)
-- accountable: H. Bernard (Directeur général)
-- consulted: A. Petit (Directrice financière)
+- driver: M. Laurent (Directeur des opérations)
+- approver: H. Bernard (Directeur général)
+- contributors: A. Petit (Directrice financière)
 - informed: Comité des risques
 
 Un mouvement social prolongé au port du Havre bloque les conteneurs à l’import.
@@ -266,9 +266,9 @@ Un mouvement social prolongé au port du Havre bloque les conteneurs à l’impo
 - inherent: 4x4
 - target: 3x2
 - appetite: 12
-- responsible: J. Moreau (DSI)
-- accountable: H. Bernard (Directeur général)
-- consulted: A. Petit (Directrice financière)
+- driver: J. Moreau (DSI)
+- approver: H. Bernard (Directeur général)
+- contributors: A. Petit (Directrice financière)
 - informed: Conseil d’administration
 
 Le déploiement du nouvel ERP prend du retard et dépasse son budget.
@@ -300,9 +300,9 @@ Le déploiement du nouvel ERP prend du retard et dépasse son budget.
 - inherent: 4x3
 - target: 3x2
 - appetite: 9
-- responsible: L. Garnier (DRH)
-- accountable: H. Bernard (Directeur général)
-- consulted: J. Moreau (DSI)
+- driver: L. Garnier (DRH)
+- approver: H. Bernard (Directeur général)
+- contributors: J. Moreau (DSI)
 - informed: Comité des risques
 
 Le départ de quelques experts techniques laisse des systèmes critiques sans relève.
@@ -334,9 +334,9 @@ Le départ de quelques experts techniques laisse des systèmes critiques sans re
 - inherent: 3x3
 - target: 2x2
 - appetite: 6
-- responsible: M. Laurent (Directeur des opérations)
-- accountable: M. Laurent (Directeur des opérations)
-- consulted: A. Petit (Directrice financière)
+- driver: M. Laurent (Directeur des opérations)
+- approver: M. Laurent (Directeur des opérations)
+- contributors: A. Petit (Directrice financière)
 - informed: Comité des risques
 
 Le manque de palettes certifiées ralentit les expéditions en haute saison.
@@ -368,9 +368,9 @@ Le manque de palettes certifiées ralentit les expéditions en haute saison.
 - inherent: 4x3
 - target: 3x2
 - appetite: 8
-- responsible: N. Fontaine (Directrice de la communication)
-- accountable: H. Bernard (Directeur général)
-- consulted: C. Dubois (Déléguée à la protection des données)
+- driver: N. Fontaine (Directrice de la communication)
+- approver: H. Bernard (Directeur général)
+- contributors: C. Dubois (Déléguée à la protection des données)
 - informed: Conseil d’administration
 
 Une plainte de client ou une publication de salarié devient virale et nuit à la confiance dans la marque.
@@ -402,9 +402,9 @@ Une plainte de client ou une publication de salarié devient virale et nuit à l
 - inherent: 3x5
 - target: 2x2
 - appetite: 9
-- responsible: A. Petit (Directrice financière)
-- accountable: H. Bernard (Directeur général)
-- consulted: J. Moreau (DSI)
+- driver: A. Petit (Directrice financière)
+- approver: H. Bernard (Directeur général)
+- contributors: J. Moreau (DSI)
 - informed: Conseil d’administration
 
 Le nouveau reporting réglementaire de durabilité entre en vigueur avant que nos données et processus soient prêts.
@@ -437,9 +437,9 @@ Le nouveau reporting réglementaire de durabilité entre en vigueur avant que no
 - target_value: 12
 - cost: 90 k€ la première année
 - realisation: 2027-06-30
-- responsible: J. Moreau (DSI)
-- accountable: M. Laurent (Directeur des opérations)
-- consulted: A. Petit (Directrice financière)
+- driver: J. Moreau (DSI)
+- approver: M. Laurent (Directeur des opérations)
+- contributors: A. Petit (Directrice financière)
 - informed: Comité des risques
 
 Planifier les tournées avec un moteur d’optimisation plutôt qu’avec des tournées fixes.
@@ -472,9 +472,9 @@ Planifier les tournées avec un moteur d’optimisation plutôt qu’avec des to
 - target_value: 9
 - cost: 10 k€
 - realisation: 2027-03-31
-- responsible: M. Laurent (Directeur des opérations)
-- accountable: H. Bernard (Directeur général)
-- consulted: A. Petit (Directrice financière)
+- driver: M. Laurent (Directeur des opérations)
+- approver: H. Bernard (Directeur général)
+- contributors: A. Petit (Directrice financière)
 - informed: Comité des risques
 
 Proposer aux entreprises locales la capacité de stockage inutilisée en dehors de la haute saison.
@@ -507,9 +507,9 @@ Proposer aux entreprises locales la capacité de stockage inutilisée en dehors 
 - target_value: 9
 - cost: Effort interne uniquement
 - realisation: 2027-01-31
-- responsible: A. Petit (Directrice financière)
-- accountable: A. Petit (Directrice financière)
-- consulted: M. Laurent (Directeur des opérations)
+- driver: A. Petit (Directrice financière)
+- approver: A. Petit (Directrice financière)
+- contributors: M. Laurent (Directeur des opérations)
 - informed: Comité d’audit
 
 Grouper les achats de carburant avec d’autres transporteurs régionaux pour obtenir de meilleurs prix.
