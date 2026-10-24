@@ -108,6 +108,9 @@ risk. Fields that belong to the other kind are ignored.
 | `realisation` | Date the value should land, `YYYY-MM-DD` |
 
 **People** are written `Name (Role)` or just a name; separate several with `;`.
+A placeholder name (`Unassigned`, `TBD`, `TBC`, `TBA`, `None`, `N/A`, `-`, `?`)
+counts as nobody: a DACI role with only placeholders is hidden, and so is the
+whole DACI section if every role is.
 
 **Slugs** are separated by `;` or `,`. Each is turned into lower-case
 kebab-case (`Carrier Insolvency` → `carrier-insolvency`) and duplicates are
@@ -154,6 +157,8 @@ Controls.
 
 - Columns are found by header name, in any order; a missing column reads as
   blank. The `|---|` separator row is optional.
+- An evidence title can be a link, `[OECD report](https://…)` or a bare
+  `https://…` URL; it opens in a new tab. Only http(s) links are linked.
 - Every cell is free text. These words get a colour; anything else shows
   neutral:
   - Effectiveness: `Effective`, `Partial`, `Ineffective`

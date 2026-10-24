@@ -59,6 +59,7 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 </div>
 <p style="margin: 0; font-size: 15px; color: var(--ink2)">{{headline}}</p>
+<a href="?view=balance" onClick="{{openBalance}}" title="Open the Balance view" style="align-self: flex-start; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 14px; font-weight: 600; color: {{scoreTone}}; text-decoration: underline; text-underline-offset: 3px">{{scoreLine}}</a>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center">
 <div role="group" aria-label="Side" style="display: flex; gap: 4px; padding: 3px; border: 1px solid var(--ink); border-radius: 8px; background: var(--card)">
@@ -424,6 +425,36 @@ button:disabled{opacity:.35;cursor:default}
 </sc-if>
 </div>
 </sc-if>
+<sc-if value="{{isBalance}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; background: var(--card); border: 1px solid var(--rule); border-radius: 8px">
+<div style="display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline">
+<span style="font-size: 22px; font-weight: 600; color: {{bal.tone}}">{{bal.status}}</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: var(--ink2)">{{bal.share}}</span>
+<sc-if value="{{bal.hasBefore}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: var(--ink2)">{{bal.before}}</span></sc-if>
+</div>
+<svg viewBox="0 0 800 530" role="img" aria-label="{{bal.aria}}" style="width: 100%; max-width: 800px; height: auto; align-self: center; font-family: inherit">
+<text x="400" y="38" text-anchor="middle" style="font-size: 23px; font-weight: 600; fill: var(--ink)">{{bal.net}}</text>
+<text x="210" y="80" text-anchor="middle" style="font-size: 15px; font-weight: 600; letter-spacing: 0.06em; fill: var(--escalate)">RISKS</text>
+<text x="590" y="80" text-anchor="middle" style="font-size: 15px; font-weight: 600; letter-spacing: 0.06em; fill: var(--improve)">OPPORTUNITIES</text>
+<path d="M 400 175 L 400 440" style="stroke: var(--ink3); stroke-width: 13; stroke-linecap: round"></path>
+<path d="M 342 459 Q 350 437 400 437 Q 450 437 458 459 Z" style="fill: var(--ink3)"></path>
+<path d="M 184 175 H 616" style="stroke: var(--rule); stroke-width: 1.5; stroke-dasharray: 4 6"></path>
+<path d="{{bal.beam}}" style="stroke: var(--ink); stroke-width: 9; stroke-linecap: round"></path>
+<sc-for list="{{bal.pans}}" as="pn" hint-placeholder-count="2">
+<path d="{{pn.strings}}" style="fill: none; stroke: var(--ink3); stroke-width: 2"></path>
+<path d="{{pn.bowl}}" style="fill: var(--rule-soft); stroke: var(--ink3); stroke-width: 2"></path>
+<sc-for list="{{pn.blocks}}" as="bk" hint-placeholder-count="4">
+<rect class="rr-hover" x="{{bk.x}}" y="{{bk.y}}" width="122" height="{{bk.h}}" onClick="{{bk.pick}}" style="fill: {{pn.color}}; opacity: {{bk.opacity}}; stroke: {{bk.stroke}}; stroke-width: 3; cursor: pointer"><title>{{bk.title}}</title></rect>
+<sc-if value="{{bk.showLabel}}" hint-placeholder-val="{{ true }}"><text x="{{pn.x}}" y="{{bk.mid}}" dominant-baseline="middle" text-anchor="middle" style="font-size: 14px; fill: #FFFFFF; pointer-events: none">{{bk.label}}</text></sc-if>
+</sc-for>
+<text x="{{pn.x}}" y="{{pn.totalY}}" text-anchor="middle" style="font-size: 19px; font-weight: 600; fill: {{pn.color}}">{{pn.total}}</text>
+</sc-for>
+<circle cx="400" cy="175" r="12" style="fill: var(--card); stroke: var(--ink); stroke-width: 5"></circle>
+<text x="400" y="504" text-anchor="middle" style="font-size: 13px; fill: var(--ink2)">Block height = score · Tilt = relative imbalance</text>
+</svg>
+<p style="margin: 0; font-size: 12px; color: var(--ink2)">Each block is an open entry, as tall as its score. Click a block to see it on the matrix. Risk and opportunity scores measure different things, so treat the balance as a conversation starter, not a net score.</p>
+</div>
+</sc-if>
 <sc-if value="{{isTable}}" hint-placeholder-val="{{ false }}">
 <div style="background: var(--card); border: 1px solid var(--rule); border-radius: 8px; overflow-x: auto">
 <div style="min-width: 1240px">
@@ -560,7 +591,7 @@ button:disabled{opacity:.35;cursor:default}
 <ul style="list-style: none; margin: 0; padding: 0">
 <sc-for list="{{sel.evidence}}" as="e" hint-placeholder-count="3">
 <li style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 10px 0; border-top: 1px solid var(--rule-soft)">
-<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 14px; font-weight: 500">{{e.title}}</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: var(--ink2)">{{e.meta}}</span><span style="font-size: 12px; color: var(--ink2)">{{e.validity}}</span></span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><sc-if value="{{e.hasHref}}" hint-placeholder-val="{{ false }}"><a href="{{e.href}}" target="_blank" rel="noopener noreferrer" style="font-size: 14px; font-weight: 500; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere">{{e.title}}</a></sc-if><sc-if value="{{e.noHref}}" hint-placeholder-val="{{ true }}"><span style="font-size: 14px; font-weight: 500; overflow-wrap: anywhere">{{e.title}}</span></sc-if><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: var(--ink2)">{{e.meta}}</span><span style="font-size: 12px; color: var(--ink2)">{{e.validity}}</span></span>
 <span style="flex: 0 0 auto; padding: 3px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; background: {{e.bg}}; color: {{e.fg}}">{{e.status}}</span>
 </li>
 </sc-for>
@@ -612,6 +643,10 @@ button:disabled{opacity:.35;cursor:default}
 </select>
 </label>
 <div role="toolbar" aria-label="File actions" style="display: flex; gap: 4px; align-items: center">
+<button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{undo}}" disabled="{{undoDisabled}}" title="{{undoTitle}}" aria-label="{{undoTitle}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3 L2.5 6 L5.5 9 M2.5 6 H10 A3.5 3.5 0 0 1 10 13 H7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+<button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{redo}}" disabled="{{redoDisabled}}" title="{{redoTitle}}" aria-label="{{redoTitle}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 3 L13.5 6 L10.5 9 M13.5 6 H6 A3.5 3.5 0 0 0 6 13 H9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+<span aria-hidden="true" style="width: 1px; height: 24px; margin: 0 4px; background: var(--rule)"></span>
+<button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{toggleOpen}}" aria-expanded="{{openExpanded}}" title="Open a file" aria-label="Open a file"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.75 4 A1.25 1.25 0 0 1 3 2.75 H6.25 L7.75 4.25 H13 A1.25 1.25 0 0 1 14.25 5.5 V12 A1.25 1.25 0 0 1 13 13.25 H3 A1.25 1.25 0 0 1 1.75 12 Z M1.75 6.75 H14.25" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path></svg></button>
 <button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{openNew}}" aria-expanded="{{newExpanded}}" title="New file" aria-label="New file"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M9 1.75 H4 A1.25 1.25 0 0 0 2.75 3 V13 A1.25 1.25 0 0 0 4 14.25 H12 A1.25 1.25 0 0 0 13.25 13 V6 Z M9 1.75 V6 H13.25 M8 8 V12.5 M5.75 10.25 H10.25" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
 <button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{copyToClipboard}}" title="Copy {{copySource}} to the clipboard" aria-label="Copy {{copySource}} to the clipboard"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2.5" width="10" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"></rect><path d="M6 2.5 V1.75 H10 V2.5 M5.5 7 H10.5 M5.5 10 H10.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></button>
 <button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{downloadFile}}" title="Download {{copySource}}" aria-label="Download {{copySource}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 V10 M4.5 6.5 L8 10 L11.5 6.5 M2.5 11 V13.5 H13.5 V11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
@@ -629,6 +664,23 @@ button:disabled{opacity:.35;cursor:default}
 <button class="rr-hover" onClick="{{formFix}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">Fix in Source</button>
 </div>
 </sc-if>
+</sc-if>
+<sc-if value="{{openOpen}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 12px; width: 100%; box-sizing: border-box; padding: 14px 16px; background: var(--card); border: 1px solid var(--ink); border-radius: 8px; animation: rr-drop 140ms ease-out">
+<span style="font-size: 13px; font-weight: 600">Open a register</span>
+<div onDragOver="{{onDragOver}}" onDragLeave="{{onDragLeave}}" onDrop="{{onDrop}}" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; min-height: 96px; padding: 16px; border: 2px dashed {{dropBd}}; border-radius: 8px; background: {{dropBg}}; text-align: center">
+<span style="font-size: 14px; color: var(--ink2)">Drop .md files here, or</span>
+<label class="rr-hover" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">Choose files…<input type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" multiple onChange="{{onPickFiles}}" style="position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden"></label>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+<label for="rr-open-url" style="font-size: 13px; font-weight: 600">URL</label>
+<input id="rr-open-url" type="url" value="{{openUrl}}" onChange="{{onOpenUrl}}" onKeyDown="{{onOpenUrlKey}}" placeholder="https://…/risks.md" spellcheck="false" autocomplete="off" style="flex: 1 1 260px; min-width: 0; max-width: 520px; height: 42px; padding: 0 12px; border: 1px solid var(--control); border-radius: 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; background: var(--card); color: var(--ink); box-sizing: border-box">
+<button class="rr-hover" onClick="{{openFromUrl}}" disabled="{{openUrlDisabled}}" style="height: 42px; padding: 0 16px; border: 1px solid var(--ink); border-radius: 6px; background: var(--ink); color: var(--on-ink); cursor: pointer; font-size: 13px; font-weight: 600">{{openUrlLabel}}</button>
+<button class="rr-hover" onClick="{{toggleOpen}}" style="height: 42px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">Cancel</button>
+</div>
+<sc-if value="{{hasOpenError}}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin: 0; font-size: 13px; color: var(--bad-fg); white-space: pre-wrap">{{openError}}</p></sc-if>
+<p style="margin: 0; font-size: 12px; line-height: 1.5; color: var(--ink2)">Opened files join the files on this page and the last one becomes the register on view. They live in memory only. A URL must allow cross-origin requests (GitHub Pages and raw.githubusercontent.com do); to share a register, link to it with <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">?src=</span> instead.</p>
+</div>
 </sc-if>
 <sc-if value="{{copyOpen}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 14px 16px; background: var(--card); border: 1px solid var(--ink); border-radius: 8px; animation: rr-drop 140ms ease-out">
@@ -679,6 +731,22 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 </sc-for>
 </div>
+<fieldset style="margin: 0; padding: 0; border: 0; min-width: 0">
+<legend style="padding: 0 0 8px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">Entry</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: stretch">
+<div role="tablist" aria-orientation="vertical" aria-label="Entry text" style="flex: 0 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+<sc-for list="{{formEntryTabs}}" as="et" hint-placeholder-count="4">
+<button class="rr-hover" role="tab" id="{{et.tabId}}" aria-selected="{{et.selected}}" aria-controls="rr-entry-panel" onClick="{{et.pick}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 12px; border: 1px solid {{et.bd}}; border-left: 3px solid {{et.bar}}; border-radius: 6px; background: {{et.bg}}; color: var(--ink); cursor: pointer; text-align: left; min-width: 0"><span style="font-size: 13px; font-weight: 600">{{et.label}}</span><span style="max-width: 100%; font-size: 12px; color: {{et.previewFg}}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{et.preview}}</span></button>
+</sc-for>
+</div>
+<div role="tabpanel" id="rr-entry-panel" aria-labelledby="{{formEntry.tabId}}" style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+<label for="{{formEntry.id}}" style="font-size: 13px; font-weight: 600">{{formEntry.label}}</label>
+<textarea id="{{formEntry.id}}" value="{{formEntry.value}}" onChange="{{formEntry.onInput}}" rows="{{formEntry.rows}}" style="flex: 1 1 auto; min-height: 120px; padding: 8px 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; box-sizing: border-box; width: 100%"></textarea>
+<span style="font-size: 12px; color: var(--ink3)">{{formEntry.hint}}</span>
+<sc-if value="{{formEntry.hasError}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 12px; color: var(--bad-fg)">{{formEntry.error}} — not saved yet</span></sc-if>
+</div>
+</div>
+</fieldset>
 <sc-for list="{{formSections}}" as="fs" hint-placeholder-count="3">
 <fieldset style="margin: 0; padding: 0; border: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 12px 16px">
 <legend style="padding: 0 0 8px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{fs.title}}</legend>
@@ -792,7 +860,7 @@ button:disabled{opacity:.35;cursor:default}
 
 <div style="display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; background: var(--card); border: 1px solid var(--rule); border-radius: 8px; font-size: 13px; line-height: 1.55; color: var(--ink2)">
 <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">How the files work</span>
-<span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: var(--ink)">?src=</span> names the current register (shown here as risks.md) and <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: var(--ink)">?ours=…&amp;theirs=…</span> compares two. Edits here live in memory only, so save the markdown to your own repo. Examples: <a href="?src=examples/acme-risks/risks.md">register</a> · <a href="?ours=examples/acme-risks/risks.md&amp;theirs=examples/partenaire.md">compare with a partner</a>. On the Register page, the A and B pickers choose what it shows: B is the register on view, and A (optional) is the baseline its changes are measured from. The toolbar creates, copies, downloads, clones or deletes the file on view.</span>
+<span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: var(--ink)">?src=</span> names the current register (shown here as risks.md) and <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: var(--ink)">?ours=…&amp;theirs=…</span> compares two. Edits here live in memory only, so save the markdown to your own repo. Examples: <a href="?src=examples/acme-risks/risks.md">register</a> · <a href="?ours=examples/acme-risks/risks.md&amp;theirs=examples/partenaire.md">compare with a partner</a>. On the Register page, the A and B pickers choose what it shows: B is the register on view, and A (optional) is the baseline its changes are measured from. The toolbar opens files (drag and drop, a file picker or a URL) and creates, copies, downloads, clones or deletes the file on view.</span>
 </div>
 </section>
 </sc-if>
@@ -1127,6 +1195,7 @@ const ATTAINABLE_SCORES = [1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 15, 16, 20, 25];
 const VIEWS = [
   { id: 'matrix', label: 'Matrix' },
   { id: 'distribution', label: 'Distribution' },
+  { id: 'balance', label: 'Balance' },
   { id: 'compare', label: 'Compare' },
   { id: 'trajectories', label: 'Trajectories' },
   { id: 'table', label: 'Table' },
@@ -1358,6 +1427,15 @@ function parseSlugs(s) {
 
 /** A field line "- key: value"; keys are matched in any case, with spaces or dashes read as _. */
 const FIELD_RE = /^- ([A-Za-z][A-Za-z0-9 _-]*?):(?:\s+(.*))?$/;
+/** "[text](https://…)" or a bare http(s) URL → { title, href }; other text has no link. Only http(s) links are kept. */
+function linkOf(s) {
+  const md = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/.exec(s);
+  if (md !== null) return { title: s.replace(md[0], md[1]).trim(), href: md[2], hasHref: true, noHref: false };
+  const bare = /https?:\/\/\S+/.exec(s);
+  return bare !== null ? { title: s, href: bare[0], hasHref: true, noHref: false } : { title: s, href: '', hasHref: false, noHref: true };
+}
+/** Names that mean nobody yet. */
+const PLACEHOLDER_NAME = /^(unassigned|tbd|tbc|tba|none|n\/a|-+|\?+)$/i;
 /** Older RACI keys still read as their DACI equivalents. */
 const FIELD_ALIASES = Object.freeze({ responsible: 'driver', accountable: 'approver', consulted: 'contributors', contributor: 'contributors' });
 function fieldKey(k) {
@@ -1863,6 +1941,10 @@ function buildDetail(st, S, viewRisks, others, go) {
   const { fromIdx, toIdx, selectedId } = st;
   const r = viewRisks.find((x) => x.id === selectedId);
   if (r === undefined) throw new Error('bug: selected entry "' + selectedId + '" is not among the ' + st.lens + ' entries');
+  /* DACI roles with someone real in them; placeholders like "Unassigned (Lead)" or "TBD" don't count. */
+  const named = (people) => people.filter((p) => !PLACEHOLDER_NAME.test(p.name));
+  const daci = [['D', 'Driver'], ['A', 'Approver'], ['C', 'Contributors'], ['I', 'Informed']]
+    .map(([letter, role]) => ({ letter, role, people: named(r.daci[letter]) })).filter((x) => x.people.length > 0);
   const L = lensOf(r.kind);
   const KINDS = kindsFor(L);
   const OL = lensOf(r.kind === 'risk' ? 'opportunity' : 'risk');
@@ -1875,16 +1957,11 @@ function buildDetail(st, S, viewRisks, others, go) {
     sourceRef: 'Source: ' + r.file + ' · line ' + r.line,
     hasCause: r.cause !== null, hasEffect: r.consequence !== null, hasControls: r.controls.length > 0,
     hasEvidence: r.evidence.length > 0, hasActions: r.actions.length > 0,
-    hasDaci: ['D', 'A', 'C', 'I'].some((k) => r.daci[k].length > 0),
+    hasDaci: daci.length > 0,
     lcLabel: lcStyle.label, lcBg: lcStyle.bg, lcFg: lcStyle.fg,
     isPending: lc === 'pending', hasPosition: lc !== 'pending',
     pendingNote: 'Not on the register as at ' + asAt.label + '. First recorded at the ' + S[firstOpenIdx(r)].label + ' review.',
-    daci: [
-      { letter: 'D', role: 'Driver', people: r.daci.D },
-      { letter: 'A', role: 'Approver', people: r.daci.A },
-      { letter: 'C', role: 'Contributors', people: r.daci.C },
-      { letter: 'I', role: 'Informed', people: r.daci.I },
-    ].filter((x) => x.people.length > 0).map((x, j) => ({ letter: x.letter, role: x.role, people: x.people.map(personLine).join('\n'), bg: x.letter === 'A' ? INK : 'var(--neutral-bg)', fg: x.letter === 'A' ? 'var(--on-ink)' : INK, rule: j === 0 ? '0' : '1px solid var(--rule-soft)' })),
+    daci: daci.map((x, j) => ({ letter: x.letter, role: x.role, people: x.people.map(personLine).join('\n'), bg: x.letter === 'A' ? INK : 'var(--neutral-bg)', fg: x.letter === 'A' ? 'var(--on-ink)' : INK, rule: j === 0 ? '0' : '1px solid var(--rule-soft)' })),
     causeLabel: L.causeLabel, effectLabel: L.effectLabel,
     controlsTitle: L.supportsLabel + ' · ' + r.controls.length,
     /* Known effectiveness/status words get their colour; any other wording shows neutral. */
@@ -1910,13 +1987,13 @@ function buildDetail(st, S, viewRisks, others, go) {
       const known = e.date !== null && e.validDays !== null;
       const status = known ? lookup(PILLS, evidenceStatus(e, asAt.day), 'pill') : { label: '', bg: 'transparent', fg: INK2 };
       return {
-        title: e.title || e.ref, meta: dotJoin([e.title === '' ? null : e.ref, e.kind, e.date === null ? null : formatDate(e.date)]),
+        ...linkOf(e.title || e.ref), meta: dotJoin([e.title === '' ? null : e.ref, e.kind, e.date === null ? null : formatDate(e.date)]),
         validity: known ? 'Valid ' + e.validDays + ' days, to ' + formatDay(dayNumber(e.date) + e.validDays) : '', status: status.label, bg: status.bg, fg: status.fg,
       };
     });
   const actions = r.actions.map((a) => {
     const status = lookup(PILLS, actionStatus(a, asAt.day), 'pill');
-    return { title: a.title, meta: dotJoin([a.owner === null ? null : a.owner.name, a.due === null ? null : 'due ' + formatDate(a.due)]), status: status.label, bg: status.bg, fg: status.fg };
+    return { title: a.title, meta: dotJoin([a.owner === null || PLACEHOLDER_NAME.test(a.owner.name) ? null : a.owner.name, a.due === null ? null : 'due ' + formatDate(a.due)]), status: status.label, bg: status.bg, fg: status.fg };
   });
   const withLists = Object.assign({}, base, {
     evidenceTitle: 'Evidence as at ' + asAt.label + ' · ' + evidence.length,
@@ -2037,7 +2114,28 @@ function kindCounts(entries) {
   return ['risk', 'opportunity'].map((k) => plural(entries.filter((e) => e.kind === k).length, LENS[k].noun, LENS[k].nouns)).join(' · ');
 }
 
-function buildDataSide(st, a, go, applyDrafts, onEdit, setState) {
+/** Files from a drop or a picker → promises of { name, text }. */
+function readFiles(list) {
+  return Array.from(list).map((f) => f.text().then((text) => ({ name: f.name, text })));
+}
+/** Fetch one URL (absolute or relative to the page) as a file named after its last path segment. */
+function openUrl(raw, setState, addFiles) {
+  let url;
+  try { url = new URL(raw.trim(), location.href); } catch (e) { setState({ openError: '“' + raw.trim() + '” is not a URL' }); return; }
+  setState({ openBusy: true, openError: '' });
+  addFiles([fetch(url).then((res) => {
+    if (!res.ok) throw new Error(url.href + ': HTTP ' + res.status);
+    return res.text().then((text) => ({ name: url.pathname.split('/').pop() || 'register.md', text }));
+  })], { openBusy: false, openUrl: '' });
+}
+/** A file name the drafts can hold: lower-case, safe characters, .md, and not already taken. */
+function openedName(name, drafts) {
+  const base = name.toLowerCase().replace(/\.(markdown|txt)$/, '.md').replace(/[^a-z0-9._-]+/g, '-').replace(/^[^a-z0-9]+/, '');
+  const md = /\.md$/.test(base) ? base : (base === '' ? 'register' : base) + '.md';
+  return Object.prototype.hasOwnProperty.call(drafts, md) ? suggestCopyName(md, drafts, '') : md;
+}
+
+function buildDataSide(st, a, go, applyDrafts, onEdit, setState, addFiles) {
   byId(DATA_MODES, st.dataMode, 'data mode');
   const name = st.dataFile;
   if (!Object.prototype.hasOwnProperty.call(st.drafts, name)) throw new Error('bug: no draft named "' + name + '"');
@@ -2087,12 +2185,25 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState) {
       setState(Object.assign(reconcile(st, rest), { dataFlash: 'Deleted ' + name, copyOpen: false }));
     },
     copyOpen: st.copyOpen, copyExpanded: String(st.copyOpen && st.copyMode === 'clone'), newExpanded: String(st.copyOpen && st.copyMode === 'new'),
-    openCopy: go(st.copyOpen && st.copyMode === 'clone' ? { copyOpen: false, copyName: '', copyError: '' } : { copyOpen: true, copyMode: 'clone', copyName: suggestCopyName(name, st.drafts), copyError: '' }),
-    openNew: go(st.copyOpen && st.copyMode === 'new' ? { copyOpen: false, copyName: '', copyError: '' } : { copyOpen: true, copyMode: 'new', copyName: suggestCopyName('register.md', st.drafts, ''), copyError: '' }),
+    openCopy: go(st.copyOpen && st.copyMode === 'clone' ? { copyOpen: false, copyName: '', copyError: '' } : { openOpen: false, copyOpen: true, copyMode: 'clone', copyName: suggestCopyName(name, st.drafts), copyError: '' }),
+    openNew: go(st.copyOpen && st.copyMode === 'new' ? { copyOpen: false, copyName: '', copyError: '' } : { openOpen: false, copyOpen: true, copyMode: 'new', copyName: suggestCopyName('register.md', st.drafts, ''), copyError: '' }),
     copyPrompt: st.copyMode === 'new' ? 'New file name' : 'Clone ' + name + ' as',
     copyCreateLabel: st.copyMode === 'new' ? 'Create file' : 'Create clone',
     copyNoun: st.copyMode === 'new' ? 'The new file' : 'The clone',
     dataFlash: st.dataFlash,
+    /* Open: drop, pick or fetch .md files; addFiles (on the component) reads the latest state, since these finish later. */
+    openOpen: st.openOpen, openExpanded: String(st.openOpen),
+    toggleOpen: go(st.openOpen ? { openOpen: false, openError: '', dropActive: false } : { openOpen: true, openError: '', copyOpen: false }),
+    dropBd: st.dropActive ? 'var(--accent)' : 'var(--control)', dropBg: st.dropActive ? 'var(--sel-bg)' : 'transparent',
+    onDragOver: (e) => { e.preventDefault(); if (!st.dropActive) setState({ dropActive: true }); },
+    onDragLeave: () => setState({ dropActive: false }),
+    onDrop: (e) => { e.preventDefault(); addFiles(readFiles(e.dataTransfer.files)); },
+    onPickFiles: (e) => { const fs = readFiles(e.target.files); e.target.value = ''; addFiles(fs); },
+    openUrl: st.openUrl, hasOpenError: st.openError !== '', openError: st.openError,
+    onOpenUrl: (e) => setState({ openUrl: e.target.value, openError: '' }),
+    openUrlDisabled: st.openUrl.trim() === '' || st.openBusy, openUrlLabel: st.openBusy ? 'Opening…' : 'Open URL',
+    openFromUrl: () => openUrl(st.openUrl, setState, addFiles),
+    onOpenUrlKey: (e) => { if (e.key === 'Enter' && st.openUrl.trim() !== '' && !st.openBusy) openUrl(st.openUrl, setState, addFiles); },
     copyToClipboard: () => navigator.clipboard.writeText(text).then(
       () => setState({ dataFlash: 'Copied ' + name }),
       (e) => setState({ dataFlash: 'Copy failed: ' + e.message }),
@@ -2122,6 +2233,84 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState) {
 }
 
 /** Table view: the filtered entries of the lens as at toIdx (not-yet-raised ones left out), open by score, then closed. */
+/** Overall status from the share of open weight that is risk (sum of risk scores ÷ sum of all scores). */
+function balanceStatus(riskW, oppW) {
+  if (riskW + oppW === 0) return { status: 'Nothing open', share: null, tone: INK2 };
+  const share = riskW / (riskW + oppW);
+  const status = share >= 0.65 ? 'Risk-heavy' : share > 0.55 ? 'Leaning to risk' : share <= 0.35 ? 'Opportunity-heavy' : share < 0.45 ? 'Leaning to opportunity' : 'Balanced';
+  return { status, share, tone: share > 0.55 ? ESCALATE : share < 0.45 ? IMPROVE : INK };
+}
+
+/**
+ * Beam-scale geometry (SVG units, 800 × 530 viewBox): risks hang on the left, opportunities on the right, each as a
+ * stack of equal-width blocks whose heights share one scale, fitted so the taller stack stays below the beam.
+ * risks / opportunities: [{ id, weight, title }] with weight ≥ 0; zero weights are left out.
+ */
+function balanceScale(risks, opportunities) {
+  const sides = [risks, opportunities].map((xs) => xs.filter((x) => x.weight > 0).slice().sort((a, b) => b.weight - a.weight || a.id.localeCompare(b.id)));
+  const sum = (xs) => xs.reduce((t, x) => t + x.weight, 0);
+  const [neg, pos] = sides.map(sum);
+  const total = neg + pos;
+  const angle = total === 0 ? 0 : (16 * (pos - neg)) / total;
+  const rad = (angle * Math.PI) / 180;
+  const ends = [-1, 1].map((d) => ({ x: 400 + d * 190 * Math.cos(rad), y: 175 + d * 190 * Math.sin(rad) }));
+  const most = Math.max(1, ...sides.map((xs) => xs.length));
+  const gap = Math.min(3, 20 / most);
+  const unit = Math.max(neg, pos) === 0 ? 0 : (145 - gap * (most - 1)) / Math.max(neg, pos);
+  const f = (v) => v.toFixed(1);
+  const pans = sides.map((xs, k) => {
+    const { x, y } = ends[k];
+    const floor = y + 190;
+    let bottom = floor - 3;
+    const blocks = xs.map((b, i) => {
+      const h = b.weight * unit;
+      const out = { id: b.id, weight: b.weight, title: b.title, x: f(x - 61), y: f(bottom - h), h: f(h), mid: f(bottom - h / 2), opacity: i % 2 === 0 ? 1 : 0.78, showLabel: h >= 20 };
+      bottom -= h + gap;
+      return out;
+    });
+    return {
+      x: f(x), blocks, totalY: f(floor + 55), weight: [neg, pos][k],
+      strings: 'M ' + f(x) + ' ' + f(y) + ' L ' + f(x - 79) + ' ' + f(floor) + ' M ' + f(x) + ' ' + f(y) + ' L ' + f(x + 79) + ' ' + f(floor),
+      bowl: 'M ' + f(x - 86) + ' ' + f(floor) + ' Q ' + f(x) + ' ' + f(floor + 39) + ' ' + f(x + 86) + ' ' + f(floor) + ' Z',
+    };
+  });
+  return { negatives: neg, positives: pos, net: pos - neg, beam: 'M ' + f(ends[0].x) + ' ' + f(ends[0].y) + ' L ' + f(ends[1].x) + ' ' + f(ends[1].y), pans };
+}
+
+/** Open entries of each kind at idx as balance weights (their scores). */
+function balanceWeights(M, idx) {
+  return ['risk', 'opportunity'].map((kind) => M.risks.filter((r) => r.kind === kind && positionAt(r, idx) !== null)
+    .map((r) => ({ id: r.id, weight: positionAt(r, idx).score, title: recordUpTo(r, idx).title, kind })));
+}
+const signedNum = (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v);
+/** "Score: 102 − 172 = −70": opportunity weight minus risk weight. */
+function scoreLine(sc) { return 'Score: ' + sc.positives + ' − ' + sc.negatives + ' = ' + signedNum(sc.net); }
+
+/** Balance view: the scale for B, the overall status, and A's status when there is one. */
+function buildBalance(M, fromIdx, toIdx, selectedId, pick) {
+  const [risks, opps] = balanceWeights(M, toIdx);
+  const sc = balanceScale(risks, opps);
+  const colors = ['var(--escalate)', 'var(--improve)'];
+  const byId = Object.fromEntries(risks.concat(opps).map((x) => [x.id, x]));
+  const pans = sc.pans.map((p, k) => Object.assign({}, p, {
+    color: colors[k], total: (k === 0 ? '−' : '+') + p.weight,
+    blocks: p.blocks.map((b) => Object.assign({}, b, {
+      label: b.id.length <= 8 ? b.id + ' · ' + b.weight : String(b.weight),
+      title: b.id + ' · ' + b.title + ' · score ' + b.weight + ' — show on the matrix',
+      stroke: b.id === selectedId ? 'var(--ink)' : 'none', pick: pick(byId[b.id]),
+    })),
+  }));
+  const now = balanceStatus(sc.negatives, sc.positives);
+  const pct = (x) => Math.round(x * 100) + '% risk';
+  const was = fromIdx === toIdx ? null : (() => { const [r, o] = balanceWeights(M, fromIdx); const w = balanceScale(r, o); return balanceStatus(w.negatives, w.positives); })();
+  return {
+    status: now.status, tone: now.tone, share: now.share === null ? '' : pct(now.share) + ' · ' + Math.round((1 - now.share) * 100) + '% opportunity, by score',
+    hasBefore: was !== null, before: was === null ? '' : 'In A: ' + was.status + (was.share === null ? '' : ' (' + pct(was.share) + ')'),
+    net: 'Net ' + signedNum(sc.net), beam: sc.beam, pans,
+    aria: now.status + '. Opportunities weigh ' + sc.positives + ', risks weigh ' + sc.negatives + '; net ' + signedNum(sc.net) + '.',
+  };
+}
+
 function buildTable(st, toIdx, go, risks, L) {
   if (st.view !== 'table') return { tableRows: [], tableEmpty: false };
   const rows = risks.filter((r) => lifecycleAt(r, toIdx) !== 'pending').map((r) => ({ r, open: lifecycleAt(r, toIdx) === 'open', score: r.impact * r.likelihood }))
@@ -2472,13 +2661,29 @@ function buildForm(st, fr, name, text, go, setState) {
         { id: 'closed', label: 'Closed', patch: { status: 'closed', closed: raw('closed').trim() === '' ? file.asAt : raw('closed') } },
       ]),
     ],
+    /* Entry text as vertical tabs, with the selected one's text area beside them. Only the description keeps line breaks. */
+    ...(() => {
+      const entry = [
+        field('title', 'Title', 'text', p.title, 'One line; it becomes the ## heading.'),
+        field('description', 'Description', 'textarea', p.description, 'Blank lines separate paragraphs.'),
+        field('cause', L.causeLabel, 'text', p.cause, 'One line.'),
+        field('consequence', L.effectLabel, 'text', p.consequence, 'One line.'),
+      ].map((f) => Object.assign(f, { key: f.id.slice(5), tabId: f.id + '-tab' }));
+      const cur = entry.find((f) => f.key === st.formEntryTab) ?? entry[0];
+      const oneLine = (f) => (e) => f.onInput({ target: { value: e.target.value.replace(/\r?\n/g, ' ') } });
+      return {
+        formEntryTabs: entry.map((f) => {
+          const on = f === cur;
+          return {
+            label: f.label, tabId: f.tabId, selected: String(on), pick: go({ formEntryTab: f.key }),
+            preview: f.value.trim() === '' ? 'Empty' : f.value.replace(/\s+/g, ' '), previewFg: f.value.trim() === '' ? 'var(--ink3)' : INK2,
+            bg: on ? 'var(--sel-bg)' : 'var(--card)', bd: on ? INK : 'var(--rule)', bar: on ? 'var(--accent)' : 'var(--rule)',
+          };
+        }),
+        formEntry: Object.assign({}, cur, { rows: cur.key === 'description' ? 8 : 4, onInput: cur.key === 'description' ? cur.onInput : oneLine(cur) }),
+      };
+    })(),
     formSections: [
-      { title: 'Entry', fields: [
-        field('title', 'Title', 'text', p.title, ''),
-        field('description', 'Description', 'textarea', p.description, ''),
-        field('cause', L.causeLabel, 'text', p.cause, ''),
-        field('consequence', L.effectLabel, 'text', p.consequence, ''),
-      ] },
       { title: 'Details', fields: (r.status === 'closed' ? [field('closed', 'Closed on', 'date', raw('closed'), '')] : [])
         .concat(FORM_DETAILS[r.kind].map(([k, label, type, hint]) => field(k, label, type, raw(k), hint))) },
       { title: 'DACI', fields: FORM_DACI.map(([k, label]) => field(k, label, 'text', raw(k), 'Name (Role); separate several with ;')) },
@@ -2971,7 +3176,7 @@ function initialState() {
   const a = analyseDrafts(ORIGINALS, src.cmpA, src.cmpB);
   const base = {
     drafts: ORIGINALS, dataFile: CURRENT_FILE, view: DEFAULT_CMP_B === null ? 'matrix' : 'compare', side: DEFAULT_SIDE, dataMode: window.RR_LANDING ? 'form' : 'source',
-    formIdx: 0, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '',
+    formIdx: 0, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', formEntryTab: 'title',
     cellFilter: null, kindFilter: null, showMovement: true,
     categories: [], query: '', filtersOpen: false,
     theme: 'paper', palette: 'heat', accentId: 'blue', themeOpen: false,
@@ -2980,14 +3185,71 @@ function initialState() {
     cmpFocus: null, cmpPeer: null, cmpSlugDraft: '', cmpSlugError: '', cmpFlash: '',
     cmpPickOpen: null, cmpPickQuery: '',
     copyOpen: false, copyMode: 'clone', copyName: '', copyError: '', dataFlash: '',
+    openOpen: false, openUrl: '', openError: '', openBusy: false, dropActive: false,
+    undo: [], redo: [], histAt: 0,
     lens: 'risk',
     ...queryPrefs(),
   };
   return Object.assign(base, a.model.ok ? initialFromModel(a.model.model, base.lens) : { selectedId: null, drawerOpen: false });
 }
 
+/** Undo history: every change to the drafts records the previous drafts; edits to one file within 0.8 s count as one step. */
+const HISTORY_LIMIT = 100;
+function withHistory(st, patch, now) {
+  if (patch.drafts === undefined || patch.drafts === st.drafts) return patch;
+  const merge = now - st.histAt < 800 && (patch.dataFile ?? st.dataFile) === st.dataFile && st.undo.length > 0;
+  const undo = merge ? st.undo : st.undo.slice(-(HISTORY_LIMIT - 1)).concat([{ drafts: st.drafts, dataFile: st.dataFile }]);
+  return Object.assign({}, patch, { undo, redo: [], histAt: now });
+}
+/** Step back (from = 'undo') or forward (from = 'redo'): restore that entry's drafts and push the current ones the other way. */
+function historyStep(st, from) {
+  const to = from === 'undo' ? 'redo' : 'undo';
+  const entry = st[from][st[from].length - 1];
+  if (entry === undefined) return {};
+  return Object.assign(reconcile(Object.assign({}, st, { dataFile: entry.dataFile }), entry.drafts), {
+    [from]: st[from].slice(0, -1), [to]: st[to].concat([{ drafts: st.drafts, dataFile: st.dataFile }]),
+    histAt: 0, formPending: {}, dataFlash: from === 'undo' ? 'Undone' : 'Redone', __skipHistory: true,
+  });
+}
+
 class Component extends DCLogic {
   state = initialState();
+
+  setState(patch, done) {
+    const p = typeof patch === 'function' ? patch(this.state) : patch;
+    if (p.__skipHistory) { delete p.__skipHistory; super.setState(p, done); return; }
+    super.setState(withHistory(this.state, p, Date.now()), done);
+  }
+  undo() { this.setState(historyStep(this.state, 'undo')); }
+  redo() { this.setState(historyStep(this.state, 'redo')); }
+  /* ⌘/Ctrl+Z and ⇧⌘/Ctrl+Shift+Z (or Ctrl+Y) outside text fields; inside them the browser's own undo applies. */
+  componentDidMount() {
+    this.onKey = (e) => {
+      if (!(e.metaKey || e.ctrlKey) || e.altKey) return;
+      if (e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+      const k = e.key.toLowerCase();
+      const dir = k === 'z' ? (e.shiftKey ? 'redo' : 'undo') : k === 'y' && !e.shiftKey ? 'redo' : null;
+      if (dir === null || this.state[dir].length === 0) return;
+      e.preventDefault();
+      this[dir]();
+    };
+    document.addEventListener('keydown', this.onKey);
+  }
+  componentWillUnmount() { document.removeEventListener('keydown', this.onKey); }
+
+  /** Adds opened files to the drafts once they have all been read; the last one becomes B and the file in the editor. */
+  addFiles(pending, done = {}) {
+    if (pending.length === 0) return;
+    Promise.all(pending).then((files) => {
+      const st = this.state;
+      const drafts = Object.assign({}, st.drafts);
+      const names = files.map((f) => { const n = openedName(f.name, drafts); drafts[n] = f.text; return n; });
+      const last = names[names.length - 1];
+      this.setState(Object.assign(reconcile(Object.assign({}, st, { cmpB: last, cmpA: st.cmpA === last ? null : st.cmpA }), Object.freeze(drafts)), {
+        dataFile: last, formIdx: 0, formPending: {}, openOpen: false, openError: '', dropActive: false, dataFlash: 'Opened ' + names.join(', '),
+      }, done));
+    }, (e) => this.setState(Object.assign({ openError: 'Could not open: ' + e.message, dropActive: false }, done)));
+  }
 
   renderVals() {
     const st = this.state;
@@ -3004,8 +3266,12 @@ class Component extends DCLogic {
     else if (this.flipLayout !== st.cmpLayout) this.flipAnim = 'none';
     this.flipSide = st.side;
     this.flipLayout = st.cmpLayout;
-    const shell = Object.assign({}, buildThemePicker(st, go), buildPickers(st, a, go, (p) => this.setState(p)), buildDataSide(st, a, go, applyDrafts, onEdit, (p) => this.setState(p)), {
+    const shell = Object.assign({}, buildThemePicker(st, go), buildPickers(st, a, go, (p) => this.setState(p)), buildDataSide(st, a, go, applyDrafts, onEdit, (p) => this.setState(p), (pending, done = {}) => this.addFiles(pending, done)), {
       lensAttr: st.lens, flipAnim: this.flipAnim,
+      undo: () => this.undo(), redo: () => this.redo(),
+      undoDisabled: st.undo.length === 0, redoDisabled: st.redo.length === 0,
+      undoTitle: 'Undo' + (st.undo.length === 0 ? '' : ' (' + st.undo.length + ')') + ' — ⌘Z / Ctrl+Z',
+      redoTitle: 'Redo' + (st.redo.length === 0 ? '' : ' (' + st.redo.length + ')') + ' — ⇧⌘Z / Ctrl+Y',
       isBack, showSources: !isBack,
       modelOk: a.model.ok,
       showModelError: !a.model.ok && !isBack,
@@ -3053,6 +3319,7 @@ class Component extends DCLogic {
     const captions = {
       matrix: 'Click ' + (L.higherIsBetter ? 'an ' : 'a ') + L.noun + ' to drill in; click a cell to filter the list.',
       distribution: 'How the register’s score profile shifted between the two files.',
+      balance: 'Open risks against open opportunities, weighed by score; the heavier side sinks.',
       compare: st.cmpLayout === 'summary' ? 'Every ' + L.noun + ' that changed, sorted by size of change.' : 'A and B side by side; click ' + (L.higherIsBetter ? 'an ' : 'a ') + L.noun + ' to see its match.',
       trajectories: 'Score in A and in B.',
       table: 'Every ' + L.noun + ' on the register as at ' + S[toIdx].label + ', highest score first. Click a row for detail.',
@@ -3078,6 +3345,13 @@ class Component extends DCLogic {
         registerTitle: L.title,
         limitName: L.limitName,
         nouns: L.nouns,
+        ...(() => {
+          const sc = balanceScale(...balanceWeights(M, toIdx));
+          return {
+            scoreLine: scoreLine(sc), scoreTone: sc.net > 0 ? IMPROVE : sc.net < 0 ? ESCALATE : INK,
+            openBalance: (e) => { e.preventDefault(); this.setState({ side: 'front', view: 'balance', themeOpen: false }); },
+          };
+        })(),
         headline: plural(openTo.length, 'open ' + L.noun, 'open ' + L.nouns) + ' as at ' + S[toIdx].label + ' · ' + standout + ' · ' + outside + ' ' + L.outsideWord + (filterCount === 0 ? '' : ' · filtered'),
         sides: [
           { id: 'front', label: 'Register', patch: { side: 'front', themeOpen: false } },
@@ -3096,6 +3370,8 @@ class Component extends DCLogic {
         isDiff: view === 'compare',
         isTrajectories: view === 'trajectories',
         isTable: view === 'table',
+        isBalance: view === 'balance',
+        bal: view === 'balance' ? buildBalance(M, fromIdx, toIdx, st.selectedId, (r) => go(Object.assign(lensPatch(r.kind), { view: 'matrix', selectedId: r.id, drawerOpen: true }))) : null,
         sel: hasSelection ? buildDetail(sv, S, all, others, go) : null,
         drawerOpen: hasSelection && st.drawerOpen,
         drawerClosed: hasSelection && !st.drawerOpen,

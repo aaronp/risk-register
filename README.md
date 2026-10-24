@@ -21,7 +21,7 @@ Add any of these to preset the controls (unknown values are ignored):
 | `theme` | `paper` (default), `slate`, `night`, `contrast` |
 | `kind` | `risk` (default), `opportunity` |
 | `page` | `register`, `data`; defaults to `data` with no source, else `register` |
-| `view` | `matrix` (default), `distribution`, `table`, `compare`, `trajectories`; opens `register` unless `page` says otherwise |
+| `view` | `matrix` (default), `distribution`, `balance`, `table`, `compare`, `trajectories`; opens `register` unless `page` says otherwise |
 
 The address bar keeps up with these as you change them, so you can copy it to share the current view.
 
