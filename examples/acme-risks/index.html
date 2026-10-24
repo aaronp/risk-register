@@ -1,0 +1,11 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Acme risk register</title>
+<script>
+  // The viewer lives in its own repo; this repo only holds the data.
+  // Extra query params (page, view, kind, theme) are passed through.
+  const VIEWER = 'https://aaronp.github.io/risk-register/';
+  const src = new URL('risks.md', location.href).href;
+  location.replace(VIEWER + '?src=' + encodeURIComponent(src) + location.search.replace(/^\?/, '&') + location.hash);
+</script>
+<a href="risks.md">risks.md</a>

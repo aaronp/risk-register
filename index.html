@@ -115,7 +115,27 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 </header>
 </sc-if>
+<sc-if value="{{showSources}}" hint-placeholder-val="{{ true }}">
 <nav aria-label="Sources" style="display: flex; flex-direction: column; gap: 6px">
+<sc-if value="{{srcSingle}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center">
+<span style="display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; min-width: 0">
+<sc-if value="{{srcMulti}}" hint-placeholder-val="{{ false }}">
+<select value="{{srcName}}" onChange="{{srcPick}}" aria-label="Register to show" style="height: 40px; max-width: min(320px, calc(100vw - 32px)); padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 14px; font-weight: 600; cursor: pointer">
+<sc-for list="{{srcFiles}}" as="sf" hint-placeholder-count="3">
+<option value="{{sf.name}}">{{sf.name}}</option>
+</sc-for>
+</select>
+</sc-if>
+<sc-if value="{{srcSolo}}" hint-placeholder-val="{{ true }}">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 14px; font-weight: 600">{{srcName}}</span>
+</sc-if>
+<a href="?page=data" onClick="{{srcOpen}}" title="Edit {{srcName}} in Data" style="font-size: 13px; color: var(--ink2); text-decoration: underline; text-underline-offset: 3px">{{srcSub}}</a>
+</span>
+<button class="rr-hover" onClick="{{srcCompare}}" style="display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 500"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 5 H12 M9 2 L12 5 L9 8 M14 11 H4 M7 8 L4 11 L7 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>Compare</span></button>
+</div>
+</sc-if>
+<sc-if value="{{srcPair}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center">
 <sc-for list="{{cmpPickers}}" as="pk" hint-placeholder-count="2">
 <div style="position: relative; display: flex; align-items: center; gap: 8px">
@@ -146,11 +166,14 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 </sc-for>
 <button class="rr-hover" onClick="{{cmpSwap}}" disabled="{{cmpSwapDisabled}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 500">Swap A ⇄ B</button>
+<button class="rr-hover" onClick="{{srcStop}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 500">Stop comparing</button>
 </div>
+</sc-if>
 </nav>
+</sc-if>
 
 <sc-if value="{{isFront}}" hint-placeholder-val="{{ true }}">
-<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; animation: rr-flip 360ms ease-out; transform-origin: 50% 0">
+<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; animation: {{flipAnim}}; transform-origin: 50% 0">
 
 <section style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
 <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between">
@@ -323,6 +346,11 @@ button:disabled{opacity:.35;cursor:default}
 
 <sc-if value="{{isDiff}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 16px">
+<div role="group" aria-label="Compare layout" style="display: flex; flex-wrap: wrap; gap: 4px; padding: 3px; align-self: flex-start; border: 1px solid var(--control); border-radius: 8px; background: var(--card)">
+<sc-for list="{{cmpLayouts}}" as="ly" hint-placeholder-count="4">
+<button class="rr-hover" onClick="{{ly.pick}}" aria-pressed="{{ly.pressed}}" style="border: 0; border-radius: 5px; padding: 0 12px; height: 34px; font-size: 13px; font-weight: 600; cursor: pointer; background: {{ly.bg}}; color: {{ly.fg}}">{{ly.label}}</button>
+</sc-for>
+</div>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(120px, 100%), 1fr)); gap: 10px">
 <sc-for list="{{kindTiles}}" as="k" hint-placeholder-count="6">
 <button class="rr-hover" onClick="{{k.pick}}" aria-pressed="{{k.pressed}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 14px; border: 1px solid {{k.bd}}; border-radius: 8px; background: {{k.bg}}; cursor: pointer; text-align: left; min-height: 72px">
@@ -565,7 +593,7 @@ button:disabled{opacity:.35;cursor:default}
 </sc-if>
 
 <sc-if value="{{isBack}}" hint-placeholder-val="{{ false }}">
-<section aria-label="Register data" style="display: flex; flex-direction: column; gap: 14px; animation: rr-flip 360ms ease-out; transform-origin: 50% 0">
+<section aria-label="Register data" style="display: flex; flex-direction: column; gap: 14px; animation: {{flipAnim}}; transform-origin: 50% 0">
 <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between">
 <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
 <sc-if value="{{showDataBack}}" hint-placeholder-val="{{ false }}">
@@ -575,6 +603,24 @@ button:disabled{opacity:.35;cursor:default}
 <sc-for list="{{dataModes}}" as="dm" hint-placeholder-count="3">
 <button class="rr-hover" onClick="{{dm.pick}}" aria-pressed="{{dm.pressed}}" style="border: 0; border-radius: 5px; padding: 0 16px; height: 36px; font-size: 13px; font-weight: 600; cursor: pointer; background: {{dm.bg}}; color: {{dm.fg}}">{{dm.label}}</button>
 </sc-for>
+</div>
+<label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600">File
+<select value="{{dataFileName}}" onChange="{{onDataFile}}" style="height: 40px; max-width: min(360px, calc(100vw - 80px)); padding: 0 10px; border: 1px solid {{dataFileBd}}; border-radius: 6px; background: var(--card); color: var(--ink); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; cursor: pointer">
+<sc-for list="{{dataFiles}}" as="df" hint-placeholder-count="10">
+<option value="{{df.name}}">{{df.name}} · {{df.sub}}</option>
+</sc-for>
+</select>
+</label>
+<div role="toolbar" aria-label="File actions" style="display: flex; gap: 4px; align-items: center">
+<button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{openNew}}" aria-expanded="{{newExpanded}}" title="New file" aria-label="New file"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M9 1.75 H4 A1.25 1.25 0 0 0 2.75 3 V13 A1.25 1.25 0 0 0 4 14.25 H12 A1.25 1.25 0 0 0 13.25 13 V6 Z M9 1.75 V6 H13.25 M8 8 V12.5 M5.75 10.25 H10.25" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+<button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{copyToClipboard}}" title="Copy {{copySource}} to the clipboard" aria-label="Copy {{copySource}} to the clipboard"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2.5" width="10" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"></rect><path d="M6 2.5 V1.75 H10 V2.5 M5.5 7 H10.5 M5.5 10 H10.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></button>
+<button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{downloadFile}}" title="Download {{copySource}}" aria-label="Download {{copySource}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 V10 M4.5 6.5 L8 10 L11.5 6.5 M2.5 11 V13.5 H13.5 V11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+<button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{openCopy}}" aria-expanded="{{copyExpanded}}" title="Clone {{copySource}} as a new file" aria-label="Clone {{copySource}} as a new file"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"></rect><path d="M10.5 3 H4 A1.5 1.5 0 0 0 2.5 4.5 V10.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></button>
+<sc-if value="{{snapshotShow}}" hint-placeholder-val="{{ true }}">
+<button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{takeSnapshot}}" disabled="{{snapshotDisabled}}" title="{{snapshotNote}}" aria-label="Snapshot: {{snapshotNote}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="4" width="13" height="9.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"></rect><circle cx="8" cy="8.75" r="2.5" fill="none" stroke="currentColor" stroke-width="1.5"></circle><path d="M5.5 4 L6.5 2.5 H9.5 L10.5 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path></svg></button>
+</sc-if>
+<button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--bad-fg); cursor: pointer" onClick="{{deleteFile}}" disabled="{{deleteDisabled}}" title="{{deleteTitle}}" aria-label="{{deleteTitle}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4 H13.5 M6 4 V2.5 H10 V4 M4 4 L4.75 13.5 H11.25 L12 4 M6.75 6.75 V11 M9.25 6.75 V11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+<span role="status" style="font-size: 12px; color: var(--ink2); padding-left: 4px">{{dataFlash}}</span>
 </div>
 </div>
 <p style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: var(--ink2)">{{dataMeta}}</p>
@@ -587,36 +633,22 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 </sc-if>
 </sc-if>
-<div style="display: flex; flex-direction: column; gap: 6px">
-<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2)">File to edit</span>
-<div style="display: flex; flex-wrap: wrap; gap: 6px">
-<sc-for list="{{dataFiles}}" as="df" hint-placeholder-count="10">
-<button class="rr-hover" onClick="{{df.pick}}" aria-pressed="{{df.pressed}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 1px; min-height: 44px; padding: 5px 12px; border: 1px solid {{df.bd}}; border-radius: 6px; background: {{df.bg}}; color: {{df.fg}}; cursor: pointer; text-align: left"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600">{{df.name}}</span><span style="font-size: 11px; color: {{df.subFg}}">{{df.sub}}</span></button>
-</sc-for>
-</div>
-</div>
-<div style="display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center">
-<sc-if value="{{snapshotShow}}" hint-placeholder-val="{{ true }}">
-<button class="rr-hover" onClick="{{takeSnapshot}}" disabled="{{snapshotDisabled}}" style="display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--ink); color: var(--on-ink); cursor: pointer; font-size: 13px; font-weight: 600"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="4" width="13" height="9.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"></rect><circle cx="8" cy="8.75" r="2.5" fill="none" stroke="currentColor" stroke-width="1.5"></circle><path d="M5.5 4 L6.5 2.5 H9.5 L10.5 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path></svg><span>Snapshot</span></button>
-<span style="flex: 1 1 260px; font-size: 12px; line-height: 1.4; color: var(--ink2)">{{snapshotNote}}</span>
-</sc-if>
-<sc-if value="{{copyClosed}}" hint-placeholder-val="{{ true }}">
-<button class="rr-hover" onClick="{{openCopy}}" style="display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"></rect><path d="M10.5 3 H4 A1.5 1.5 0 0 0 2.5 4.5 V10.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg><span>{{copyLabel}}</span></button>
-</sc-if>
 <sc-if value="{{copyOpen}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 14px 16px; background: var(--card); border: 1px solid var(--ink); border-radius: 8px; animation: rr-drop 140ms ease-out">
-<label for="rr-copy-name" style="font-size: 13px; font-weight: 600">Copy <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">{{copySource}}</span> as</label>
+<label for="rr-copy-name" style="font-size: 13px; font-weight: 600">{{copyPrompt}}</label>
 <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
 <input id="rr-copy-name" type="text" value="{{copyName}}" onChange="{{onCopyName}}" onKeyDown="{{onCopyKey}}" autoFocus="{{ true }}" spellcheck="false" autocomplete="off" style="flex: 1 1 260px; min-width: 0; max-width: 420px; height: 42px; padding: 0 12px; border: 1px solid var(--control); border-radius: 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 14px; background: var(--card); color: var(--ink); box-sizing: border-box">
-<button class="rr-hover" onClick="{{createCopy}}" style="height: 42px; padding: 0 16px; border: 1px solid var(--ink); border-radius: 6px; background: var(--ink); color: var(--on-ink); cursor: pointer; font-size: 13px; font-weight: 600">Create copy</button>
+<button class="rr-hover" onClick="{{createCopy}}" style="height: 42px; padding: 0 16px; border: 1px solid var(--ink); border-radius: 6px; background: var(--ink); color: var(--on-ink); cursor: pointer; font-size: 13px; font-weight: 600">{{copyCreateLabel}}</button>
 <button class="rr-hover" onClick="{{cancelCopy}}" style="height: 42px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">Cancel</button>
 </div>
 <sc-if value="{{hasCopyError}}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin: 0; font-size: 13px; color: var(--bad-fg)">{{copyError}}</p></sc-if>
-<p style="margin: 0; font-size: 12px; line-height: 1.5; color: var(--ink2)">The copy opens in the editor and appears in Compare’s document pickers. To make it a dated snapshot, name it <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">risks-YYYY-MM-DD.md</span>, set its <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">as_at</span> to that date, and add it to the <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">snapshots</span> list in risks.md. Copies live in memory only.</p>
+<p style="margin: 0; font-size: 12px; line-height: 1.5; color: var(--ink2)">{{copyNoun}} opens in the editor and appears in the document pickers. To make it a dated snapshot, name it <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">risks-YYYY-MM-DD.md</span>, set its <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">as_at</span> to that date, and add it to the <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">snapshots</span> list in risks.md. New files live in memory only, so download them to keep them.</p>
 </div>
 </sc-if>
-</div>
-<p role="status" style="margin: 0; padding: 10px 14px; border-radius: 6px; font-size: 13px; line-height: 1.5; background: {{regStatusBg}}; color: {{regStatusFg}}; font-weight: 500; white-space: pre-wrap">{{regStatus}}</p>
+<sc-if value="{{hasRegError}}" hint-placeholder-val="{{ false }}">
+<p role="alert" style="margin: 0; padding: 10px 14px; border-radius: 6px; font-size: 13px; line-height: 1.5; background: var(--bad-bg); color: var(--bad-fg); font-weight: 500; white-space: pre-wrap">A source has an error, so the views are hidden:
+{{regError}}</p>
+</sc-if>
 
 <sc-if value="{{formOk}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
@@ -752,9 +784,6 @@ button:disabled{opacity:.35;cursor:default}
 <sc-if value="{{isOriginal}}" hint-placeholder-val="{{ true }}">
 <button class="rr-hover" onClick="{{revertFile}}" disabled="{{revertFileDisabled}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 500">Revert this file</button>
 </sc-if>
-<sc-if value="{{isCopy}}" hint-placeholder-val="{{ false }}">
-<button class="rr-hover" onClick="{{deleteCopy}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--bad-fg); border-radius: 6px; background: var(--card); color: var(--bad-fg); cursor: pointer; font-size: 13px; font-weight: 600">{{deleteCopyLabel}}</button>
-</sc-if>
 <button class="rr-hover" onClick="{{revertAll}}" disabled="{{revertAllDisabled}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 500">{{revertAllLabel}}</button>
 </div>
 <p style="margin: 0; font-size: 13px; line-height: 1.5; color: var(--ink2)">Every keystroke re-parses the file and rebuilds the register. Edits live in memory only and are lost on reload; saving and loading files is a separate step.</p>
@@ -766,13 +795,21 @@ button:disabled{opacity:.35;cursor:default}
 
 <div style="display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; background: var(--card); border: 1px solid var(--rule); border-radius: 8px; font-size: 13px; line-height: 1.55; color: var(--ink2)">
 <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">How the files work</span>
-<span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: var(--ink)">?src=</span> names the current register (shown here as risks.md) and <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: var(--ink)">?ours=…&amp;theirs=…</span> compares two; snapshots a register lists are fetched from beside it. Edits here live in memory only, so save the markdown to your own repo. Examples: <a href="?src=examples/risks.md">register</a> · <a href="?ours=examples/risks.md&amp;theirs=examples/partenaire.md">compare with a partner</a>. The A and B pickers at the top choose what the register shows: B is the register on view, and A (optional) is the baseline its changes are measured from. Snapshot freezes risks.md as a dated copy so the next round of changes can be compared against it.</span>
+<span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: var(--ink)">?src=</span> names the current register (shown here as risks.md) and <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: var(--ink)">?ours=…&amp;theirs=…</span> compares two; snapshots a register lists are fetched from beside it. Edits here live in memory only, so save the markdown to your own repo. Examples: <a href="?src=examples/acme-risks/risks.md">register</a> · <a href="?ours=examples/acme-risks/risks.md&amp;theirs=examples/partenaire.md">compare with a partner</a>. On the Register page, the A and B pickers choose what it shows: B is the register on view, and A (optional) is the baseline its changes are measured from. The toolbar copies, downloads or clones the file on view; Snapshot freezes risks.md as a dated copy so the next round of changes can be compared against it.</span>
 </div>
 </section>
 </sc-if>
 
 <sc-if value="{{isCompare}}" hint-placeholder-val="{{ false }}">
-<section aria-label="Compare two registers" style="display: flex; flex-direction: column; gap: 16px; animation: rr-flip 360ms ease-out; transform-origin: 50% 0">
+<section aria-label="Compare two registers" style="display: flex; flex-direction: column; gap: 16px; animation: {{flipAnim}}; transform-origin: 50% 0">
+<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between">
+<nav aria-label="Views" style="display: flex; flex-wrap: wrap; gap: 4px">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">
+<button class="rr-hover" onClick="{{t.pick}}" aria-pressed="{{t.pressed}}" style="height: 40px; padding: 0 16px; border: 1px solid {{t.bd}}; border-radius: 999px; font-size: 14px; font-weight: 500; cursor: pointer; background: {{t.bg}}; color: {{t.fg}}">{{t.label}}</button>
+</sc-for>
+</nav>
+<p style="margin: 0; font-size: 13px; color: var(--ink2)">{{viewCaption}}</p>
+</div>
 
 <sc-if value="{{cmpFailed}}" hint-placeholder-val="{{ false }}">
 <div role="alert" style="display: flex; flex-direction: column; gap: 12px; padding: 20px; background: var(--card); border: 2px solid var(--bad-fg); border-radius: 8px">
@@ -1094,7 +1131,7 @@ const ATTAINABLE_SCORES = [1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 15, 16, 20, 25];
 const VIEWS = [
   { id: 'matrix', label: 'Matrix' },
   { id: 'distribution', label: 'Distribution' },
-  { id: 'diff', label: 'Diff' },
+  { id: 'compare', label: 'Compare' },
   { id: 'trajectories', label: 'Trajectories' },
   { id: 'table', label: 'Table' },
 ];
@@ -1990,8 +2027,8 @@ const FILE_NAME_RE = /^[a-z0-9][a-z0-9._-]*\.md$/;
 const DEFAULT_CMP_B = window.RR_THEIRS;
 function isCopyName(n) { return !Object.prototype.hasOwnProperty.call(ORIGINALS, n); }
 /** "risks.md" → "risks-copy.md", then "risks-copy-2.md"… — the first name not already taken. */
-function suggestCopyName(name, drafts) {
-  const stem = name.replace(/\.md$/, '').replace(/-copy(?:-\d+)?$/, '') + '-copy';
+function suggestCopyName(name, drafts, suffix = '-copy') {
+  const stem = name.replace(/\.md$/, '').replace(/-copy(?:-\d+)?$/, '') + suffix;
   for (let n = 1; n < 1000; n += 1) {
     const candidate = stem + (n === 1 ? '' : '-' + n) + '.md';
     if (!Object.prototype.hasOwnProperty.call(drafts, candidate)) return candidate;
@@ -2019,6 +2056,13 @@ function withSnapshot(text, snapName, asAt) {
   }
   return ['---'].concat(fm, lines.slice(end)).join('\n');
 }
+/** Drops "  - name" from the front matter's snapshots list, if it is there. */
+function withoutSnapshot(text, name) {
+  const lines = text.replace(/\r\n?/g, '\n').split('\n');
+  const end = lines.indexOf('---', 1);
+  if (lines[0] !== '---' || end === -1) return text;
+  return lines.filter((l, i) => !(i < end && l.trimEnd() === '  - ' + name)).join('\n');
+}
 function copyNameProblem(newName, drafts) {
   if (!FILE_NAME_RE.test(newName)) return '“' + newName + '” is not a valid name: lower-case letters, digits, . _ - and ending in .md';
   if (Object.prototype.hasOwnProperty.call(drafts, newName)) return newName + ' already exists';
@@ -2040,7 +2084,7 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState) {
   const listed = cur !== undefined && cur.ok ? cur.file.snapshots : [];
   const names = [CURRENT_FILE].concat(Object.keys(st.drafts).filter((n) => n !== CURRENT_FILE).sort().reverse());
   const edited = (n) => !Object.prototype.hasOwnProperty.call(ORIGINALS, n) || ORIGINALS[n] !== st.drafts[n];
-  const anyEdited = names.some(edited);
+  const anyEdited = names.some(edited) || Object.keys(ORIGINALS).some((n) => !names.includes(n));
   const loc = fr.ok ? null : errorLocation(fr.error);
   const lines = text.split('\n');
   const errLines = loc === null || loc.file !== name ? [] : [-2, -1, 0, 1, 2].map((d) => loc.line + d).filter((n) => n >= 1 && n <= lines.length)
@@ -2051,36 +2095,37 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState) {
     isSource: mode === 'source',
     dataModes: DATA_MODES.map((m) => ({ label: m.label, pressed: String(m.id === mode), bg: m.id === mode ? INK : 'transparent', fg: m.id === mode ? 'var(--on-ink)' : INK, pick: go({ dataMode: m.id, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '' }) })),
     dataMeta: name +(fr.ok ? ' · as at ' + formatDate(fr.file.asAt) + ' · ' + kindCounts(fr.file.risks) + ' · parsed OK' : ' · has an error'),
+    dataFileName: name,
+    dataFileBd: fr.ok ? 'var(--control)' : 'var(--bad-fg)',
+    onDataFile: (e) => setState({ formIdx: 0, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', dataFile: e.target.value, dataFlash: '' }),
     dataFiles: names.map((n) => {
       const r = lookup(a.files, n, 'parsed file');
-      const on = n === name;
       const idx = listed.indexOf(n);
       const sub = (n === CURRENT_FILE ? 'current' : isCopyName(n) && idx === -1 ? 'copy' : isCopyName(n) ? 'new snapshot' : SNAPSHOT_NAME.test(n) ? (idx === -1 && a.model.ok ? 'not listed' : 'snapshot') : 'other register') + (r.ok ? ' · ' + formatDate(r.file.asAt) : ' · error') + (!isCopyName(n) && edited(n) ? ' · edited' : '');
-      return {
-        name: n, sub, pressed: String(on), bg: on ? INK : 'var(--card)', fg: on ? 'var(--on-ink)' : INK,
-        subFg: on ? 'var(--on-ink-muted)' : r.ok ? INK2 : 'var(--bad-fg)', bd: r.ok ? (on ? INK : 'var(--control)') : 'var(--bad-fg)',
-        pick: go({ formIdx: 0, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', dataFile: n }),
-      };
+      return { name: n, sub };
     }),
-    regStatus: a.model.ok
-      ? 'Register OK · ' + (st.cmpA === null ? st.cmpB : st.cmpA + ' → ' + st.cmpB) + ' · ' + kindCounts(a.model.model.risks) + (anyEdited ? ' · includes in-memory edits' : '')
-      : 'A source has an error, so the views are hidden:\n' + a.model.error,
-    regStatusBg: a.model.ok ? 'var(--ok-bg)' : 'var(--bad-bg)',
-    regStatusFg: a.model.ok ? 'var(--ok-fg)' : 'var(--bad-fg)',
+    hasRegError: !a.model.ok, regError: a.model.ok ? '' : a.model.error,
     editFileName: name, editText: text, onEdit,
     fileStatusTitle: fr.ok ? 'This file parses' : 'This file has an error',
     fileStatusColor: fr.ok ? 'var(--ok-fg)' : 'var(--bad-fg)',
     fileStatusBd: fr.ok ? 'var(--rule)' : 'var(--bad-fg)',
     fileStatusBody: fr.ok ? plural(fr.file.risks.length, 'risk', 'risks') + ' · as at ' + formatDate(fr.file.asAt) : fr.error,
     errLines, hasErrLines: errLines.length > 0,
-    isOriginal: !isCopyName(name), isCopy: isCopyName(name),
+    isOriginal: !isCopyName(name),
     revertFile: isCopyName(name) ? () => { throw new Error('bug: a copy has no original to revert to'); } : applyDrafts(Object.freeze(Object.assign({}, st.drafts, { [name]: lookup(ORIGINALS, name, 'original file') }))),
     revertFileDisabled: !edited(name),
     revertAll: applyDrafts(ORIGINALS),
     revertAllDisabled: !anyEdited,
     revertAllLabel: names.some(isCopyName) ? 'Revert all edits and remove copies' : 'Revert all edits',
-    deleteCopy: isCopyName(name) ? applyDrafts(Object.freeze(Object.fromEntries(Object.entries(st.drafts).filter(([n]) => n !== name)))) : () => { throw new Error('bug: only copies can be deleted'); },
-    deleteCopyLabel: 'Delete ' + name,
+    /* Delete any file but risks.md; it also leaves risks.md's snapshots list. Revert all brings deleted originals back. */
+    deleteDisabled: name === CURRENT_FILE,
+    deleteTitle: name === CURRENT_FILE ? CURRENT_FILE + ' is the register and can’t be deleted' : 'Delete ' + name,
+    deleteFile: () => {
+      if (name === CURRENT_FILE) throw new Error('bug: delete is disabled for ' + CURRENT_FILE);
+      const rest = Object.fromEntries(Object.entries(st.drafts).filter(([n]) => n !== name));
+      rest[CURRENT_FILE] = withoutSnapshot(rest[CURRENT_FILE], name);
+      setState(Object.assign(reconcile(st, Object.freeze(rest)), { dataFlash: 'Deleted ' + name, copyOpen: false }));
+    },
     ...(() => {
       /* Snapshot: freeze risks.md as risks-<its as_at>.md, list it, and move risks.md on to today. */
       if (name !== CURRENT_FILE || !fr.ok) return { snapshotShow: false };
@@ -2099,9 +2144,24 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState) {
         },
       };
     })(),
-    copyOpen: st.copyOpen, copyClosed: !st.copyOpen,
-    copyLabel: 'Copy ' + name + '…',
-    openCopy: go({ copyOpen: true, copyName: suggestCopyName(name, st.drafts), copyError: '' }),
+    copyOpen: st.copyOpen, copyExpanded: String(st.copyOpen && st.copyMode === 'clone'), newExpanded: String(st.copyOpen && st.copyMode === 'new'),
+    openCopy: go(st.copyOpen && st.copyMode === 'clone' ? { copyOpen: false, copyName: '', copyError: '' } : { copyOpen: true, copyMode: 'clone', copyName: suggestCopyName(name, st.drafts), copyError: '' }),
+    openNew: go(st.copyOpen && st.copyMode === 'new' ? { copyOpen: false, copyName: '', copyError: '' } : { copyOpen: true, copyMode: 'new', copyName: suggestCopyName('register.md', st.drafts, ''), copyError: '' }),
+    copyPrompt: st.copyMode === 'new' ? 'New file name' : 'Clone ' + name + ' as',
+    copyCreateLabel: st.copyMode === 'new' ? 'Create file' : 'Create clone',
+    copyNoun: st.copyMode === 'new' ? 'The new file' : 'The clone',
+    dataFlash: st.dataFlash,
+    copyToClipboard: () => navigator.clipboard.writeText(text).then(
+      () => setState({ dataFlash: 'Copied ' + name }),
+      (e) => setState({ dataFlash: 'Copy failed: ' + e.message }),
+    ),
+    downloadFile: () => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([text], { type: 'text/markdown' }));
+      a.download = name;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    },
     cancelCopy: go({ copyOpen: false, copyName: '', copyError: '' }),
     copyName: st.copyName, copySource: name,
     onCopyName: (e) => setState({ copyName: e.target.value, copyError: '' }),
@@ -2110,8 +2170,10 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState) {
       const newName = st.copyName.trim();
       const problem = copyNameProblem(newName, st.drafts);
       if (problem !== '') { setState({ copyError: problem }); return; }
-      const drafts = Object.freeze(Object.assign({}, st.drafts, { [newName]: text }));
-      setState(Object.assign(reconcile(st, drafts), { dataFile: newName, dataMode: 'source', copyOpen: false, copyName: '', copyError: '' }));
+      const isNew = st.copyMode === 'new';
+      const body = isNew ? '---\nregister: ' + newName.replace(/\.md$/, '') + '\nas_at: ' + todayIso() + '\n---\n' : text;
+      const drafts = Object.freeze(Object.assign({}, st.drafts, { [newName]: body }));
+      setState(Object.assign(reconcile(st, drafts), { dataFile: newName, dataMode: isNew ? 'form' : 'source', formIdx: 0, copyOpen: false, copyName: '', copyError: '' }));
     },
     onCopyKey: (e) => { if (e.key === 'Escape') setState({ copyOpen: false, copyName: '', copyError: '' }); },
   };
@@ -2208,12 +2270,11 @@ function reconcile(st, drafts) {
   const cmpA = has(st.cmpA) && st.cmpA !== cmpB ? st.cmpA : null;
   const a = analyseDrafts(drafts, cmpA, cmpB);
   /* Without A there is nothing to compare: Compare is hidden until one is picked. */
-  const solo = cmpA === null && st.side === 'compare' ? { side: 'front' } : {};
   const docsMoved = cmpA !== st.cmpA || cmpB !== st.cmpB;
   const f = st.cmpFocus;
   const focusDoc = f === null || docsMoved ? null : lookup(a.files, f.side === 'A' ? cmpA : cmpB, 'parsed file');
   const focusGone = f !== null && (docsMoved || (focusDoc.ok && !focusDoc.file.risks.some((r) => r.id === f.id)));
-  const cmp = Object.assign(solo, { cmpA, cmpB, dataFile: has(st.dataFile) ? st.dataFile : CURRENT_FILE }, focusGone ? { cmpFocus: null, cmpPeer: null } : {});
+  const cmp = Object.assign({ cmpA, cmpB, dataFile: has(st.dataFile) ? st.dataFile : CURRENT_FILE }, focusGone ? { cmpFocus: null, cmpPeer: null } : {});
   if (!a.model.ok) return Object.assign({ drafts }, cmp);
   const M = a.model.model;
   const toIdx = M.snapshots.length - 1;
@@ -2227,7 +2288,10 @@ function reconcile(st, drafts) {
 }
 
 /* ---------- Compare two registers by slug ---------- */
-const CMP_LAYOUTS = [{ id: 'butterfly', label: 'Butterfly' }, { id: 'twin', label: 'Twin matrices' }, { id: 'shift', label: 'Shift matrix' }];
+function buildCmpLayouts(st, go) {
+  return CMP_LAYOUTS.map((x) => ({ label: x.label, pressed: String(x.id === st.cmpLayout), bg: x.id === st.cmpLayout ? INK : 'transparent', fg: x.id === st.cmpLayout ? 'var(--on-ink)' : INK, pick: go({ cmpLayout: x.id }) }));
+}
+const CMP_LAYOUTS = [{ id: 'summary', label: 'Summary' }, { id: 'butterfly', label: 'Butterfly' }, { id: 'twin', label: 'Twin matrices' }, { id: 'shift', label: 'Shift matrix' }];
 const CMP_SHOWS = [{ id: 'all', label: 'All' }, { id: 'linked', label: 'Linked' }, { id: 'orphans', label: 'Orphans' }];
 /** Minimum text similarity (0–1) for an orphan pair to be suggested as a likely match. */
 const SUGGEST_MIN = 0.12;
@@ -2594,7 +2658,7 @@ function buildPickers(st, an, go, setState) {
     const offerNone = open && letter === 'A' && terms.every((t) => 'none'.includes(t));
     const choose = (n) => () => pickSources({ [key]: n });
     const firstFree = opts.find((n) => n !== other);
-    const noneOpt = { name: 'None', tag: 'view B on its own' + (current === null ? ' · selected' : ''), sub: 'Hides Diff, Trajectories and Compare', subFg: INK2, selected: String(current === null), disabled: false, pick: choose(null), bg: current === null ? 'var(--sel-bg)' : 'transparent' };
+    const noneOpt = { name: 'None', tag: 'view B on its own' + (current === null ? ' · selected' : ''), sub: 'Hides Compare and Trajectories', subFg: INK2, selected: String(current === null), disabled: false, pick: choose(null), bg: current === null ? 'var(--sel-bg)' : 'transparent' };
     return {
       letter, radius, name: current === null ? 'None' : current,
       sub: current === null ? 'Pick a baseline to see changes into B' : docSub(lookup(an.files, current, 'parsed file')),
@@ -2626,6 +2690,16 @@ function buildPickers(st, an, go, setState) {
     cmpPickers: [picker('A', 'cmpA', 'cmpB', '50%'), picker('B', 'cmpB', 'cmpA', '4px')],
     cmpSwap: () => pickSources({ cmpA: st.cmpB, cmpB: st.cmpA }),
     cmpSwapDisabled: st.cmpA === null,
+    /* One source: just its name and a Compare button, which opens the A picker; closing that picker unchosen goes back. */
+    srcSingle: st.cmpA === null && st.cmpPickOpen !== 'A',
+    srcPair: st.cmpA !== null || st.cmpPickOpen === 'A',
+    srcMulti: names.length > 1, srcSolo: names.length === 1,
+    srcFiles: names.map((n) => ({ name: n })),
+    srcPick: (e) => pickSources({ cmpB: e.target.value }),
+    srcName: st.cmpB, srcSub: docSub(lookup(an.files, st.cmpB, 'parsed file')),
+    srcCompare: go({ cmpPickOpen: 'A', cmpPickQuery: '' }),
+    srcOpen: (e) => { e.preventDefault(); setState({ side: 'back', dataFile: st.cmpB, formIdx: 0, formPending: {}, dataFlash: '', themeOpen: false }); },
+    srcStop: () => pickSources({ cmpA: null }),
   };
 }
 
@@ -2850,7 +2924,7 @@ function buildCompare(st, an, go, applyDrafts, setState) {
     cmpAgreement: links.length === 0 ? 'No ' + L.nouns + ' share a slug yet.'
       : 'Of ' + plural(links.length, 'link', 'links') + ', ' + sameBand + ' land in the same band; B rates ' + links.filter((l) => sc(l.b) > sc(l.a)).length + ' higher and ' + links.filter((l) => sc(l.b) < sc(l.a)).length + ' lower.'
         + (filtersActive ? ' Filters show ' + visLinks.length + ' links and ' + (visOrphA.length + visOrphB.length) + ' orphans.' : ''),
-    cmpLayouts: CMP_LAYOUTS.map((x) => ({ label: x.label, pressed: String(x.id === st.cmpLayout), bg: x.id === st.cmpLayout ? INK : 'transparent', fg: x.id === st.cmpLayout ? 'var(--on-ink)' : INK, pick: go({ cmpLayout: x.id }) })),
+    cmpLayouts: buildCmpLayouts(st, go),
     cmpShows: CMP_SHOWS.map((x) => ({ label: x.label, pressed: String(x.id === st.cmpShow), bg: x.id === st.cmpShow ? INK : 'transparent', fg: x.id === st.cmpShow ? 'var(--on-ink)' : INK, pick: go({ cmpShow: x.id }) })),
     cmpQuery: st.cmpQuery,
     onCmpQuery: (e) => setState({ cmpQuery: e.target.value }),
@@ -2928,19 +3002,25 @@ function buildCompare(st, an, go, applyDrafts, setState) {
   });
 }
 
-/** ?theme=, ?kind= (risk | opportunity) and ?view= preset those controls; unknown values are ignored. A view opens the Register side. */
+/** ?page= names the side; the landing page (no ?src) opens on Data, a register on Register. */
+const PAGES = { register: 'front', data: 'back' };
+const DEFAULT_SIDE = window.RR_LANDING ? 'back' : 'front';
+const pageOf = (side) => Object.keys(PAGES).find((k) => PAGES[k] === side);
+/** ?page=, ?theme=, ?kind= (risk | opportunity) and ?view= preset those controls; unknown values are ignored. A view without a page opens Register. */
 function queryPrefs() {
   const q = new URLSearchParams(location.search);
   const ok = (key, ids) => (ids.includes(q.get(key)) ? q.get(key) : undefined);
   const view = ok('view', VIEWS.map((v) => v.id));
+  const page = ok('page', Object.keys(PAGES));
   return Object.fromEntries(Object.entries({
-    theme: ok('theme', THEMES.map((t) => t.id)), lens: ok('kind', ['risk', 'opportunity']), view, side: view && 'front',
+    theme: ok('theme', THEMES.map((t) => t.id)), lens: ok('kind', ['risk', 'opportunity']), view,
+    side: page ? PAGES[page] : view && 'front',
   }).filter(([, v]) => v !== undefined));
 }
-/** Mirrors theme, kind and view into the URL (defaults left out) so the address bar is a shareable link. */
-function syncQuery(theme, kind, view) {
+/** Mirrors page, theme, kind and view into the URL (defaults left out) so the address bar is a shareable link. */
+function syncQuery(side, theme, kind, view) {
   const q = new URLSearchParams(location.search);
-  for (const [k, v, dflt] of [['theme', theme, 'paper'], ['kind', kind, 'risk'], ['view', view, 'matrix']]) {
+  for (const [k, v, dflt] of [['page', pageOf(side), pageOf(DEFAULT_SIDE)], ['theme', theme, 'paper'], ['kind', kind, 'risk'], ['view', view, 'matrix']]) {
     if (v === dflt) q.delete(k); else q.set(k, v);
   }
   const url = location.pathname + (q.size ? '?' + q.toString().replace(/=(?=&|$)/g, '').replace(/%2F/gi, '/').replace(/%3A/gi, ':') : '') + location.hash;
@@ -2951,16 +3031,16 @@ function initialState() {
   const src = initialSources();
   const a = analyseDrafts(ORIGINALS, src.cmpA, src.cmpB);
   const base = {
-    drafts: ORIGINALS, dataFile: CURRENT_FILE, view: DEFAULT_CMP_B === null ? 'matrix' : 'diff', side: window.RR_LANDING ? 'back' : 'front', dataMode: window.RR_LANDING ? 'form' : 'source',
+    drafts: ORIGINALS, dataFile: CURRENT_FILE, view: DEFAULT_CMP_B === null ? 'matrix' : 'compare', side: DEFAULT_SIDE, dataMode: window.RR_LANDING ? 'form' : 'source',
     formIdx: 0, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '',
     cellFilter: null, kindFilter: null, showMovement: true,
     categories: [], query: '', filtersOpen: false,
     theme: 'paper', palette: 'heat', accentId: 'blue', themeOpen: false,
-    ...src, cmpLayout: 'butterfly', cmpShow: 'all', cmpQuery: '',
+    ...src, cmpLayout: 'summary', cmpShow: 'all', cmpQuery: '',
     cmpImpact: [], cmpLik: [], cmpSuggestOn: true, cmpDismissed: [],
     cmpFocus: null, cmpPeer: null, cmpSlugDraft: '', cmpSlugError: '', cmpFlash: '',
     cmpPickOpen: null, cmpPickQuery: '',
-    copyOpen: false, copyName: '', copyError: '',
+    copyOpen: false, copyMode: 'clone', copyName: '', copyError: '', dataFlash: '',
     lens: 'risk',
     ...queryPrefs(),
   };
@@ -2973,39 +3053,44 @@ class Component extends DCLogic {
   renderVals() {
     const st = this.state;
     const go = (patch) => () => this.setState(patch);
-    if (!['front', 'back', 'compare'].includes(st.side)) throw new Error('bug: unknown side "' + st.side + '"');
+    if (!['front', 'back'].includes(st.side)) throw new Error('bug: unknown side "' + st.side + '"');
     const isBack = st.side === 'back';
     const a = analyseDrafts(st.drafts, st.cmpA, st.cmpB);
     const errLoc = a.model.ok ? null : errorLocation(a.model.error);
     const applyDrafts = (drafts) => () => this.setState(reconcile(this.state, drafts));
     const onEdit = (e) => this.setState(reconcile(this.state, Object.freeze(Object.assign({}, this.state.drafts, { [this.state.dataFile]: e.target.value }))));
     lensOf(st.lens);
+    /* Flip only when the side changes (Register ⇄ Data), not when a Compare layout swaps the block on the same side. */
+    if (this.flipSide !== st.side) this.flipAnim = 'rr-flip 360ms ease-out';
+    else if (this.flipLayout !== st.cmpLayout) this.flipAnim = 'none';
+    this.flipSide = st.side;
+    this.flipLayout = st.cmpLayout;
     const shell = Object.assign({}, buildThemePicker(st, go), buildPickers(st, a, go, (p) => this.setState(p)), buildDataSide(st, a, go, applyDrafts, onEdit, (p) => this.setState(p)), {
-      lensAttr: st.lens,
-      isBack,
+      lensAttr: st.lens, flipAnim: this.flipAnim,
+      isBack, showSources: !isBack,
       modelOk: a.model.ok,
-      isFront: a.model.ok && st.side === 'front',
-      isCompare: a.model.ok && st.side === 'compare',
       showModelError: !a.model.ok && !isBack,
       showDataBack: !a.model.ok,
       modelError: a.model.ok ? '' : a.model.error,
       fixErrors: go({ side: 'back', dataMode: 'source', dataFile: errLoc !== null && Object.prototype.hasOwnProperty.call(st.drafts, errLoc.file) ? errLoc.file : CURRENT_FILE }),
       backToRegister: go({ side: 'front' }),
-    }, st.side === 'compare' ? buildCompare(st, a, go, applyDrafts, (p) => this.setState(p)) : {});
+    });
     if (!a.model.ok) return shell;
 
     const M = a.model.model;
     const S = M.snapshots;
     const N = S.length;
     const accent = 'var(--accent)';
-    /* The views read A as "from" and B as "as at"; with B alone both are B. Diff and Trajectories need two sources. */
+    /* The views read A as "from" and B as "as at"; with B alone both are B. Compare and Trajectories need two sources. */
     const fromIdx = 0;
     const toIdx = N - 1;
-    const pairOnly = ['diff', 'trajectories'];
+    const pairOnly = ['compare', 'trajectories'];
     const views = VIEWS.filter((v) => N > 1 || !pairOnly.includes(v.id));
     const view = views.some((v) => v.id === st.view) ? st.view : 'matrix';
     const sv = Object.assign({}, st, { fromIdx, toIdx, view, showMovement: st.showMovement && N > 1 });
-    syncQuery(st.theme, st.lens, view);
+    syncQuery(st.side, st.theme, st.lens, view);
+    /* Compare's Summary layout is the register's own change list (with the detail drawer); the others are the side-by-side compare page. */
+    const sideBySide = st.side === 'front' && view === 'compare' && st.cmpLayout !== 'summary';
 
     const L = lensOf(st.lens);
     const everything = M.risks.map((r) => viewRisk(r, toIdx));
@@ -3029,7 +3114,7 @@ class Component extends DCLogic {
     const captions = {
       matrix: 'Click ' + (L.higherIsBetter ? 'an ' : 'a ') + L.noun + ' to drill in; click a cell to filter the list.',
       distribution: 'How the register’s score profile shifted between the two files.',
-      diff: 'Every ' + L.noun + ' that changed, sorted by size of change.',
+      compare: st.cmpLayout === 'summary' ? 'Every ' + L.noun + ' that changed, sorted by size of change.' : 'A and B side by side; click ' + (L.higherIsBetter ? 'an ' : 'a ') + L.noun + ' to see its match.',
       trajectories: 'Score in A and in B.',
       table: 'Every ' + L.noun + ' on the register as at ' + S[toIdx].label + ', highest score first. Click a row for detail.',
     };
@@ -3040,7 +3125,10 @@ class Component extends DCLogic {
 
     return Object.assign(
       {}, shell,
+      sideBySide ? buildCompare(st, a, go, applyDrafts, (p) => this.setState(p)) : { cmpLayouts: buildCmpLayouts(st, go) },
       {
+        isFront: st.side === 'front' && !sideBySide,
+        isCompare: sideBySide,
         accent,
         lensId: L.id,
         lenses: ['risk', 'opportunity'].map((k) => {
@@ -3055,8 +3143,7 @@ class Component extends DCLogic {
         sides: [
           { id: 'front', label: 'Register', patch: { side: 'front', themeOpen: false } },
           { id: 'back', label: 'Data', patch: { side: 'back', themeOpen: false, dataFile: S[toIdx].file } },
-          { id: 'compare', label: 'Compare', patch: { side: 'compare', themeOpen: false } },
-        ].filter((x) => x.id !== 'compare' || st.cmpA !== null).map((x) => ({ label: x.label, pressed: String(st.side === x.id), bg: st.side === x.id ? INK : 'transparent', fg: st.side === x.id ? 'var(--on-ink)' : INK, pick: go(x.patch) })),
+        ].map((x) => ({ label: x.label, pressed: String(st.side === x.id), bg: st.side === x.id ? INK : 'transparent', fg: st.side === x.id ? 'var(--on-ink)' : INK, pick: go(x.patch) })),
         hasA: N > 1,
         fromLabel: 'A',
         toLabel: 'B',
@@ -3067,7 +3154,7 @@ class Component extends DCLogic {
         viewCaption: lookup(captions, view, 'view caption'),
         isMatrix: view === 'matrix',
         isDistribution: view === 'distribution',
-        isDiff: view === 'diff',
+        isDiff: view === 'compare',
         isTrajectories: view === 'trajectories',
         isTable: view === 'table',
         sel: hasSelection ? buildDetail(sv, S, all, others, go) : null,
@@ -3105,7 +3192,7 @@ class Component extends DCLogic {
 <script>
 /* Loader: fetch the register markdown named in the query string, then boot the runtime.
    ?src=<url> (alias ?ours=) is the current register; the snapshots its front matter lists are fetched from beside it.
-   ?theirs=<url> adds a second document and opens Compare on ours vs theirs.
+   ?theirs=<url> adds a second document and opens the Compare view on ours vs theirs.
    With neither, the page opens on Data → Form with examples/minimal.md as risks.md. */
 (async () => {
   const q = new URLSearchParams(location.search);
@@ -3145,7 +3232,7 @@ class Component extends DCLogic {
     const main = document.createElement('main');
     main.style.cssText = 'max-width:640px;margin:48px auto;padding:0 16px;font:15px/1.6 system-ui,sans-serif';
     main.innerHTML = '<h1 style="font-size:22px">Risk register</h1><pre style="padding:12px;background:#F4D6D0;color:#8A2A1F;white-space:pre-wrap"></pre>'
-      + '<p><a href="./">Start a new register</a> · <a href="?src=examples/risks.md">example register</a></p>';
+      + '<p><a href="./">Start a new register</a> · <a href="?src=examples/acme-risks/risks.md">example register</a></p>';
     main.querySelector('pre').textContent = 'Could not load: ' + e.message;
     document.body.replaceChildren(main);
   }
