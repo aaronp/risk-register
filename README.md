@@ -61,11 +61,28 @@ entry's lines in the markdown (tables are edited in Data → Source).
 standalone data repo; `examples/partenaire.md` is a second register to compare
 it with, and `examples/minimal.md` is the smallest valid one.
 
+## Viewing locally
+
+`make dev` serves the folder with Bun on http://localhost:8000 and prints the
+example's URL; some browsers block the scripts over file://.
+
+## Hosting & external data
+
+Served on GitHub Pages by `.github/workflows/pages.yml` on pushes to `main`
+(Settings → Pages → Source: **GitHub Actions**; the `github-pages` environment
+must allow `main`). `.md` files are served raw, without Jekyll.
+
+Load any register with `?src=<url>` (absolute, or relative to the page), e.g.
+`https://aaronp.github.io/risk-register/?src=examples/acme-risks/risks.md`.
+The source must allow CORS (GitHub Pages and raw.githubusercontent.com do).
+
 ## Publishing your own register
 
-Your register lives in its own data-only repo: `risks.md`, its snapshots, a
-redirecting `index.html` and a Pages workflow. This repo stays the viewer.
-Create an empty repo on GitHub, then:
+Your register lives in its own data-only repo (`risks.md`, its snapshots, a
+redirecting `index.html` and a Pages workflow); this repo stays the viewer.
+Create an empty repo on GitHub, then either:
+
+**A. Start from `examples/` in this repo**
 
 ```sh
 git clone https://github.com/aaronp/risk-register.git
@@ -75,19 +92,23 @@ make clone REPO=you/your-risks    # or ./clone.sh to be prompted
 
 This copies the example to `../your-risks` as a fresh repo on `main`, points
 its README link at `https://you.github.io/your-risks/` and sets the `origin`
-remote. Edit `risks.md`, commit and `git push -u origin main`, then set
-Settings → Pages → Source: **GitHub Actions**. Your site redirects here with
-`?src=` pointing at your `risks.md`, passing on any other query params
+remote.
+
+**B. Clone the standalone example**
+
+```sh
+git clone https://github.com/aaronp/risk-register-example.git your-risks
+cd your-risks
+git remote set-url origin git@github.com:you/your-risks.git
+```
+
+Then change the **View** link in its README to `https://you.github.io/your-risks/`.
+
+Either way, edit `risks.md`, commit and `git push -u origin main`, then on
+GitHub set Settings → Pages → Source: **GitHub Actions**. Your site at
+`https://you.github.io/your-risks/` redirects here with `?src=` pointing at
+your `risks.md`, passing on any other query params
 (`https://you.github.io/your-risks/?page=data`).
-
-## Local
-
-    make dev    # serves with Bun on http://localhost:8000/
-
-## Deploy
-
-`.github/workflows/pages.yml` publishes the repo root to GitHub Pages on push
-to `main`. Enable it once under Settings → Pages → Source: GitHub Actions.
 
 ## Files
 
