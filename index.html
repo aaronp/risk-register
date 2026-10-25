@@ -491,7 +491,7 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 <h2 style="margin: 0; font-size: 24px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">{{sel.title}}</h2>
 <p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink2); text-wrap: pretty">{{sel.description}}</p>
-<p style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: var(--ink3)">{{sel.sourceRef}}</p>
+<a href="?page=data" onClick="{{sel.sourceOpen}}" title="Edit {{sel.id}} in Data" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: var(--ink3); text-decoration: underline; text-underline-offset: 3px">{{sel.sourceRef}}</a>
 </div>
 
 <sc-if value="{{sel.isPending}}" hint-placeholder-val="{{ false }}">
@@ -518,11 +518,11 @@ button:disabled{opacity:.35;cursor:default}
 <span style="border-radius: 2px; background: {{m.fill}}"></span>
 </sc-for>
 </div>
-<svg viewBox="0 0 100 100" style="position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible" role="img" aria-label="{{sel.miniAria}}">
+<svg viewBox="0 0 100 100" onPointerMove="{{sel.dragMove}}" onPointerUp="{{sel.dragEnd}}" onPointerCancel="{{sel.dragCancel}}" style="position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; touch-action: none" role="img" aria-label="{{sel.miniAria}}">
 <polyline points="{{sel.pathPoints}}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 2" stroke-linejoin="round"></polyline>
-<polygon points="{{sel.inherentPts}}" style="fill: var(--card)" stroke="currentColor" stroke-width="1.5"></polygon>
-<sc-if value="{{sel.hasTarget}}" hint-placeholder-val="{{ true }}"><circle cx="{{sel.targetX}}" cy="{{sel.targetY}}" r="5" fill="none" style="stroke: {{accent}}" stroke-width="2.2"></circle></sc-if>
-<circle cx="{{sel.nowX}}" cy="{{sel.nowY}}" r="5.5" style="fill: {{sel.nowFill}}; stroke: var(--card)" stroke-width="1.5"></circle>
+<polygon points="{{sel.inherentPts}}" onPointerDown="{{sel.dragInherent}}" style="fill: var(--card); cursor: {{sel.inherentCursor}}" stroke="currentColor" stroke-width="1.5"></polygon>
+<sc-if value="{{sel.hasTarget}}" hint-placeholder-val="{{ true }}"><circle cx="{{sel.targetX}}" cy="{{sel.targetY}}" r="5" fill="none" onPointerDown="{{sel.dragTarget}}" style="stroke: {{accent}}; pointer-events: all; cursor: {{sel.dragCursor}}" stroke-width="2.2"></circle></sc-if>
+<circle cx="{{sel.nowX}}" cy="{{sel.nowY}}" r="5.5" onPointerDown="{{sel.dragNow}}" style="fill: {{sel.nowFill}}; stroke: var(--card); cursor: {{sel.dragCursor}}" stroke-width="1.5"></circle>
 </svg>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 11px; color: var(--ink2)">
@@ -741,7 +741,12 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 <div role="tabpanel" id="rr-entry-panel" aria-labelledby="{{formEntry.tabId}}" style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
 <label for="{{formEntry.id}}" style="font-size: 13px; font-weight: 600">{{formEntry.label}}</label>
-<textarea id="{{formEntry.id}}" value="{{formEntry.value}}" onChange="{{formEntry.onInput}}" rows="{{formEntry.rows}}" style="flex: 1 1 auto; min-height: 120px; padding: 8px 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; box-sizing: border-box; width: 100%"></textarea>
+<sc-if value="{{formEntry.isInput}}" hint-placeholder-val="{{ true }}">
+<input id="{{formEntry.id}}" type="text" value="{{formEntry.value}}" onChange="{{formEntry.onInput}}" autocomplete="off" style="height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; box-sizing: border-box; width: 100%">
+</sc-if>
+<sc-if value="{{formEntry.isArea}}" hint-placeholder-val="{{ false }}">
+<textarea id="{{formEntry.id}}" value="{{formEntry.value}}" onChange="{{formEntry.onInput}}" rows="8" style="flex: 1 1 auto; min-height: 120px; padding: 8px 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; box-sizing: border-box; width: 100%"></textarea>
+</sc-if>
 <span style="font-size: 12px; color: var(--ink3)">{{formEntry.hint}}</span>
 <sc-if value="{{formEntry.hasError}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 12px; color: var(--bad-fg)">{{formEntry.error}} — not saved yet</span></sc-if>
 </div>
@@ -1936,8 +1941,9 @@ function buildTrajectories(st, S, accent, go, risks) {
 /**
  * Drawer for the selected entry. `others` are entries of the other kind (as at the same date); any sharing a slug
  * with the selection are listed as related, e.g. a risk and the opportunity that is its upside.
+ * While open at the as-at file, its now/inherent/target markers drag to a new cell, written back to that file.
  */
-function buildDetail(st, S, viewRisks, others, go) {
+function buildDetail(st, S, viewRisks, others, go, setState, saveDraft) {
   const { fromIdx, toIdx, selectedId } = st;
   const r = viewRisks.find((x) => x.id === selectedId);
   if (r === undefined) throw new Error('bug: selected entry "' + selectedId + '" is not among the ' + st.lens + ' entries');
@@ -1955,6 +1961,12 @@ function buildDetail(st, S, viewRisks, others, go) {
   const base = {
     id: r.id, title: r.title, category: r.category, description: r.description, cause: r.cause, consequence: r.consequence,
     sourceRef: 'Source: ' + r.file + ' · line ' + r.line,
+    sourceOpen: (e) => {
+      e.preventDefault();
+      const fr = tryParse(r.file, st.drafts[r.file]);
+      const k = fr.ok ? fr.file.risks.findIndex((x) => x.line === r.line) : -1;
+      go({ side: 'back', dataMode: 'form', dataFile: r.file, formIdx: Math.max(0, k), formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', dataFlash: '' })();
+    },
     hasCause: r.cause !== null, hasEffect: r.consequence !== null, hasControls: r.controls.length > 0,
     hasEvidence: r.evidence.length > 0, hasActions: r.actions.length > 0,
     hasDaci: daci.length > 0,
@@ -2002,7 +2014,7 @@ function buildDetail(st, S, viewRisks, others, go) {
     actionsTitle: 'Actions · ' + actions.length, actions,
   });
   if (lc === 'pending') {
-    return Object.assign({}, withLists, { score: '', bandFill: 'var(--card)', bandInk: INK, bandLabel: '', ixl: '', facts: [], miniCells: [], miniAria: '', pathPoints: '', inherentPts: '', targetX: 0, targetY: 0, hasTarget: false, nowX: 0, nowY: 0, nowFill: INK, nowLegend: '', originLegend: L.originLabel });
+    return Object.assign({}, withLists, { score: '', bandFill: 'var(--card)', bandInk: INK, bandLabel: '', ixl: '', facts: [], miniCells: [], miniAria: '', pathPoints: '', inherentPts: '', targetX: 0, targetY: 0, hasTarget: false, nowX: 0, nowY: 0, nowFill: INK, nowLegend: '', originLegend: L.originLabel, canDrag: false, dragCursor: 'default', inherentCursor: 'default', dragNow: null, dragInherent: null, dragTarget: null, dragMove: null, dragEnd: null, dragCancel: null });
   }
   const lastIdx = lastOpenIdxUpTo(r, toIdx);
   const now = positionAt(r, lastIdx);
@@ -2021,9 +2033,28 @@ function buildDetail(st, S, viewRisks, others, go) {
     : { k: sinceLabel, v: (now.score > before.score ? '▲ ' : now.score < before.score ? '▼ ' : '') + Math.abs(now.score - before.score) + ' (' + before.score + ' → ' + now.score + ')', color: lookup(KINDS, kind, 'kind').color };
   const hist = r.path.slice(0, toIdx + 1).filter((p) => p !== null);
   const dedup = hist.filter((p, j) => j === 0 || p[0] !== hist[j - 1][0] || p[1] !== hist[j - 1][1]);
-  const ic = cellCentre(origin[0], origin[1]);
-  const tc = r.target === null ? { x: 0, y: 0 } : cellCentre(r.target[0], r.target[1]);
-  const nc = cellCentre(now.i, now.l);
+  /* Dragging: cells are [impact, likelihood] matrix positions; an opportunity stores value = l and effort = SCALE + 1 - i. */
+  const canDrag = lc === 'open';
+  const drag = st.miniDrag !== null && st.miniDrag.id === r.id ? st.miniDrag : null;
+  const at = (which, cell) => (drag !== null && drag.which === which ? [drag.i, drag.l] : cell);
+  const nowCell = at('now', [now.i, now.l]);
+  if (drag !== null && drag.which === 'now') dedup[dedup.length - 1] = nowCell;
+  const ic = cellCentre(...at('inherent', origin));
+  const tc = r.target === null ? { x: 0, y: 0 } : cellCentre(...at('target', r.target));
+  const nc = cellCentre(...nowCell);
+  const isOpp = r.kind === 'opportunity';
+  const pair = (i, l) => (isOpp ? l + 'x' + (SCALE + 1 - i) : i + 'x' + l);
+  const toPatch = (which, i, l) => (which === 'now' ? (isOpp ? { value: String(l), effort: String(SCALE + 1 - i) } : { impact: String(i), likelihood: String(l) }) : { [which]: pair(i, l) });
+  const cellAt = (e) => {
+    const b = e.currentTarget.getBoundingClientRect();
+    const clamp = (v) => Math.min(SCALE, Math.max(1, v));
+    return [clamp(Math.ceil(((e.clientX - b.left) / b.width) * SCALE)), clamp(SCALE - Math.floor(((e.clientY - b.top) / b.height) * SCALE))];
+  };
+  const grab = (which, cell) => (e) => {
+    e.preventDefault();
+    e.currentTarget.ownerSVGElement.setPointerCapture(e.pointerId);
+    setState({ miniDrag: { id: r.id, which, i: cell[0], l: cell[1] } });
+  };
   /* Facts whose field is missing are left out (null). */
   const limitFact = r.limit === null ? null : { k: L.limitName, v: L.limitSymbol + ' ' + r.limit + (lc === 'open' ? ' · ' + (outside ? L.outsideWord : L.insideWord) : ''), color: outside ? ESCALATE : INK };
   const targetFact = r.target === null ? null : { k: 'Target', v: tScore + ' (' + L.pairText(r.targetRaw) + ')', color: INK };
@@ -2055,6 +2086,24 @@ function buildDetail(st, S, viewRisks, others, go) {
     targetX: tc.x, targetY: tc.y, nowX: nc.x, nowY: nc.y,
     nowFill: lc === 'open' ? INK : 'var(--ink3)',
     nowLegend: lc === 'open' ? 'Now' : 'Last',
+    canDrag, dragCursor: canDrag ? (drag === null ? 'grab' : 'grabbing') : 'default',
+    inherentCursor: canDrag && hasInherent ? (drag === null ? 'grab' : 'grabbing') : 'default',
+    dragNow: canDrag ? grab('now', [now.i, now.l]) : null,
+    dragInherent: canDrag && hasInherent ? grab('inherent', origin) : null,
+    dragTarget: canDrag && r.target !== null ? grab('target', r.target) : null,
+    dragMove: (e) => {
+      if (drag === null) return;
+      const [i, l] = cellAt(e);
+      if (i !== drag.i || l !== drag.l) setState({ miniDrag: Object.assign({}, drag, { i, l }) });
+    },
+    dragEnd: () => {
+      if (drag === null) return;
+      const fr = tryParse(r.file, st.drafts[r.file]);
+      const rec = fr.ok ? fr.file.risks.find((x) => x.line === r.line) : undefined;
+      if (rec === undefined) { setState({ miniDrag: null }); return; }
+      saveDraft(r.file, patchSection(st.drafts[r.file], rec, toPatch(drag.which, drag.i, drag.l)));
+    },
+    dragCancel: () => { if (drag !== null) setState({ miniDrag: null }); },
   });
 }
 
@@ -2226,7 +2275,7 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState, addFiles) {
       const isNew = st.copyMode === 'new';
       const body = isNew ? '---\nregister: ' + newName.replace(/\.md$/, '') + '\nas_at: ' + todayIso() + '\n---\n' : text;
       const drafts = Object.freeze(Object.assign({}, st.drafts, { [newName]: body }));
-      setState(Object.assign(reconcile(st, drafts), { dataFile: newName, dataMode: isNew ? 'form' : 'source', formIdx: 0, copyOpen: false, copyName: '', copyError: '' }));
+      setState(Object.assign(reconcile(st, drafts), { dataFile: newName, dataMode: 'form', formIdx: 0, copyOpen: false, copyName: '', copyError: '' }));
     },
     onCopyKey: (e) => { if (e.key === 'Escape') setState({ copyOpen: false, copyName: '', copyError: '' }); },
   };
@@ -2661,7 +2710,7 @@ function buildForm(st, fr, name, text, go, setState) {
         { id: 'closed', label: 'Closed', patch: { status: 'closed', closed: raw('closed').trim() === '' ? file.asAt : raw('closed') } },
       ]),
     ],
-    /* Entry text as vertical tabs, with the selected one's text area beside them. Only the description keeps line breaks. */
+    /* Entry text as vertical tabs, with the selected one's input beside them. Only the description keeps line breaks. */
     ...(() => {
       const entry = [
         field('title', 'Title', 'text', p.title, 'One line; it becomes the ## heading.'),
@@ -2680,7 +2729,7 @@ function buildForm(st, fr, name, text, go, setState) {
             bg: on ? 'var(--sel-bg)' : 'var(--card)', bd: on ? INK : 'var(--rule)', bar: on ? 'var(--accent)' : 'var(--rule)',
           };
         }),
-        formEntry: Object.assign({}, cur, { rows: cur.key === 'description' ? 8 : 4, onInput: cur.key === 'description' ? cur.onInput : oneLine(cur) }),
+        formEntry: Object.assign({}, cur, { onInput: cur.key === 'description' ? cur.onInput : oneLine(cur) }),
       };
     })(),
     formSections: [
@@ -3175,8 +3224,8 @@ function initialState() {
   const src = initialSources();
   const a = analyseDrafts(ORIGINALS, src.cmpA, src.cmpB);
   const base = {
-    drafts: ORIGINALS, dataFile: CURRENT_FILE, view: DEFAULT_CMP_B === null ? 'matrix' : 'compare', side: DEFAULT_SIDE, dataMode: window.RR_LANDING ? 'form' : 'source',
-    formIdx: 0, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', formEntryTab: 'title',
+    drafts: ORIGINALS, dataFile: CURRENT_FILE, view: DEFAULT_CMP_B === null ? 'matrix' : 'compare', side: DEFAULT_SIDE, dataMode: 'form',
+    formIdx: 0, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', formEntryTab: 'title', miniDrag: null,
     cellFilter: null, kindFilter: null, showMovement: true,
     categories: [], query: '', filtersOpen: false,
     theme: 'paper', palette: 'heat', accentId: 'blue', themeOpen: false,
@@ -3372,7 +3421,7 @@ class Component extends DCLogic {
         isTable: view === 'table',
         isBalance: view === 'balance',
         bal: view === 'balance' ? buildBalance(M, fromIdx, toIdx, st.selectedId, (r) => go(Object.assign(lensPatch(r.kind), { view: 'matrix', selectedId: r.id, drawerOpen: true }))) : null,
-        sel: hasSelection ? buildDetail(sv, S, all, others, go) : null,
+        sel: hasSelection ? buildDetail(sv, S, all, others, go, (patch) => this.setState(patch), (name, text) => this.setState(Object.assign(reconcile(this.state, Object.freeze(Object.assign({}, this.state.drafts, { [name]: text }))), { miniDrag: null }))) : null,
         drawerOpen: hasSelection && st.drawerOpen,
         drawerClosed: hasSelection && !st.drawerOpen,
         openDrawer: go({ drawerOpen: true }),
