@@ -88,6 +88,7 @@ risk. Fields that belong to the other kind are ignored.
 | `closed` | Date it closed, `YYYY-MM-DD` |
 | `category` | Free text, used for grouping and filters |
 | `slugs` | Stable tags that identify the same entry across registers |
+| `related` | Ids of other entries in the register it bears on, risks or opportunities, separated by `;` or `,` (`R03; O02`). A link shows on both entries; an id that matches nothing is ignored |
 | `target` | Target scores, `4x2` (`4 x 2` and `4×2` work too) |
 | `driver`, `approver`, `contributors`, `informed` | People (DACI). The RACI keys `responsible`, `accountable` and `consulted` are read as `driver`, `approver` and `contributors`. The first approver is shown as the entry's owner |
 
@@ -120,15 +121,9 @@ Optional values that don't make sense are ignored, not rejected: a non-date
 
 ### Text
 
-Any prose in the entry is its description. Two lines have a special meaning:
-
-| Risk | Opportunity | Meaning |
-|---|---|---|
-| `**Cause:** …` | `**Rationale:** …` | Why it could happen |
-| `**Consequence:** …` | `**Benefit:** …` | What happens if it does |
-
-Other text, anywhere in the entry and under any other heading, is added to the
-description.
+Any prose in the entry, anywhere in it and under any other heading, is its
+description. Put causes and consequences there in your own words; `**bold**`
+markers show as plain text, so an older `**Cause:** …` line reads as `Cause: …`.
 
 ### Tables
 

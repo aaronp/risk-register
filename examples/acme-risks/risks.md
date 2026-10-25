@@ -541,6 +541,7 @@ Shipped software includes components whose licence terms we do not meet.
 
 ## R15 · Software supply-chain compromise
 - slugs: software-supply-chain
+- related: R14; R01
 - kind: risk
 - status: open
 - category: Cyber

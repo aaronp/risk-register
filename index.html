@@ -75,6 +75,54 @@ button:disabled{opacity:.35;cursor:default}
 </sc-for>
 </div>
 <div style="position: relative">
+<button class="rr-hover" onClick="{{toggleSettings}}" aria-expanded="{{settingsExpanded}}" aria-controls="rr-settings" aria-label="Settings" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; padding: 0; border: 1px solid var(--control); border-radius: 8px; background: var(--card); cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+</button>
+<sc-if value="{{settingsOpen}}" hint-placeholder-val="{{ false }}">
+<div id="rr-settings" aria-label="Settings" style="position: absolute; right: 0; top: calc(100% + 8px); z-index: 30; width: min({{settingsWidth}}, calc(100vw - 32px)); box-sizing: border-box; background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: 10px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22); padding: 16px; display: flex; flex-direction: column; gap: 14px; animation: rr-drop 160ms ease-out">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+<span style="font-size: 15px; font-weight: 600">Settings</span>
+<button class="rr-hover" onClick="{{closeSettings}}" aria-label="Close settings" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4 L12 12 M12 4 L4 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label for="rr-jev-key" style="font-size: 13px; font-weight: 600">Jev API key (TypeSafe)</label>
+<input id="rr-jev-key" type="password" value="{{jevDraft}}" onChange="{{onJevDraft}}" onKeyDown="{{onJevKey}}" placeholder="{{jevPlaceholder}}" spellcheck="false" autocomplete="off" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-size: 14px; box-sizing: border-box">
+<div style="display: flex; gap: 8px">
+<button class="rr-hover" onClick="{{saveJev}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--ink); color: var(--on-ink); cursor: pointer; font-size: 13px; font-weight: 600">Save</button>
+<sc-if value="{{jevSaved}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{clearJev}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">Forget key</button></sc-if>
+</div>
+<span role="status" style="font-size: 12px; color: var(--ink3)">{{jevNote}}</span>
+</div>
+<sc-if value="{{jevSaved}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 14px; border-top: 1px solid var(--rule-soft)">
+<span style="font-size: 13px; font-weight: 600">Auto-link</span>
+<span style="font-size: 12px; color: var(--ink2)">{{autoIntro}}</span>
+<div><button class="rr-hover" onClick="{{autoRun}}" disabled="{{autoBusy}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">{{autoRunLabel}}</button></div>
+<sc-if value="{{autoHasNote}}" hint-placeholder-val="{{ false }}"><span role="status" style="font-size: 12px; color: {{autoNoteFg}}">{{autoNote}}</span></sc-if>
+<sc-if value="{{autoHasPairs}}" hint-placeholder-val="{{ false }}">
+<label for="rr-auto-threshold" style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600"><span>Accept matches of at least</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">{{autoThresholdLabel}}</span></label>
+<input id="rr-auto-threshold" type="range" min="0" max="100" step="1" value="{{autoThreshold}}" onChange="{{onAutoThreshold}}" style="width: 100%; accent-color: var(--accent)">
+<div id="rr-auto-list" role="group" aria-label="Suggested links" style="display: flex; flex-direction: column; border: 1px solid var(--rule-soft); border-radius: 6px; max-height: 360px; overflow-y: auto">
+<sc-for list="{{autoPairs}}" as="ap" hint-placeholder-count="4">
+<label style="display: grid; grid-template-columns: 20px 44px minmax(0, 1fr); gap: 10px; align-items: center; padding: 8px 10px; border-top: {{ap.rule}}; cursor: pointer; font-size: 13px">
+<input type="checkbox" checked="{{ap.checked}}" onChange="{{ap.toggle}}" aria-label="{{ap.aria}}" style="width: 18px; height: 18px; margin: 0; accent-color: var(--accent)">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; color: {{ap.pctFg}}">{{ap.pct}}</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span>{{ap.a}}</span><span style="color: var(--ink2)">↔ {{ap.b}}</span></span>
+</label>
+</sc-for>
+</div>
+<div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap">
+<button class="rr-hover" onClick="{{autoAccept}}" disabled="{{autoAcceptDisabled}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--ink); color: var(--on-ink); cursor: pointer; font-size: 13px; font-weight: 600">{{autoAcceptLabel}}</button>
+<button class="rr-hover" onClick="{{autoClear}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">Discard</button>
+<span role="status" style="font-size: 13px; font-weight: {{autoDoneWeight}}; color: {{autoDoneFg}}">{{autoDone}}</span>
+</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+</sc-if>
+</div>
+<div style="position: relative">
 <button class="rr-hover" onClick="{{toggleTheme}}" aria-expanded="{{themeExpanded}}" aria-controls="rr-theme" style="display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; border: 1px solid var(--control); border-radius: 8px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 500">
 <span aria-hidden="true" style="display: flex; width: 32px; height: 14px; border-radius: 3px; overflow: hidden; border: 1px solid var(--rule)"><span style="flex: 1; background: var(--b1)"></span><span style="flex: 1; background: var(--b2)"></span><span style="flex: 1; background: var(--b3)"></span><span style="flex: 1; background: var(--b4)"></span></span>
 <span>Theme</span>
@@ -203,7 +251,7 @@ button:disabled{opacity:.35;cursor:default}
 <div style="position: relative; display: flex; align-items: center; flex: 1 1 240px; min-width: 0; max-width: 420px">
 <label for="rr-search" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search risks</label>
 <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="position: absolute; left: 12px; pointer-events: none"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"></circle><path d="M10.5 10.5 L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
-<input id="rr-search" type="search" value="{{query}}" onChange="{{onQuery}}" placeholder="Search title, ID, approver, cause…" autocomplete="off" style="width: 100%; height: 44px; padding: 0 12px 0 36px; border: 1px solid var(--control); border-radius: 6px; font-family: inherit; font-size: 14px; background: var(--card); color: var(--ink); box-sizing: border-box">
+<input id="rr-search" type="search" value="{{query}}" onChange="{{onQuery}}" placeholder="Search title, ID, approver, description…" autocomplete="off" style="width: 100%; height: 44px; padding: 0 12px 0 36px; border: 1px solid var(--control); border-radius: 6px; font-family: inherit; font-size: 14px; background: var(--card); color: var(--ink); box-sizing: border-box">
 </div>
 <span style="font-size: 13px; color: var(--ink2)">{{filterSummary}}</span>
 <sc-if value="{{anyFilter}}" hint-placeholder-val="{{ false }}">
@@ -543,10 +591,6 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 </sc-if>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap: 16px">
-<sc-if value="{{sel.hasCause}}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 4px"><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{sel.causeLabel}}</h3><a class="rr-edit" href="{{sel.edit.context.href}}" onClick="{{sel.edit.context.open}}" aria-label="{{sel.edit.context.aria}}">Edit</a></div><p style="margin: 0; font-size: 14px; line-height: 1.5">{{sel.cause}}</p></div></sc-if>
-<sc-if value="{{sel.hasEffect}}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 4px"><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{sel.effectLabel}}</h3><a class="rr-edit" href="{{sel.edit.context.href}}" onClick="{{sel.edit.context.open}}" aria-label="{{sel.edit.context.aria}}">Edit</a></div><p style="margin: 0; font-size: 14px; line-height: 1.5">{{sel.consequence}}</p></div></sc-if>
-</div>
 
 <sc-if value="{{sel.hasRelated}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 6px">
@@ -678,7 +722,7 @@ button:disabled{opacity:.35;cursor:default}
 <span style="font-size: 13px; font-weight: 600">Open a register</span>
 <div onDragOver="{{onDragOver}}" onDragLeave="{{onDragLeave}}" onDrop="{{onDrop}}" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; min-height: 96px; padding: 16px; border: 2px dashed {{dropBd}}; border-radius: 8px; background: {{dropBg}}; text-align: center">
 <span style="font-size: 14px; color: var(--ink2)">Drop .md files here, or</span>
-<label class="rr-hover" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">Choose files…<input type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" multiple onChange="{{onPickFiles}}" style="position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden"></label>
+<label class="rr-hover" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">Choose files…<input type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" multiple onChange="{{onPickFiles}}" onClick="{{onPickClick}}" style="position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden"></label>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
 <label for="rr-open-url" style="font-size: 13px; font-weight: 600">URL</label>
@@ -815,6 +859,36 @@ button:disabled{opacity:.35;cursor:default}
 </sc-if>
 <span style="font-size: 12px; color: var(--ink3)">Tags that match this entry across registers. Enter, comma or ; adds one; text is turned into kebab-case. {{formSlugPreview}}</span>
 <sc-if value="{{formHasSlugError}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 12px; color: var(--bad-fg)">{{formSlugError}}</span></sc-if>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label for="rr-f-related" style="font-size: 13px; font-weight: 600">Related</label>
+<div style="display: flex; gap: 8px; align-items: center; max-width: 520px">
+<select id="rr-f-related" value="" onChange="{{onFormRelated}}" style="flex: 1 1 auto; min-width: 0; font: inherit; height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-size: 14px; box-sizing: border-box">
+<option value="">Link a risk or opportunity…</option>
+<sc-for list="{{formRelatedOptions}}" as="ro" hint-placeholder-count="3"><option value="{{ro.id}}">{{ro.label}}</option></sc-for>
+</select>
+<button class="rr-hover" onClick="{{formSuggest}}" disabled="{{formSuggestBusy}}" aria-describedby="rr-f-suggest-note" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">{{formSuggestLabel}}</button>
+</div>
+<sc-if value="{{formHasSuggestNote}}" hint-placeholder-val="{{ false }}"><span id="rr-f-suggest-note" role="status" style="font-size: 12px; color: {{formSuggestNoteFg}}">{{formSuggestNote}}</span></sc-if>
+<sc-if value="{{formHasSuggestions}}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-label="Suggested links" style="display: flex; flex-direction: column; max-width: 520px; border: 1px solid var(--rule-soft); border-radius: 6px; max-height: 320px; overflow-y: auto">
+<sc-for list="{{formSuggestions}}" as="sg" hint-placeholder-count="3">
+<button class="rr-hover" onClick="{{sg.add}}" aria-label="{{sg.aria}}" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 10px; border: 0; border-top: {{sg.rule}}; background: var(--card); cursor: pointer; text-align: left; font-size: 13px">
+<span style="display: flex; flex-direction: column; gap: 3px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600">{{sg.pct}}</span><span aria-hidden="true" style="height: 4px; border-radius: 2px; background: var(--rule-soft)"><span style="display: block; height: 4px; border-radius: 2px; width: {{sg.pct}}; background: var(--accent)"></span></span></span>
+<span style="min-width: 0">{{sg.label}}</span>
+<span style="font-size: 12px; font-weight: 600; color: var(--accent)">+ Link</span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{formHasRelated}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center">
+<sc-for list="{{formRelated}}" as="rel" hint-placeholder-count="2">
+<span style="display: inline-flex; align-items: center; gap: 2px; padding: 0 2px 0 10px; height: 30px; border-radius: 999px; background: var(--neutral-bg); color: var(--neutral-fg); font-size: 12px"><a href="{{rel.href}}" onClick="{{rel.open}}" aria-label="{{rel.openAria}}" style="color: inherit; text-decoration: none">{{rel.label}}</a><button class="rr-hover" onClick="{{rel.remove}}" aria-label="{{rel.aria}}" style="width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 999px; background: transparent; cursor: pointer"><svg width="10" height="10" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4 L12 12 M12 4 L4 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></button></span>
+</sc-for>
+</div>
+</sc-if>
+<span style="font-size: 12px; color: var(--ink3)">Other risks or opportunities in this register that bear on this one. A link shows on both entries.</span>
 </div>
 </sc-if>
 <sc-if value="{{formEntry.isList}}" hint-placeholder-val="{{ false }}">
@@ -1291,7 +1365,7 @@ const LENS = Object.freeze({
     xLabels: IMPACT_LABELS, yLabels: LIKELIHOOD_LABELS, colNumber: (i) => i,
     bands: ['Low', 'Medium', 'High', 'Critical'], higherIsBetter: false,
     limitName: 'Appetite', limitSymbol: '≤', outside: (score, limit) => limit !== null && score > limit, outsideWord: 'outside appetite', insideWord: 'within appetite',
-    causeLabel: 'Cause', effectLabel: 'Consequence', supportsLabel: 'Controls', originLabel: 'Inherent',
+    supportsLabel: 'Controls', originLabel: 'Inherent',
     rating: (i, l) => 'I ' + i + ' × L ' + l, ratingLong: (i, l) => 'Impact ' + i + ' × Likelihood ' + l,
     pairText: (p) => 'I ' + p[0] + ' × L ' + p[1],
     filters: [{ label: 'Impact', key: 'cmpImpact', get: (r) => r.impact }, { label: 'Likelihood', key: 'cmpLik', get: (r) => r.likelihood }],
@@ -1303,7 +1377,7 @@ const LENS = Object.freeze({
     xLabels: EASE_LABELS, yLabels: VALUE_LABELS, colNumber: (i) => SCALE + 1 - i,
     bands: ['Marginal', 'Moderate', 'Strong', 'Exceptional'], higherIsBetter: true,
     limitName: 'Target value', limitSymbol: '≥', outside: (score, limit) => limit !== null && score < limit, outsideWord: 'below target', insideWord: 'on target',
-    causeLabel: 'Rationale', effectLabel: 'Benefit', supportsLabel: 'Enablers', originLabel: 'First assessed',
+    supportsLabel: 'Enablers', originLabel: 'First assessed',
     rating: (i, l) => 'V ' + l + ' · E ' + (SCALE + 1 - i), ratingLong: (i, l) => 'Value ' + l + ' · Effort ' + (SCALE + 1 - i),
     pairText: (p) => 'V ' + p[0] + ' · E ' + p[1],
     filters: [{ label: 'Value', key: 'cmpImpact', get: (r) => r.likelihood }, { label: 'Effort', key: 'cmpLik', get: (r) => SCALE + 1 - r.impact }],
@@ -1460,6 +1534,16 @@ function parseSlugs(s) {
   return Object.freeze(Array.from(new Set(s.split(/[;,]/).map(slugify).filter((x) => x !== ''))));
 }
 
+/** "- related: R02; O01" → the ids of other entries it links to, as written; unique, in order. */
+function parseRelated(s) {
+  return Object.freeze(Array.from(new Set(s.split(/[;,]/).map((x) => x.trim()).filter((x) => x !== '' && x !== '[]'))));
+}
+/** Whether a and b are linked by a "- related:" line on either side. Ids match in any case. */
+function linked(a, b) {
+  const lists = (x, y) => x.related.some((id) => id.toLowerCase() === y.id.toLowerCase());
+  return lists(a, b) || lists(b, a);
+}
+
 /** A field line "- key: value"; keys are matched in any case, with spaces or dashes read as _. */
 const FIELD_RE = /^- ([A-Za-z][A-Za-z0-9 _-]*?):(?:\s+(.*))?$/;
 /** "[text](https://…)" or a bare http(s) URL → { title, href }; other text has no link. Only http(s) links are kept. */
@@ -1485,7 +1569,7 @@ function firstFieldLine(lines, start, end) {
 }
 
 /** Fields every entry has, then the fields only one kind has. */
-const COMMON_FIELDS = ['slugs', 'kind', 'status', 'closed', 'category', 'target', 'driver', 'approver', 'contributors', 'informed'];
+const COMMON_FIELDS = ['slugs', 'related', 'kind', 'status', 'closed', 'category', 'target', 'driver', 'approver', 'contributors', 'informed'];
 const KIND_FIELDS = Object.freeze({
   risk: ['impact', 'likelihood', 'inherent', 'appetite'],
   opportunity: ['value', 'effort', 'target_value', 'cost', 'realisation'],
@@ -1497,8 +1581,8 @@ const EVIDENCE_HEADER = ['Ref', 'Title', 'Kind', 'Date', 'Valid days'];
 const ACTION_HEADER = ['Action', 'Owner', 'Due', 'Done'];
 /** Per-kind prose and table markers in the markdown. */
 const KIND_SYNTAX = Object.freeze({
-  risk: { cause: '**Cause:** ', effect: '**Consequence:** ', table: '### Controls', header: ['Control', 'Type', 'Effectiveness'], types: CONTROL_TYPES, states: EFFECTIVENESS, stateWhat: 'control effectiveness' },
-  opportunity: { cause: '**Rationale:** ', effect: '**Benefit:** ', table: '### Enablers', header: ['Enabler', 'Type', 'Status'], types: ENABLER_TYPES, states: ENABLER_STATUS, stateWhat: 'enabler status' },
+  risk: { table: '### Controls', header: ['Control', 'Type', 'Effectiveness'], types: CONTROL_TYPES, states: EFFECTIVENESS, stateWhat: 'control effectiveness' },
+  opportunity: { table: '### Enablers', header: ['Enabler', 'Type', 'Status'], types: ENABLER_TYPES, states: ENABLER_STATUS, stateWhat: 'enabler status' },
 });
 
 /**
@@ -1534,16 +1618,12 @@ function parseRiskSection(lines, start, end, file) {
   const syn = KIND_SYNTAX[kind];
 
   const description = [];
-  let cause = null;
-  let consequence = null;
   let controls = null;
   let evidence = null;
   let actions = null;
   while (i < end) {
     const line = lines[i];
     if (line.trim() === '') { i += 1; continue; }
-    if (line.startsWith(syn.cause)) { cause = line.slice(syn.cause.length).trim(); i += 1; continue; }
-    if (line.startsWith(syn.effect)) { consequence = line.slice(syn.effect.length).trim(); i += 1; continue; }
     /* Tables: cells are free text; a date that isn't YYYY-MM-DD, or a non-numeric "valid days", reads as blank. */
     const heading = /^#{3,}\s*(.*?)\s*$/.exec(line);
     const table = heading === null ? null : heading[1].toLowerCase();
@@ -1569,8 +1649,9 @@ function parseRiskSection(lines, start, end, file) {
       }));
       i = t.next; continue;
     }
-    /* Any other text — including other headings and text after the cause or tables — is description. */
-    description.push(heading === null ? line.trim() : heading[1]);
+    /* Any other text — including other headings and text after the tables — is description. Bold markers show as plain text
+       (older files have "**Cause:** …" lines, which read as "Cause: …"). */
+    description.push((heading === null ? line.trim() : heading[1]).replace(/\*\*(.+?)\*\*/g, '$1'));
     i += 1;
   }
 
@@ -1581,6 +1662,7 @@ function parseRiskSection(lines, start, end, file) {
   return Object.freeze({
     id: h[1] === undefined ? null : h[1], kind, title: h[2].trim(), status: closed ? 'closed' : 'open',
     slugs: has('slugs') ? parseSlugs(fields.slugs) : Object.freeze([]), slugsLine: at('slugs'),
+    related: has('related') ? parseRelated(fields.related) : Object.freeze([]),
     closed: closedOn,
     category: has('category') ? fields.category : 'Uncategorised',
     value, effort,
@@ -1593,7 +1675,7 @@ function parseRiskSection(lines, start, end, file) {
     cost: !isRisk && has('cost') ? fields.cost : null,
     realisation: !isRisk && has('realisation') && isIsoDate(fields.realisation) ? fields.realisation : null,
     daci: Object.freeze({ D: people('driver'), A: people('approver'), C: people('contributors'), I: people('informed') }),
-    description: description.join(' '), cause, consequence,
+    description: description.join(' '),
     controls: Object.freeze(controls ?? []), evidence: Object.freeze(evidence ?? []), actions: Object.freeze(actions ?? []),
     file, line: start + 1, endLine: end,
   });
@@ -1733,7 +1815,7 @@ function cellCentre(i, l) { return { x: (i - 0.5) * (100 / SCALE), y: (SCALE - l
 function matchesQuery(r, query) {
   const terms = query.toLowerCase().split(/\s+/).filter((t) => t.length > 0);
   if (terms.length === 0) return true;
-  const hay = [r.id, r.title, r.category, r.description, r.cause, r.consequence, personLine(approverOf(r))].join(' ').toLowerCase();
+  const hay = [r.id, r.title, r.category, r.description, personLine(approverOf(r))].join(' ').toLowerCase();
   return terms.every((t) => hay.includes(t));
 }
 
@@ -2028,8 +2110,9 @@ function dragGrid(st, id, cells, movable, setState, drop) {
 }
 
 /**
- * Drawer for the selected entry. `others` are entries of the other kind (as at the same date); any sharing a slug
- * with the selection are listed as related, e.g. a risk and the opportunity that is its upside.
+ * Drawer for the selected entry. `others` are entries of the other kind (as at the same date). Related entries are any
+ * linked by a "- related:" line (either side, either kind), plus any of the other kind sharing a slug, e.g. a risk and
+ * the opportunity that is its upside.
  * While open at the as-at file, its now/inherent/target markers drag to a new cell, written back to that file.
  */
 function buildDetail(st, S, viewRisks, others, go, setState, saveDraft) {
@@ -2042,13 +2125,13 @@ function buildDetail(st, S, viewRisks, others, go, setState, saveDraft) {
     .map(([letter, role]) => ({ letter, role, people: named(r.daci[letter]) })).filter((x) => x.people.length > 0);
   const L = lensOf(r.kind);
   const KINDS = kindsFor(L);
-  const OL = lensOf(r.kind === 'risk' ? 'opportunity' : 'risk');
-  const related = others.filter((o) => lifecycleAt(o, toIdx) !== 'pending' && o.slugs.some((s) => r.slugs.includes(s)));
+  const viaSlugs = (o) => o.kind !== r.kind ? o.slugs.filter((s) => r.slugs.includes(s)) : [];
+  const related = viewRisks.concat(others).filter((o) => o.id !== r.id && lifecycleAt(o, toIdx) !== 'pending' && (linked(r, o) || viaSlugs(o).length > 0));
   const lc = lifecycleAt(r, toIdx);
   const lcStyle = lookup(LIFECYCLE, lc, 'lifecycle');
   const asAt = S[toIdx];
   const base = {
-    id: r.id, title: r.title, category: r.category, description: r.description, cause: r.cause, consequence: r.consequence,
+    id: r.id, title: r.title, category: r.category, description: r.description,
     sourceRef: 'Source: ' + r.file + ' · line ' + r.line,
     /* Links to each form tab for this entry: a plain click opens it here, a modified click follows the href (e.g. a new tab). */
     edit: Object.fromEntries(FORM_TABS.map((tab) => [tab, {
@@ -2062,25 +2145,25 @@ function buildDetail(st, S, viewRisks, others, go, setState, saveDraft) {
         go({ side: 'back', dataMode: 'form', dataFile: r.file, formIdx: Math.max(0, k), formEntryTab: tab, formListOpen: null, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', dataFlash: '' })();
       },
     }])),
-    hasCause: r.cause !== null, hasEffect: r.consequence !== null, hasControls: r.controls.length > 0,
+    hasControls: r.controls.length > 0,
     hasEvidence: r.evidence.length > 0, hasActions: r.actions.length > 0,
     hasDaci: daci.length > 0,
     lcLabel: lcStyle.label, lcBg: lcStyle.bg, lcFg: lcStyle.fg,
     isPending: lc === 'pending', hasPosition: lc !== 'pending',
     pendingNote: 'Not on the register as at ' + asAt.label + '. First recorded at the ' + S[firstOpenIdx(r)].label + ' review.',
     daci: daci.map((x, j) => ({ letter: x.letter, role: x.role, people: x.people.map(personLine).join('\n'), bg: x.letter === 'A' ? INK : 'var(--neutral-bg)', fg: x.letter === 'A' ? 'var(--on-ink)' : INK, rule: j === 0 ? '0' : '1px solid var(--rule-soft)' })),
-    causeLabel: L.causeLabel, effectLabel: L.effectLabel,
     controlsTitle: L.supportsLabel + ' · ' + r.controls.length,
     /* Known effectiveness/status words get their colour; any other wording shows neutral. */
     controls: r.controls.map((c) => { const e = KIND_SYNTAX[r.kind].states[c.eff] ?? { bg: 'var(--neutral-bg)', fg: 'var(--neutral-fg)' }; return { name: c.name, type: c.type, eff: c.eff, bg: e.bg, fg: e.fg }; }),
     hasRelated: related.length > 0,
-    relatedTitle: 'Related ' + OL.nouns + ' · shared slugs',
+    relatedTitle: 'Related · ' + related.length,
     related: related.map((o) => {
+      const OL = lensOf(o.kind);
       const p = positionAt(o, lifecycleAt(o, toIdx) === 'open' ? toIdx : lastOpenIdxUpTo(o, toIdx));
       const band = bandOf(p.score);
       return {
         id: o.id, title: o.title, kindLabel: capitalise(OL.noun), score: p.score, fill: band.fill, ink: band.ink,
-        meta: OL.rating(p.i, p.l) + ' · via ' + o.slugs.filter((s) => r.slugs.includes(s)).join(', ') + (lifecycleAt(o, toIdx) === 'closed' ? ' · closed' : ''),
+        meta: OL.rating(p.i, p.l) + (linked(r, o) ? '' : ' · via ' + viaSlugs(o).join(', ')) + (lifecycleAt(o, toIdx) === 'closed' ? ' · closed' : ''),
         pick: go({ lens: o.kind, selectedId: o.id, drawerOpen: true, categories: [], cellFilter: null, kindFilter: null }),
         aria: 'Open ' + OL.noun + ' ' + o.id + ' ' + o.title,
       };
@@ -2178,6 +2261,169 @@ function buildCategoryPills(cats, categories, toIdx, go, pool) {
   }));
 }
 
+/** Where the Jev API key lives: this browser's localStorage, so it never leaves the machine unless a request sends it. */
+const JEV_KEY_STORE = 'rr.jevApiKey';
+function loadJevKey() {
+  try { return localStorage.getItem(JEV_KEY_STORE) ?? ''; } catch (e) { return ''; }
+}
+/** Settings popover: the Jev API key. Returns false when the browser won't store it (e.g. storage blocked). */
+function storeJevKey(key) {
+  try { if (key === '') localStorage.removeItem(JEV_KEY_STORE); else localStorage.setItem(JEV_KEY_STORE, key); return true; } catch (e) { return false; }
+}
+/** An entry as Jev reads it: its words. */
+function jevEntry(e) {
+  return Object.fromEntries([['kind', e.kind], ['title', e.title], ['category', e.category === 'Uncategorised' ? null : e.category],
+    ['description', e.description]].filter(([, v]) => v !== null && v !== ''));
+}
+/* TypeSafe's API doesn't allow browser (CORS) calls, so locally `make dev` proxies it; elsewhere a call fails with a message. */
+// ponytail: only localhost has a proxy; a hosted proxy (e.g. a small Worker) is needed for Suggest on GitHub Pages.
+const JEV_URL = ['localhost', '127.0.0.1'].includes(location.hostname) ? '/typesafe/v1/systemone' : 'https://api.typesafe.ai/v1/systemone';
+/** What "related" means, sent once in the state so each pair's question can stay short. */
+const RELATED_MEANS = Object.freeze({
+  related: 'They are connected closely enough that whoever manages one should keep the other in view: one could cause, trigger or worsen the other, they share a root cause or exposure, a control or enabler of one changes the other, or one is the upside or mitigation of the other.',
+  not_related: 'They are separate concerns; sharing a category, a department or some vocabulary is not enough.',
+});
+/** Questions per request: the register is sent (and paid for) once per request, so requests carry many short questions. */
+const JEV_PAIRS_PER_REQUEST = 300;
+
+/** One System One request → its answers; throws with a readable message. */
+async function jevAsk(key, state, questions) {
+  let res;
+  try {
+    res = await fetch(JEV_URL, {
+      method: 'POST', headers: { Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'jev-latest', state, questions }),
+    });
+  } catch (e) {
+    throw new Error(JEV_URL.startsWith('/') ? 'Couldn’t reach TypeSafe through the dev proxy (is `make dev` running, and are you online?).' : 'TypeSafe doesn’t accept calls straight from a web page; run the viewer with `make dev` to use Suggest.');
+  }
+  if (res.status === 401 || res.status === 403) throw new Error('TypeSafe rejected the API key; check it in Settings.');
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    const why = body !== null && Array.isArray(body.detail) ? body.detail.map((d) => d.msg).join('; ') : res.statusText;
+    throw new Error('TypeSafe error ' + res.status + (why ? ': ' + why : ''));
+  }
+  return (await res.json()).answers;
+}
+
+/**
+ * How related each pair of entries is. The whole register goes in the state once per request, with one short Noul per pair
+ * pointing at `entries[i]` and `entries[j]`; pairs are split into chunks of JEV_PAIRS_PER_REQUEST, up to 4 requests at once.
+ * `pairs` is [[i, j]] indexes into `entries`. Resolves to [{ a, b, p }] (ids, probability they're related), best first.
+ */
+async function scorePairs(key, entries, pairs, progress = () => {}) {
+  const state = { related_means: RELATED_MEANS, entries: entries.map(jevEntry) };
+  const chunks = [];
+  for (let k = 0; k < pairs.length; k += JEV_PAIRS_PER_REQUEST) chunks.push(pairs.slice(k, k + JEV_PAIRS_PER_REQUEST));
+  const out = [];
+  let next = 0;
+  let done = 0;
+  const worker = async () => {
+    while (next < chunks.length) {
+      const chunk = chunks[next++];
+      const answers = await jevAsk(key, state, Object.fromEntries(chunk.map(([i, j], k) => ['p' + k, {
+        type: 'noul',
+        instructions: 'Are `entries[' + i + ']` and `entries[' + j + ']` related?',
+        criteria: { true: 'Yes, as `related_means.related` describes', false: 'No, as `related_means.not_related` describes' },
+      }])));
+      chunk.forEach(([i, j], k) => out.push({ a: entries[i].id, b: entries[j].id, p: answers['p' + k].noul }));
+      progress((done += 1), chunks.length);
+    }
+  };
+  await Promise.all([0, 1, 2, 3].map(worker));
+  return out.sort((x, y) => y.p - x.p);
+}
+/** Suggest: how related each candidate is to `entry`, as [{ id, p }] best first. */
+async function suggestRelated(key, entries, entry, candidates) {
+  const at = (e) => entries.indexOf(e);
+  return (await scorePairs(key, entries, candidates.map((c) => [at(entry), at(c)]))).map((x) => ({ id: x.b, p: x.p }));
+}
+/** Auto-link: every unlinked pair in `entries`, each asked once. */
+function scoreAllPairs(key, entries, progress) {
+  const pairs = entries.flatMap((e, i) => entries.map((c, j) => [i, j]).filter(([, j]) => j > i && !linked(e, entries[j])));
+  return scorePairs(key, entries, pairs, progress);
+}
+
+function buildSettings(st, go, setState) {
+  const save = () => {
+    /* Keys are often copied with a "Bearer " prefix or in quotes; keep just the key. */
+    const key = st.jevDraft.trim().replace(/^bearer\s+/i, '').replace(/^['"`]+|['"`]+$/g, '').trim();
+    if (key === '') { setState({ jevNote: 'Paste a key first.' }); return; }
+    setState(storeJevKey(key) ? { jevKey: key, jevDraft: '', jevNote: 'Saved in this browser.' } : { jevNote: 'This browser blocked storage; the key was not saved.' });
+  };
+  /* Auto-link works on the file on view: the one open in Data, else register B. Results belong to the file they came from. */
+  const name = st.side === 'back' ? st.dataFile : st.cmpB;
+  const fr = tryParse(name, st.drafts[name]);
+  const entries = fr.ok ? fr.file.risks : [];
+  const byId = (id) => entries.find((e) => e.id === id);
+  const run = st.autoLink !== null && st.autoLink.file === name ? st.autoLink : null;
+  /* Pairs still open: both entries still there and not linked since. */
+  const pairs = run === null ? [] : run.pairs.map((x) => ({ x, a: byId(x.a), b: byId(x.b) })).filter(({ a, b }) => a !== undefined && b !== undefined && !linked(a, b));
+  const keyOf = (x) => x.a + '|' + x.b;
+  /* The slider ticks every pair at or above it; a tick changed by hand overrides that until the slider moves. */
+  const picked = ({ x }) => st.autoPicks[keyOf(x)] ?? Math.round(x.p * 100) >= st.autoThreshold;
+  const chosen = pairs.filter(picked);
+  const todo = entries.reduce((n, e, i) => n + entries.slice(i + 1).filter((c) => !linked(e, c)).length, 0);
+  const autoRun = async () => {
+    const at = { file: name, busy: true, done: 0, total: 0, error: '', note: '', pairs: [] };
+    setState({ autoLink: at, autoPicks: {} });
+    try {
+      const found = await scoreAllPairs(st.jevKey, entries, (done, total) => setState({ autoLink: Object.assign({}, at, { done, total }) }));
+      setState({ autoLink: Object.assign({}, at, { busy: false, pairs: found }) });
+    } catch (e) { setState({ autoLink: Object.assign({}, at, { busy: false, error: e.message }) }); }
+  };
+  /* Each link is written on the first entry of its pair; the file is re-read between writes so line numbers stay right. */
+  const accept = () => {
+    const text = chosen.reduce((t, { x }) => {
+      const a = tryParse(name, t).file.risks.find((e) => e.id === x.a);
+      return patchSection(t, a, { related: a.related.concat(x.b).join('; ') });
+    }, st.drafts[name]);
+    setState(Object.assign(reconcile(st, Object.freeze(Object.assign({}, st.drafts, { [name]: text }))), {
+      autoLink: Object.assign({}, run, { note: '✓ Linked ' + chosen.length + (chosen.length === 1 ? ' pair' : ' pairs') + ' in ' + name + '. Undo reverses it.' }), autoPicks: {},
+    }));
+    /* The linked pairs leave the list; show its top, where the best of what's left now is. */
+    const list = document.getElementById('rr-auto-list');
+    if (list !== null) list.scrollTop = 0;
+  };
+  const autoNote = run === null ? '' : run.busy ? 'Asking Jev… ' + run.done + ' of ' + (run.total || '…') + ' requests done.'
+    : run.error !== '' ? run.error : pairs.length === 0 && run.note === '' ? 'No unlinked pairs left.' : '';
+  return {
+    settingsWidth: pairs.length > 0 ? '560px' : '340px',
+    autoIntro: !fr.ok ? name + ' doesn’t parse; fix it in Data → Source first.' : todo === 0 ? 'Every pair in ' + name + ' is already linked.'
+      : 'Asks Jev how related each unlinked pair of risks and opportunities in ' + name + ' is: ' + todo + ' pairs.',
+    autoRun, autoBusy: (run !== null && run.busy) || !fr.ok || todo === 0, autoRunLabel: run !== null && run.busy ? 'Auto-linking…' : run !== null && run.pairs.length > 0 ? 'Run again' : 'Auto-link',
+    autoNote, autoHasNote: autoNote !== '', autoNoteFg: run !== null && run.error !== '' ? 'var(--bad-fg)' : 'var(--ink3)',
+    autoHasPairs: pairs.length > 0,
+    autoThreshold: st.autoThreshold, autoThresholdLabel: st.autoThreshold + '%',
+    onAutoThreshold: (e) => setState({ autoThreshold: Number(e.target.value), autoPicks: {}, autoLink: Object.assign({}, run, { note: '' }) }),
+    autoPairs: pairs.map((q, j) => {
+      const on = picked(q);
+      const pct = Math.round(q.x.p * 100);
+      return {
+        checked: on, pct: pct + '%', pctFg: on ? INK : 'var(--ink3)', rule: j === 0 ? '0' : '1px solid var(--rule-soft)',
+        a: q.a.id + ' · ' + q.a.title, b: q.b.id + ' · ' + q.b.title, aria: 'Link ' + q.a.id + ' and ' + q.b.id + ', ' + pct + '% match',
+        toggle: () => setState({ autoPicks: Object.assign({}, st.autoPicks, { [keyOf(q.x)]: !on }), autoLink: Object.assign({}, run, { note: '' }) }),
+      };
+    }),
+    autoAccept: accept, autoAcceptDisabled: chosen.length === 0,
+    autoAcceptLabel: chosen.length === 0 ? 'Nothing at or above ' + st.autoThreshold + '%' : 'Accept ' + chosen.length + ' of ' + pairs.length,
+    /* The outcome of the last Accept, beside the button; it gives way to a hint once the selection changes. */
+    autoDone: run !== null && run.note !== '' ? run.note : chosen.length === 0 && pairs.length > 0 ? 'Lower the slider or tick pairs to link.' : '',
+    autoDoneFg: run !== null && run.note !== '' ? 'var(--ok-fg)' : 'var(--ink3)',
+    autoDoneWeight: run !== null && run.note !== '' ? '600' : '400',
+    autoClear: () => setState({ autoLink: null, autoPicks: {} }),
+    settingsOpen: st.settingsOpen, settingsExpanded: String(st.settingsOpen),
+    toggleSettings: go({ settingsOpen: !st.settingsOpen, themeOpen: false, jevDraft: '', jevNote: '' }), closeSettings: go({ settingsOpen: false, jevDraft: '', jevNote: '' }),
+    jevDraft: st.jevDraft, jevSaved: st.jevKey !== '',
+    jevPlaceholder: st.jevKey === '' ? 'Paste your key…' : '•••• ' + st.jevKey.slice(-4) + ' (paste to replace)',
+    jevNote: st.jevNote !== '' ? st.jevNote : st.jevKey === '' ? 'Stored only in this browser (localStorage), never in the register.' : 'A key is saved in this browser.',
+    onJevDraft: (e) => setState({ jevDraft: e.target.value, jevNote: '' }),
+    onJevKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); save(); } },
+    saveJev: save,
+    clearJev: () => { storeJevKey(''); setState({ jevKey: '', jevDraft: '', jevNote: 'Key removed from this browser.' }); },
+  };
+}
+
 function buildThemePicker(st, go) {
   byId(THEMES, st.theme, 'theme');
   byId(PALETTES, st.palette, 'palette');
@@ -2186,7 +2432,7 @@ function buildThemePicker(st, go) {
   return {
     themeId: st.theme, paletteId: st.palette, accentId: st.accentId,
     themeOpen: st.themeOpen, themeExpanded: String(st.themeOpen),
-    toggleTheme: go({ themeOpen: !st.themeOpen }), closeTheme: go({ themeOpen: false }),
+    toggleTheme: go({ themeOpen: !st.themeOpen, settingsOpen: false }), closeTheme: go({ themeOpen: false }),
     themeOptions: THEMES.map((t) => ({ label: t.label, bg: t.bg, card: t.card, ink: t.ink, rule: t.rule, pressed: String(t.id === st.theme), ring: ring(t.id === st.theme), pick: go({ theme: t.id }) })),
     paletteOptions: PALETTES.map((p) => ({ label: p.label, note: p.note, c1: p.colors[0], c2: p.colors[1], c3: p.colors[2], c4: p.colors[3], pressed: String(p.id === st.palette), ring: ring(p.id === st.palette), pick: go({ palette: p.id }) })),
     accentOptions: ACCENTS.map((a) => ({ hex: a.hex, aria: 'Accent ' + a.label, pressed: String(a.id === st.accentId), ring: a.id === st.accentId ? 'var(--ink)' : 'transparent', pick: go({ accentId: a.id }) })),
@@ -2225,8 +2471,32 @@ function kindCounts(entries) {
 }
 
 /** Files from a drop or a picker → promises of { name, text }. */
-function readFiles(list) {
-  return Array.from(list).map((f) => f.text().then((text) => ({ name: f.name, text })));
+function readFiles(list, handles = []) {
+  return Array.from(list).map((f, k) => f.text().then(async (text) => ({ name: f.name, text, handle: (await handles[k]) ?? null })));
+}
+/**
+ * Where opened files came from, by document name, so Download can start in that folder. Only Chromium-based browsers
+ * expose file handles (File System Access API); elsewhere this stays empty and Download saves to the usual downloads folder.
+ */
+const FILE_HANDLES = new Map();
+const MD_TYPES = [{ description: 'Markdown', accept: { 'text/markdown': ['.md', '.markdown'], 'text/plain': ['.txt'] } }];
+/** Save `text` with a save dialog starting next to where `name` (else the last file) was opened; falls back to a plain download. */
+async function saveFile(name, text) {
+  if (typeof window.showSaveFilePicker !== 'function') {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], { type: 'text/markdown' }));
+    a.download = name;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    return null;
+  }
+  const near = FILE_HANDLES.get(name) ?? Array.from(FILE_HANDLES.values()).pop();
+  const handle = await window.showSaveFilePicker(Object.assign({ suggestedName: name, types: MD_TYPES }, near === undefined ? {} : { startIn: near }));
+  const w = await handle.createWritable();
+  await w.write(text);
+  await w.close();
+  FILE_HANDLES.set(name, handle);
+  return handle.name;
 }
 /** Fetch one URL (absolute or relative to the page) as a file named after its last path segment. */
 function openUrl(raw, setState, addFiles) {
@@ -2307,8 +2577,22 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState, addFiles) {
     dropBd: st.dropActive ? 'var(--accent)' : 'var(--control)', dropBg: st.dropActive ? 'var(--sel-bg)' : 'transparent',
     onDragOver: (e) => { e.preventDefault(); if (!st.dropActive) setState({ dropActive: true }); },
     onDragLeave: () => setState({ dropActive: false }),
-    onDrop: (e) => { e.preventDefault(); addFiles(readFiles(e.dataTransfer.files)); },
+    /* Handles must be asked for during the drop event itself; getAsFileSystemHandle is Chromium-only. */
+    onDrop: (e) => {
+      e.preventDefault();
+      const items = Array.from(e.dataTransfer.items).filter((it) => it.kind === 'file');
+      addFiles(readFiles(e.dataTransfer.files, items.map((it) => (typeof it.getAsFileSystemHandle === 'function' ? it.getAsFileSystemHandle().catch(() => null) : null))));
+    },
     onPickFiles: (e) => { const fs = readFiles(e.target.files); e.target.value = ''; addFiles(fs); },
+    /* Where the browser can, open through its file picker instead, so we learn the files' folder for Download. */
+    onPickClick: (e) => {
+      if (typeof window.showOpenFilePicker !== 'function') return;
+      e.preventDefault();
+      window.showOpenFilePicker({ multiple: true, types: MD_TYPES }).then(
+        (hs) => addFiles(hs.map((h) => h.getFile().then((f) => f.text()).then((text) => ({ name: h.name, text, handle: h })))),
+        (err) => { if (err.name !== 'AbortError') setState({ openError: 'Could not open: ' + err.message }); },
+      );
+    },
     openUrl: st.openUrl, hasOpenError: st.openError !== '', openError: st.openError,
     onOpenUrl: (e) => setState({ openUrl: e.target.value, openError: '' }),
     openUrlDisabled: st.openUrl.trim() === '' || st.openBusy, openUrlLabel: st.openBusy ? 'Opening…' : 'Open URL',
@@ -2318,13 +2602,10 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState, addFiles) {
       () => setState({ dataFlash: 'Copied ' + name }),
       (e) => setState({ dataFlash: 'Copy failed: ' + e.message }),
     ),
-    downloadFile: () => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([text], { type: 'text/markdown' }));
-      a.download = name;
-      a.click();
-      URL.revokeObjectURL(a.href);
-    },
+    downloadFile: () => saveFile(name, text).then(
+      (saved) => { if (saved !== null) setState({ dataFlash: 'Saved ' + name + ' as ' + saved }); },
+      (e) => { if (e.name !== 'AbortError') setState({ dataFlash: 'Save failed: ' + e.message }); },
+    ),
     cancelCopy: go({ copyOpen: false, copyName: '', copyError: '' }),
     copyName: st.copyName, copySource: name,
     onCopyName: (e) => setState({ copyName: e.target.value, copyError: '' }),
@@ -2568,7 +2849,7 @@ function jaccard(x, y) {
 }
 const GRAMS = new WeakMap();
 function riskGrams(r) {
-  if (!GRAMS.has(r)) GRAMS.set(r, { title: trigramSet(r.title), body: trigramSet([r.description, r.cause, r.consequence].join(' ')) });
+  if (!GRAMS.has(r)) GRAMS.set(r, { title: trigramSet(r.title), body: trigramSet(r.description) });
   return GRAMS.get(r);
 }
 /** Language-agnostic-ish text similarity: character trigrams after folding accents; title weighted over body. */
@@ -2615,11 +2896,10 @@ function withSlugs(drafts, fileName, file, riskId, slugs) {
 
 /* ---------- Form editor: rewrites one entry's lines in the draft; the markdown stays the source of truth. ---------- */
 
-/** One entry's lines: its field lines, the description range, and everything after it (prose markers and tables). */
+/** One entry's lines: its field lines, the description range, and everything after it (tables). */
 function sectionParts(lines, r) {
   const start = r.line - 1;
   const end = r.endLine;
-  const syn = KIND_SYNTAX[r.kind];
   const fields = {};
   let i = firstFieldLine(lines, start, end);
   for (let kv; i < end && (kv = FIELD_RE.exec(lines[i])) !== null; i += 1) {
@@ -2627,21 +2907,18 @@ function sectionParts(lines, r) {
     if (kv[2] !== undefined && !Object.prototype.hasOwnProperty.call(fields, k)) fields[k] = kv[2];
   }
   let descEnd = i;
-  while (descEnd < end && !lines[descEnd].startsWith(syn.cause) && !lines[descEnd].startsWith(syn.effect) && !lines[descEnd].startsWith('#')) descEnd += 1;
-  const proseOf = (prefix) => { const l = lines.slice(descEnd, end).find((x) => x.startsWith(prefix)); return l === undefined ? '' : l.slice(prefix.length); };
+  while (descEnd < end && !lines[descEnd].startsWith('#')) descEnd += 1;
   return {
     start, end, fieldEnd: i, descEnd, fields,
     title: lines[start].replace(/^## (?:[A-Z]+-?\d{2,} · )?/, ''),
     description: lines.slice(i, descEnd).join('\n').trim(),
-    cause: proseOf(syn.cause), consequence: proseOf(syn.effect),
   };
 }
 
-/** The file text with one entry patched: title, description, cause, consequence, or any field ('' removes it). */
+/** The file text with one entry patched: title, description, or any field ('' removes it). */
 function patchSection(text, r, patch) {
   const lines = text.replace(/\r\n?/g, '\n').split('\n');
   const p = sectionParts(lines, r);
-  const syn = KIND_SYNTAX[r.kind];
   const has = (k) => Object.prototype.hasOwnProperty.call(patch, k);
   const heading = has('title') ? lines[p.start].replace(/^(## (?:[A-Z]+-?\d{2,} · )?).*$/, (_, pre) => pre + patch.title) : lines[p.start];
   const fieldLines = lines.slice(p.start + 1, p.fieldEnd).filter((l) => l.trim() !== '').flatMap((l) => {
@@ -2652,16 +2929,7 @@ function patchSection(text, r, patch) {
   });
   ALL_FIELDS.filter((k) => has(k) && !Object.prototype.hasOwnProperty.call(p.fields, k) && patch[k].trim() !== '').forEach((k) => fieldLines.push('- ' + k + ': ' + patch[k]));
   const desc = (has('description') ? patch.description : p.description).trim();
-  let rest = lines.slice(p.descEnd, p.end);
-  const prose = (prefix, value, after) => {
-    const k = rest.findIndex((l) => l.startsWith(prefix));
-    if (k !== -1) { rest = value.trim() === '' ? rest.filter((_, j) => j !== k) : rest.map((l, j) => (j === k ? prefix + value : l)); return; }
-    if (value.trim() === '') return;
-    const at = after === null ? 0 : rest.findIndex((l) => l.startsWith(after)) + 1;
-    rest = rest.slice(0, at).concat([prefix + value], rest[at] !== undefined && rest[at].startsWith('#') ? [''] : [], rest.slice(at));
-  };
-  if (has('cause')) prose(syn.cause, patch.cause, null);
-  if (has('consequence')) prose(syn.effect, patch.consequence, syn.cause);
+  const rest = lines.slice(p.descEnd, p.end);
   const section = [heading].concat(fieldLines, [''], desc === '' ? [] : desc.split('\n').concat(['']), rest);
   while (section.length > 1 && section[section.length - 1].trim() === '') section.pop();
   section.push('');
@@ -2795,6 +3063,22 @@ function buildForm(st, fr, name, text, go, setState, model) {
     if (slugs.includes(slug)) { setState({ formSlugError: slug + ' is already on this entry' }); return; }
     writeSlugs(slugs.concat(slug));
   };
+  /* Related: ids of other entries in this file; an id that matches nothing stays in the line but isn't shown. */
+  const rel = r.related;
+  const writeRelated = (xs) => commit(patchSection(text, r, { related: xs.join('; ') }), { formPending: pend });
+  const entryLabel = (e) => capitalise(LENS[e.kind].noun) + ' · ' + e.id + ' · ' + e.title;
+  /* Suggestions belong to one entry of one file; results for another entry are ignored. */
+  const sug = st.suggest !== null && st.suggest.file === name && st.suggest.id === r.id ? st.suggest : null;
+  const suggestions = sug === null ? [] : sug.results.map((x) => ({ x, e: file.risks.find((e) => e.id === x.id && e !== r) })).filter(({ e }) => e !== undefined && !linked(r, e));
+  const suggest = async () => {
+    if (st.jevKey === '') { setState({ settingsOpen: true, themeOpen: false, jevNote: 'Add a Jev API key to get suggestions.' }); return; }
+    const cands = file.risks.filter((e) => e !== r && !linked(r, e));
+    const at = { file: name, id: r.id, busy: false, error: '', results: [] };
+    if (cands.length === 0) { setState({ suggest: Object.assign(at, { error: 'Everything in this register is already linked.' }) }); return; }
+    setState({ suggest: Object.assign({}, at, { busy: true }) });
+    try { setState({ suggest: Object.assign({}, at, { results: await suggestRelated(st.jevKey, file.risks, r, cands) }) }); }
+    catch (e) { setState({ suggest: Object.assign({}, at, { error: e.message }) }); }
+  };
   const isRisk = r.kind === 'risk';
   return Object.assign(common, {
     formEntryId: r.id,
@@ -2903,9 +3187,6 @@ function buildForm(st, fr, name, text, go, setState, model) {
         tab('daci', 'DACI', r.daci.A.map((x) => x.name).join(', '), {
           fields: FORM_DACI.map(([k, label]) => field(k, label, 'text', raw(k), 'Name (Role); separate several with ;', true)),
         }),
-        tab('context', 'Context', p.cause || p.consequence, {
-          fields: [field('cause', L.causeLabel, 'text', p.cause, '', true), field('consequence', L.effectLabel, 'text', p.consequence, '', true)],
-        }),
         tab('controls', L.supportsLabel, count(tableCells(text, r, syn.table.slice(4), syn.header).length, supportNoun, L.supportsLabel.toLowerCase()), {
           isList: true, list: rowList('ctl', syn.table.slice(4), syn.header,
             [[0, capitalise(supportNoun), 'text', '', []], [1, 'Type', 'text', '', syn.types], [2, syn.header[2], 'text', '', Object.keys(syn.states)]], [0], supportNoun),
@@ -2951,6 +3232,37 @@ function buildForm(st, fr, name, text, go, setState, model) {
       else if (e.key === 'Backspace' && st.formSlugDraft === '' && slugs.length > 0) writeSlugs(slugs.slice(0, -1));
     },
     formAddSlug: addSlug,
+    formRelatedOptions: file.risks.filter((e) => e !== r && !linked(r, e)).map((e) => ({ id: e.id, label: entryLabel(e) })),
+    onFormRelated: (e) => { if (e.target.value !== '') writeRelated(rel.concat(e.target.value)); },
+    formRelated: file.risks.filter((e) => e !== r && linked(r, e)).map((e) => ({
+      label: entryLabel(e), aria: 'Unlink ' + e.id, openAria: 'Edit ' + e.id + ' ' + e.title,
+      /* A plain click opens that entry here, on the same tab; a modified click follows the href (e.g. a new tab). */
+      href: hrefWith({ page: 'data', kind: e.kind === 'risk' ? null : e.kind, entry: e.id, tab: st.formEntryTab === FORM_TABS[0] ? null : st.formEntryTab, view: null }),
+      open: (ev) => {
+        if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey || ev.button !== 0) return;
+        ev.preventDefault();
+        go(Object.assign({ lens: e.kind, formIdx: file.risks.indexOf(e) }, formReset))();
+      },
+      /* Unlinking drops the id from whichever side lists it; the later section is patched first so the other's lines stay put. */
+      remove: () => {
+        const drop = (x, y) => x.related.filter((id) => id.toLowerCase() !== y.id.toLowerCase());
+        const next = [[r, e], [e, r]].filter(([x, y]) => drop(x, y).length !== x.related.length).sort(([x], [y]) => y.line - x.line)
+          .reduce((t, [x, y]) => patchSection(t, x, { related: drop(x, y).join('; ') }), text);
+        commit(next, { formPending: pend });
+      },
+    })),
+    formHasRelated: file.risks.some((e) => e !== r && linked(r, e)),
+    formSuggest: suggest, formSuggestBusy: sug !== null && sug.busy,
+    formSuggestLabel: sug !== null && sug.busy ? 'Suggesting…' : 'Suggest',
+    formSuggestNote: sug === null ? '' : sug.busy ? 'Asking Jev how each entry relates…' : sug.error !== '' ? sug.error : suggestions.length === 0 ? 'No more suggestions.' : 'Jev’s estimate that each bears on this ' + LENS[r.kind].noun + '. Click one to link it.',
+    formSuggestNoteFg: sug !== null && sug.error !== '' ? 'var(--bad-fg)' : 'var(--ink3)',
+    formHasSuggestNote: sug !== null,
+    formHasSuggestions: suggestions.length > 0,
+    formSuggestions: suggestions.map(({ x, e }, j) => ({
+      pct: Math.round(x.p * 100) + '%', label: entryLabel(e), rule: j === 0 ? '0' : '1px solid var(--rule-soft)',
+      aria: 'Link ' + e.id + ' ' + e.title + ', ' + Math.round(x.p * 100) + '% match',
+      add: () => writeRelated(rel.concat(e.id)),
+    })),
   });
 }
 
@@ -2989,7 +3301,7 @@ function breakPlan(ctx, side, aId, bId) {
 function cmpMatches(r, query) {
   const terms = foldText(query).split(' ').filter((t) => t.length > 0);
   if (terms.length === 0) return true;
-  const hay = foldText([r.id, r.title, r.category, r.description, r.cause, r.consequence, personLine(approverOf(r)), r.slugs.join(' ')].join(' '));
+  const hay = foldText([r.id, r.title, r.category, r.description, personLine(approverOf(r)), r.slugs.join(' ')].join(' '));
   return terms.every((t) => hay.includes(t));
 }
 
@@ -3408,7 +3720,7 @@ function hrefWith(params) {
   return location.pathname + (q.size ? '?' + q.toString().replace(/=(?=&|$)/g, '').replace(/%2F/gi, '/').replace(/%3A/gi, ':') : '') + location.hash;
 }
 /** The form's tabs, in order; ?tab= picks one. */
-const FORM_TABS = ['rating', 'details', 'daci', 'context', 'controls', 'evidence', 'actions'];
+const FORM_TABS = ['rating', 'details', 'daci', 'controls', 'evidence', 'actions'];
 /**
  * Mirrors page, theme, kind and view into the URL (defaults left out) so the address bar is a shareable link.
  * On Data → Form, `form` adds the entry being edited (?entry=) and its tab (?tab=).
@@ -3431,6 +3743,7 @@ function initialState() {
     cellFilter: null, kindFilter: null, showMovement: true,
     categories: [], query: '', filtersOpen: false,
     theme: 'paper', palette: 'heat', accentId: 'blue', themeOpen: false,
+    settingsOpen: false, jevKey: loadJevKey(), jevDraft: '', jevNote: '', suggest: null, autoLink: null, autoThreshold: 75, autoPicks: {},
     ...src, cmpLayout: 'summary', cmpShow: 'all', cmpQuery: '',
     cmpImpact: [], cmpLik: [], cmpSuggestOn: true, cmpDismissed: [],
     cmpFocus: null, cmpPeer: null, cmpSlugDraft: '', cmpSlugError: '', cmpFlash: '',
@@ -3504,7 +3817,7 @@ class Component extends DCLogic {
     Promise.all(pending).then((files) => {
       const st = this.state;
       const drafts = Object.assign({}, st.drafts);
-      const names = files.map((f) => { const n = openedName(f.name, drafts); drafts[n] = f.text; return n; });
+      const names = files.map((f) => { const n = openedName(f.name, drafts); drafts[n] = f.text; if (f.handle) FILE_HANDLES.set(n, f.handle); return n; });
       const last = names[names.length - 1];
       this.setState(Object.assign(reconcile(Object.assign({}, st, { cmpB: last, cmpA: st.cmpA === last ? null : st.cmpA }), Object.freeze(drafts)), {
         dataFile: last, formIdx: 0, formPending: {}, openOpen: false, openError: '', dropActive: false, dataFlash: 'Opened ' + names.join(', '),
@@ -3527,7 +3840,7 @@ class Component extends DCLogic {
     else if (this.flipLayout !== st.cmpLayout) this.flipAnim = 'none';
     this.flipSide = st.side;
     this.flipLayout = st.cmpLayout;
-    const shell = Object.assign({}, buildThemePicker(st, go), buildPickers(st, a, go, (p) => this.setState(p)), buildDataSide(st, a, go, applyDrafts, onEdit, (p) => this.setState(p), (pending, done = {}) => this.addFiles(pending, done)), {
+    const shell = Object.assign({}, buildThemePicker(st, go), buildSettings(st, go, (p) => this.setState(p)), buildPickers(st, a, go, (p) => this.setState(p)), buildDataSide(st, a, go, applyDrafts, onEdit, (p) => this.setState(p), (pending, done = {}) => this.addFiles(pending, done)), {
       lensAttr: st.lens, flipAnim: this.flipAnim,
       undo: () => this.undo(), redo: () => this.redo(),
       undoDisabled: st.undo.length === 0, redoDisabled: st.redo.length === 0,

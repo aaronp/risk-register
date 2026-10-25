@@ -57,7 +57,10 @@ it with, and `examples/minimal.md` is the smallest valid one.
 ## Viewing locally
 
 `make dev` serves the folder with Bun on http://localhost:8000 and prints the
-example's URL; some browsers block the scripts over file://.
+example's URL; some browsers block the scripts over file://. It also proxies
+`/typesafe/*` to the TypeSafe API, which the page can't call directly (no CORS):
+that's what Data → Form → Related → **Suggest** uses, with the Jev API key set
+under the settings cog. Suggest only works when served this way.
 
 ## Hosting & external data
 
@@ -108,3 +111,4 @@ your `risks.md`, passing on any other query params
 - `index.html` — the page: an `<x-dc>` template, its logic class, and the loader
   that fetches the markdown before booting.
 - `support.js`, `vendor/react*.js` — the runtime that renders the component.
+- `dev.js` — the local server behind `make dev`, including the TypeSafe proxy.
