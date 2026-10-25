@@ -87,10 +87,9 @@ risk. Fields that belong to the other kind are ignored.
 | `status` | `closed` closes the entry; any other value (or none) means open |
 | `closed` | Date it closed, `YYYY-MM-DD` |
 | `category` | Free text, used for grouping and filters |
-| `owner` | A person (see below) |
 | `slugs` | Stable tags that identify the same entry across registers |
 | `target` | Target scores, `4x2` (`4 x 2` and `4×2` work too) |
-| `driver`, `approver`, `contributors`, `informed` | People (DACI). The RACI keys `responsible`, `accountable` and `consulted` are read as `driver`, `approver` and `contributors` |
+| `driver`, `approver`, `contributors`, `informed` | People (DACI). The RACI keys `responsible`, `accountable` and `consulted` are read as `driver`, `approver` and `contributors`. The first approver is shown as the entry's owner |
 
 **Risk only**
 
@@ -191,5 +190,6 @@ change. An entry closed in both files is left out of the views.
 
 Data → Form edits one entry at a time and rewrites only that entry's lines. It
 writes fields in the canonical lower-case form (`- impact: 3`), so a loosely
-written key such as `- Impact:` is tidied when you change that field. Tables
-are edited in Data → Source.
+written key such as `- Impact:` is tidied when you change that field. Its
+Controls (or Enablers), Evidence and Actions tabs rewrite the whole table, with
+the standard columns in the standard order; any other column is dropped.

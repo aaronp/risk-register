@@ -29,6 +29,13 @@ input::placeholder{color:var(--ink3)}
 .rr-root[data-accent="teal"]{--accent-base:#0F766E}
 .rr-root[data-accent="graphite"]{--accent-base:#4A4F58}
 .rr-hover:hover{filter:brightness(0.95)}
+.rr-edit{font-size:12px;color:var(--ink2);text-decoration:underline;text-underline-offset:3px}
+.rr-edit:hover{color:var(--ink)}
+.rr-entry .rr-view{opacity:0}
+.rr-entry:hover .rr-view,.rr-entry:focus-within .rr-view{opacity:1}
+@media (hover:none){.rr-entry .rr-view{opacity:1}}
+.rr-marker:focus{outline:none}
+.rr-marker:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 @keyframes rr-drop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 @keyframes rr-slide{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
 @keyframes rr-flip{from{opacity:0;transform:perspective(1800px) rotateY(-80deg)}to{opacity:1;transform:perspective(1800px) rotateY(0deg)}}
@@ -196,7 +203,7 @@ button:disabled{opacity:.35;cursor:default}
 <div style="position: relative; display: flex; align-items: center; flex: 1 1 240px; min-width: 0; max-width: 420px">
 <label for="rr-search" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search risks</label>
 <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="position: absolute; left: 12px; pointer-events: none"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"></circle><path d="M10.5 10.5 L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
-<input id="rr-search" type="search" value="{{query}}" onChange="{{onQuery}}" placeholder="Search title, ID, owner, cause…" autocomplete="off" style="width: 100%; height: 44px; padding: 0 12px 0 36px; border: 1px solid var(--control); border-radius: 6px; font-family: inherit; font-size: 14px; background: var(--card); color: var(--ink); box-sizing: border-box">
+<input id="rr-search" type="search" value="{{query}}" onChange="{{onQuery}}" placeholder="Search title, ID, approver, cause…" autocomplete="off" style="width: 100%; height: 44px; padding: 0 12px 0 36px; border: 1px solid var(--control); border-radius: 6px; font-family: inherit; font-size: 14px; background: var(--card); color: var(--ink); box-sizing: border-box">
 </div>
 <span style="font-size: 13px; color: var(--ink2)">{{filterSummary}}</span>
 <sc-if value="{{anyFilter}}" hint-placeholder-val="{{ false }}">
@@ -458,13 +465,13 @@ button:disabled{opacity:.35;cursor:default}
 <sc-if value="{{isTable}}" hint-placeholder-val="{{ false }}">
 <div style="background: var(--card); border: 1px solid var(--rule); border-radius: 8px; overflow-x: auto">
 <div style="min-width: 1240px">
-<div style="display: grid; grid-template-columns: 56px minmax(220px, 2fr) 120px 200px 76px 96px 60px 64px 96px 72px 72px 64px; gap: 10px; padding: 12px 16px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2); border-bottom: 1px solid var(--rule)"><span>ID</span><span>Title</span><span>Category</span><span>Owner</span><span>Status</span><span>Rating</span><span>Score</span><span>{{tableLimitName}}</span><span>Target</span><span>{{tableSupportsName}}</span><span>Evidence</span><span>Actions</span></div>
+<div style="display: grid; grid-template-columns: 56px minmax(220px, 2fr) 120px 200px 76px 96px 60px 64px 96px 72px 72px 64px; gap: 10px; padding: 12px 16px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2); border-bottom: 1px solid var(--rule)"><span>ID</span><span>Title</span><span>Category</span><span>Approver</span><span>Status</span><span>Rating</span><span>Score</span><span>{{tableLimitName}}</span><span>Target</span><span>{{tableSupportsName}}</span><span>Evidence</span><span>Actions</span></div>
 <sc-for list="{{tableRows}}" as="tr" hint-placeholder-count="16">
 <button class="rr-hover" onClick="{{tr.pick}}" aria-label="{{tr.aria}}" aria-pressed="{{tr.pressed}}" style="display: grid; grid-template-columns: 56px minmax(220px, 2fr) 120px 200px 76px 96px 60px 64px 96px 72px 72px 64px; gap: 10px; align-items: center; width: 100%; padding: 10px 16px; border: 0; border-bottom: 1px solid var(--rule-soft); background: {{tr.bg}}; text-align: left; cursor: pointer; min-height: 48px; font-size: 13px">
 <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600">{{tr.id}}</span>
 <span style="font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{tr.title}}</span>
 <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{tr.category}}</span>
-<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{tr.owner}}</span>
+<span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{tr.approver}}</span>
 <span style="justify-self: start; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; background: {{tr.stBg}}; color: {{tr.stFg}}">{{tr.status}}</span>
 <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">{{tr.rating}}</span>
 <span style="height: 26px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600; background: {{tr.fill}}; color: {{tr.ink}}">{{tr.score}}</span>
@@ -491,7 +498,7 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 <h2 style="margin: 0; font-size: 24px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">{{sel.title}}</h2>
 <p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink2); text-wrap: pretty">{{sel.description}}</p>
-<a href="?page=data" onClick="{{sel.sourceOpen}}" title="Edit {{sel.id}} in Data" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: var(--ink3); text-decoration: underline; text-underline-offset: 3px">{{sel.sourceRef}}</a>
+<a href="{{sel.edit.details.href}}" onClick="{{sel.edit.details.open}}" title="Edit {{sel.id}} in Data" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: var(--ink3); text-decoration: underline; text-underline-offset: 3px">{{sel.sourceRef}}</a>
 </div>
 
 <sc-if value="{{sel.isPending}}" hint-placeholder-val="{{ false }}">
@@ -531,13 +538,14 @@ button:disabled{opacity:.35;cursor:default}
 <sc-if value="{{sel.hasTarget}}" hint-placeholder-val="{{ true }}"><span style="display: flex; align-items: center; gap: 4px"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="3.8" fill="none" style="stroke: {{accent}}" stroke-width="1.6"></circle></svg>Target</span></sc-if>
 <span style="display: flex; align-items: center; gap: 4px"><svg width="14" height="10" viewBox="0 0 14 10" aria-hidden="true"><line x1="0" y1="5" x2="14" y2="5" stroke="currentColor" stroke-width="1.4" stroke-dasharray="3 2"></line></svg>Path</span>
 </div>
+<a class="rr-edit" style="align-self: flex-start" href="{{sel.edit.rating.href}}" onClick="{{sel.edit.rating.open}}" aria-label="{{sel.edit.rating.aria}}">Edit rating</a>
 </div>
 </div>
 </sc-if>
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap: 16px">
-<sc-if value="{{sel.hasCause}}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 4px"><h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{sel.causeLabel}}</h3><p style="margin: 0; font-size: 14px; line-height: 1.5">{{sel.cause}}</p></div></sc-if>
-<sc-if value="{{sel.hasEffect}}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 4px"><h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{sel.effectLabel}}</h3><p style="margin: 0; font-size: 14px; line-height: 1.5">{{sel.consequence}}</p></div></sc-if>
+<sc-if value="{{sel.hasCause}}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 4px"><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{sel.causeLabel}}</h3><a class="rr-edit" href="{{sel.edit.context.href}}" onClick="{{sel.edit.context.open}}" aria-label="{{sel.edit.context.aria}}">Edit</a></div><p style="margin: 0; font-size: 14px; line-height: 1.5">{{sel.cause}}</p></div></sc-if>
+<sc-if value="{{sel.hasEffect}}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 4px"><div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{sel.effectLabel}}</h3><a class="rr-edit" href="{{sel.edit.context.href}}" onClick="{{sel.edit.context.open}}" aria-label="{{sel.edit.context.aria}}">Edit</a></div><p style="margin: 0; font-size: 14px; line-height: 1.5">{{sel.consequence}}</p></div></sc-if>
 </div>
 
 <sc-if value="{{sel.hasRelated}}" hint-placeholder-val="{{ false }}">
@@ -555,7 +563,7 @@ button:disabled{opacity:.35;cursor:default}
 
 <sc-if value="{{sel.hasDaci}}" hint-placeholder-val="{{ true }}">
 <div style="display: flex; flex-direction: column; gap: 8px">
-<h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">DACI</h3>
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">DACI</h3><a class="rr-edit" href="{{sel.edit.daci.href}}" onClick="{{sel.edit.daci.open}}" aria-label="{{sel.edit.daci.aria}}">Edit</a></div>
 <div style="display: flex; flex-direction: column; border: 1px solid var(--rule-soft); border-radius: 6px">
 <sc-for list="{{sel.daci}}" as="ra" hint-placeholder-count="4">
 <div style="display: grid; grid-template-columns: 32px 100px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 12px; border-top: {{ra.rule}}">
@@ -570,7 +578,7 @@ button:disabled{opacity:.35;cursor:default}
 
 <sc-if value="{{sel.hasControls}}" hint-placeholder-val="{{ true }}">
 <div style="display: flex; flex-direction: column; gap: 4px">
-<h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{sel.controlsTitle}}</h3>
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{sel.controlsTitle}}</h3><a class="rr-edit" href="{{sel.edit.controls.href}}" onClick="{{sel.edit.controls.open}}" aria-label="{{sel.edit.controls.aria}}">Edit</a></div>
 <ul style="list-style: none; margin: 0; padding: 0">
 <sc-for list="{{sel.controls}}" as="co" hint-placeholder-count="2">
 <li style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 10px 0; border-top: 1px solid var(--rule-soft)">
@@ -584,7 +592,7 @@ button:disabled{opacity:.35;cursor:default}
 
 <sc-if value="{{sel.hasEvidence}}" hint-placeholder-val="{{ true }}">
 <div style="display: flex; flex-direction: column; gap: 4px">
-<h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{sel.evidenceTitle}}</h3>
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{sel.evidenceTitle}}</h3><a class="rr-edit" href="{{sel.edit.evidence.href}}" onClick="{{sel.edit.evidence.open}}" aria-label="{{sel.edit.evidence.aria}}">Edit</a></div>
 <sc-if value="{{sel.noEvidence}}" hint-placeholder-val="{{ false }}">
 <p style="margin: 0; padding: 10px 0; border-top: 1px solid var(--rule-soft); font-size: 14px; color: var(--bad-fg)">{{sel.noEvidenceNote}}</p>
 </sc-if>
@@ -601,7 +609,7 @@ button:disabled{opacity:.35;cursor:default}
 
 <sc-if value="{{sel.hasActions}}" hint-placeholder-val="{{ true }}">
 <div style="display: flex; flex-direction: column; gap: 4px">
-<h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{sel.actionsTitle}}</h3>
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{sel.actionsTitle}}</h3><a class="rr-edit" href="{{sel.edit.actions.href}}" onClick="{{sel.edit.actions.open}}" aria-label="{{sel.edit.actions.aria}}">Edit</a></div>
 <ul style="list-style: none; margin: 0; padding: 0">
 <sc-for list="{{sel.actions}}" as="ac" hint-placeholder-count="2">
 <li style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 10px 0; border-top: 1px solid var(--rule-soft)">
@@ -710,92 +718,77 @@ button:disabled{opacity:.35;cursor:default}
 <button class="rr-hover" onClick="{{formNew}}" style="align-self: flex-start; height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">{{formNewLabel}}</button>
 <sc-if value="{{formEmpty}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 13px; color: var(--ink2)">{{formEmptyNote}}</p></sc-if>
 <sc-for list="{{formEntries}}" as="fe" hint-placeholder-count="6">
-<button class="rr-hover" onClick="{{fe.pick}}" aria-pressed="{{fe.pressed}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 12px; border: 1px solid {{fe.bd}}; border-radius: 6px; background: {{fe.bg}}; color: {{fe.fg}}; cursor: pointer; text-align: left"><span style="font-size: 13px; font-weight: 600; line-height: 1.3"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; margin-right: 6px">{{fe.id}}</span>{{fe.title}}</span><span style="font-size: 11px; color: {{fe.subFg}}">{{fe.sub}}</span></button>
+<div class="rr-entry" style="position: relative; display: flex; flex-direction: column">
+<button class="rr-hover" onClick="{{fe.pick}}" aria-pressed="{{fe.pressed}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 64px 8px 12px; border: 1px solid {{fe.bd}}; border-radius: 6px; background: {{fe.bg}}; color: {{fe.fg}}; cursor: pointer; text-align: left"><span style="font-size: 13px; font-weight: 600; line-height: 1.3"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; margin-right: 6px">{{fe.id}}</span>{{fe.title}}</span><span style="font-size: 11px; color: {{fe.subFg}}">{{fe.sub}}</span></button>
+<sc-if value="{{fe.canView}}" hint-placeholder-val="{{ true }}"><a class="rr-view" href="{{fe.viewHref}}" onClick="{{fe.view}}" aria-label="{{fe.viewAria}}" style="position: absolute; top: 50%; right: 8px; transform: translateY(-50%); display: flex; align-items: center; height: 28px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-size: 12px; font-weight: 600; text-decoration: none">View</a></sc-if>
+</div>
 </sc-for>
 </nav>
 <sc-if value="{{formHasEntry}}" hint-placeholder-val="{{ true }}">
 <div style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 18px; padding: 20px; background: var(--card); border: 1px solid var(--rule); border-radius: 8px; box-sizing: border-box">
-<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between">
-<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: var(--ink2)"><span style="font-weight: 600; color: var(--ink)">{{formEntryId}}</span> · {{formKindLabel}}</span>
-<button class="rr-hover" onClick="{{formDelete}}" style="height: 36px; padding: 0 12px; border: 1px solid var(--bad-fg); border-radius: 6px; background: var(--card); color: var(--bad-fg); cursor: pointer; font-size: 13px; font-weight: 600">{{formDeleteLabel}}</button>
-</div>
-<div style="display: flex; flex-wrap: wrap; gap: 12px 24px">
-<sc-for list="{{formPills}}" as="fp" hint-placeholder-count="3">
-<div role="group" aria-label="{{fp.label}}" style="display: flex; flex-direction: column; gap: 6px">
-<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2)">{{fp.label}}</span>
-<div style="display: flex; gap: 4px; padding: 3px; border: 1px solid var(--control); border-radius: 8px">
-<sc-for list="{{fp.options}}" as="fo" hint-placeholder-count="5">
-<button class="rr-hover" onClick="{{fo.pick}}" aria-pressed="{{fo.pressed}}" style="border: 0; border-radius: 5px; min-width: 36px; padding: 0 10px; height: 34px; font-size: 13px; font-weight: 600; cursor: pointer; background: {{fo.bg}}; color: {{fo.fg}}">{{fo.label}}</button>
-</sc-for>
-</div>
-</div>
-</sc-for>
-</div>
-<fieldset style="margin: 0; padding: 0; border: 0; min-width: 0">
-<legend style="padding: 0 0 8px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">Entry</legend>
 <div style="display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: stretch">
-<div role="tablist" aria-orientation="vertical" aria-label="Entry text" style="flex: 0 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
-<sc-for list="{{formEntryTabs}}" as="et" hint-placeholder-count="4">
+<div style="flex: 0 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+<div role="tablist" aria-orientation="vertical" aria-label="Entry" style="display: flex; flex-direction: column; gap: 4px">
+<sc-for list="{{formEntryTabs}}" as="et" hint-placeholder-count="6">
 <button class="rr-hover" role="tab" id="{{et.tabId}}" aria-selected="{{et.selected}}" aria-controls="rr-entry-panel" onClick="{{et.pick}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 12px; border: 1px solid {{et.bd}}; border-left: 3px solid {{et.bar}}; border-radius: 6px; background: {{et.bg}}; color: var(--ink); cursor: pointer; text-align: left; min-width: 0"><span style="font-size: 13px; font-weight: 600">{{et.label}}</span><span style="max-width: 100%; font-size: 12px; color: {{et.previewFg}}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{et.preview}}</span></button>
 </sc-for>
 </div>
-<div role="tabpanel" id="rr-entry-panel" aria-labelledby="{{formEntry.tabId}}" style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
-<label for="{{formEntry.id}}" style="font-size: 13px; font-weight: 600">{{formEntry.label}}</label>
-<sc-if value="{{formEntry.isInput}}" hint-placeholder-val="{{ true }}">
-<input id="{{formEntry.id}}" type="text" value="{{formEntry.value}}" onChange="{{formEntry.onInput}}" autocomplete="off" style="height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; box-sizing: border-box; width: 100%">
-</sc-if>
-<sc-if value="{{formEntry.isArea}}" hint-placeholder-val="{{ false }}">
-<textarea id="{{formEntry.id}}" value="{{formEntry.value}}" onChange="{{formEntry.onInput}}" rows="8" style="flex: 1 1 auto; min-height: 120px; padding: 8px 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; box-sizing: border-box; width: 100%"></textarea>
-</sc-if>
-<span style="font-size: 12px; color: var(--ink3)">{{formEntry.hint}}</span>
-<sc-if value="{{formEntry.hasError}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 12px; color: var(--bad-fg)">{{formEntry.error}} — not saved yet</span></sc-if>
+<button class="rr-hover" onClick="{{formDelete}}" style="align-self: stretch; height: 36px; padding: 0 12px; border: 1px solid var(--bad-fg); border-radius: 6px; background: var(--card); color: var(--bad-fg); cursor: pointer; font-size: 13px; font-weight: 600">{{formDeleteLabel}}</button>
+</div>
+<div role="tabpanel" id="rr-entry-panel" aria-labelledby="{{formEntry.tabId}}" style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+<sc-if value="{{formEntry.isGrid}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: flex-start">
+<div style="display: flex; flex-direction: column; gap: 6px; flex: 0 0 240px">
+<div style="position: relative; width: 240px; height: 240px">
+<div style="position: absolute; inset: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(5, minmax(0, 1fr)); gap: 2px">
+<sc-for list="{{formEntry.grid.miniCells}}" as="m" hint-placeholder-count="25">
+<span style="border-radius: 3px; background: {{m.fill}}"></span>
+</sc-for>
+</div>
+<svg viewBox="0 0 100 100" onPointerMove="{{formEntry.grid.dragMove}}" onPointerUp="{{formEntry.grid.dragEnd}}" onPointerCancel="{{formEntry.grid.dragCancel}}" role="group" aria-label="{{formEntry.label}} rating grid" style="position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; touch-action: none">
+<sc-if value="{{formEntry.grid.hasInherent}}" hint-placeholder-val="{{ true }}"><polygon class="rr-marker" tabindex="0" aria-label="{{formEntry.grid.ariaInherent}}" points="{{formEntry.grid.inherentPts}}" onPointerDown="{{formEntry.grid.dragInherent}}" onKeyDown="{{formEntry.grid.keyInherent}}" style="fill: var(--card); cursor: {{formEntry.grid.inherentCursor}}" stroke="currentColor" stroke-width="1.5"></polygon></sc-if>
+<circle class="rr-marker" tabindex="0" aria-label="{{formEntry.grid.ariaNow}}" cx="{{formEntry.grid.nowX}}" cy="{{formEntry.grid.nowY}}" r="5.5" onPointerDown="{{formEntry.grid.dragNow}}" onKeyDown="{{formEntry.grid.keyNow}}" style="fill: var(--ink); stroke: var(--card); cursor: {{formEntry.grid.dragCursor}}" stroke-width="1.5"></circle>
+<sc-if value="{{formEntry.grid.hasTarget}}" hint-placeholder-val="{{ true }}"><circle class="rr-marker" tabindex="0" aria-label="{{formEntry.grid.ariaTarget}}" cx="{{formEntry.grid.targetX}}" cy="{{formEntry.grid.targetY}}" r="5" fill="none" onPointerDown="{{formEntry.grid.dragTarget}}" onKeyDown="{{formEntry.grid.keyTarget}}" style="stroke: var(--accent); pointer-events: stroke; cursor: {{formEntry.grid.dragCursor}}" stroke-width="2.2"></circle></sc-if>
+</svg>
+</div>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: var(--ink2)">{{formEntry.grid.axes}}</span>
+</div>
+<div style="flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{formEntry.grid.markers}}" as="mk" hint-placeholder-count="3">
+<div style="display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; min-height: 32px">
+<span style="display: flex; align-items: center; gap: 6px; width: 84px; font-size: 13px; font-weight: 600">
+<sc-if value="{{mk.isNow}}" hint-placeholder-val="{{ true }}"><svg width="12" height="12" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="4.5" fill="currentColor"></circle></svg></sc-if>
+<sc-if value="{{mk.isInherent}}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 10 10" aria-hidden="true"><polygon points="5,0.5 9.5,5 5,9.5 0.5,5" style="fill: var(--card)" stroke="currentColor" stroke-width="1.2"></polygon></svg></sc-if>
+<sc-if value="{{mk.isTarget}}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="3.8" fill="none" style="stroke: var(--accent)" stroke-width="1.6"></circle></svg></sc-if>
+{{mk.label}}</span>
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: {{mk.valueFg}}">{{mk.value}}</span>
+<sc-if value="{{mk.canAdd}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{mk.add}}" style="height: 30px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Add</button></sc-if>
+<sc-if value="{{mk.canClear}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{mk.clear}}" style="height: 30px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Clear</button></sc-if>
+</div>
+</sc-for>
 </div>
 </div>
-</fieldset>
-<sc-for list="{{formSections}}" as="fs" hint-placeholder-count="3">
-<fieldset style="margin: 0; padding: 0; border: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 12px 16px">
-<legend style="padding: 0 0 8px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{fs.title}}</legend>
-<sc-for list="{{fs.fields}}" as="ff" hint-placeholder-count="4">
-<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+</sc-if>
+<sc-if value="{{formEntry.hasFields}}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 12px 16px">
+<sc-for list="{{formEntry.fields}}" as="ff" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; grid-column: {{ff.span}}">
 <label for="{{ff.id}}" style="font-size: 13px; font-weight: 600">{{ff.label}}</label>
 <sc-if value="{{ff.isInput}}" hint-placeholder-val="{{ true }}">
 <input id="{{ff.id}}" type="{{ff.type}}" value="{{ff.value}}" onChange="{{ff.onInput}}" spellcheck="false" autocomplete="off" style="height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; box-sizing: border-box; width: 100%">
 </sc-if>
 <sc-if value="{{ff.isArea}}" hint-placeholder-val="{{ false }}">
-<textarea id="{{ff.id}}" value="{{ff.value}}" onChange="{{ff.onInput}}" rows="4" style="padding: 8px 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; box-sizing: border-box; width: 100%"></textarea>
+<textarea id="{{ff.id}}" value="{{ff.value}}" onChange="{{ff.onInput}}" rows="{{ff.rows}}" style="padding: 8px 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; box-sizing: border-box; width: 100%"></textarea>
 </sc-if>
-<span style="font-size: 12px; color: var(--ink3)">{{ff.hint}}</span>
+<sc-if value="{{ff.hasHint}}" hint-placeholder-val="{{ true }}"><span style="font-size: 12px; color: var(--ink3)">{{ff.hint}}</span></sc-if>
 <sc-if value="{{ff.hasError}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 12px; color: var(--bad-fg)">{{ff.error}} — not saved yet</span></sc-if>
 </div>
 </sc-for>
-</fieldset>
-</sc-for>
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 12px">
-<sc-for list="{{formPairs}}" as="pc" hint-placeholder-count="2">
-<div role="group" aria-label="{{pc.title}}" style="display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border: 1px solid var(--rule); border-radius: 8px">
-<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; justify-content: space-between">
-<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{pc.title}}</span>
-<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: var(--ink2)">{{pc.score}}</span>
 </div>
-<sc-for list="{{pc.rows}}" as="pr" hint-placeholder-count="2">
-<div role="group" aria-label="{{pc.title}} {{pr.label}}" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
-<span style="width: 72px; font-size: 13px; color: var(--ink2)">{{pr.label}}</span>
-<div style="display: flex; gap: 4px; padding: 3px; border: 1px solid var(--control); border-radius: 8px">
-<sc-for list="{{pr.options}}" as="po" hint-placeholder-count="5">
-<button class="rr-hover" onClick="{{po.pick}}" aria-pressed="{{po.pressed}}" style="border: 0; border-radius: 5px; min-width: 34px; padding: 0 8px; height: 32px; font-size: 13px; font-weight: 600; cursor: pointer; background: {{po.bg}}; color: {{po.fg}}">{{po.label}}</button>
-</sc-for>
-</div>
-</div>
-</sc-for>
-<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between">
-<span style="font-size: 12px; color: var(--ink3)">{{pc.hint}}</span>
-<sc-if value="{{pc.isSet}}" hint-placeholder-val="{{ true }}"><button class="rr-hover" onClick="{{pc.clear}}" style="height: 32px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Clear</button></sc-if>
-</div>
-</div>
-</sc-for>
-</div>
+</sc-if>
+<sc-if value="{{formEntry.isDetails}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 8px">
-<label for="rr-f-cat" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">Category</label>
+<label for="rr-f-cat" style="font-size: 13px; font-weight: 600">Category</label>
 <div style="display: flex; gap: 8px; align-items: center; max-width: 520px">
 <input id="rr-f-cat" type="text" value="{{formCatDraft}}" onChange="{{onFormCat}}" onKeyDown="{{onFormCatKey}}" placeholder="New category…" autocomplete="off" style="flex: 1 1 auto; min-width: 0; font: inherit; height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-size: 14px; box-sizing: border-box">
 <button class="rr-hover" onClick="{{formAddCat}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">Add</button>
@@ -808,7 +801,7 @@ button:disabled{opacity:.35;cursor:default}
 <span style="font-size: 12px; color: var(--ink3)">Pick one; click it again to clear. Enter adds a new one and selects it.</span>
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px">
-<label for="rr-f-slug" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">Slugs</label>
+<label for="rr-f-slug" style="font-size: 13px; font-weight: 600">Slugs</label>
 <div style="display: flex; gap: 8px; align-items: center; max-width: 520px">
 <input id="rr-f-slug" type="text" value="{{formSlugDraft}}" onChange="{{onFormSlug}}" onKeyDown="{{onFormSlugKey}}" placeholder="Add a slug…" spellcheck="false" autocomplete="off" style="flex: 1 1 auto; min-width: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-size: 14px; box-sizing: border-box">
 <button class="rr-hover" onClick="{{formAddSlug}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">Add</button>
@@ -823,9 +816,48 @@ button:disabled{opacity:.35;cursor:default}
 <span style="font-size: 12px; color: var(--ink3)">Tags that match this entry across registers. Enter, comma or ; adds one; text is turned into kebab-case. {{formSlugPreview}}</span>
 <sc-if value="{{formHasSlugError}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 12px; color: var(--bad-fg)">{{formSlugError}}</span></sc-if>
 </div>
-<div style="display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; font-size: 13px; color: var(--ink2)">
-<span>{{formTablesNote}}</span>
-<button class="rr-hover" onClick="{{formToSource}}" style="height: 36px; padding: 0 12px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">Open Source</button>
+</sc-if>
+<sc-if value="{{formEntry.isList}}" hint-placeholder-val="{{ false }}">
+<sc-if value="{{formEntry.list.canFold}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; justify-content: flex-end; gap: 6px">
+<button class="rr-hover" onClick="{{formEntry.list.expandAll}}" style="height: 32px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Expand all</button>
+<button class="rr-hover" onClick="{{formEntry.list.collapseAll}}" style="height: 32px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Collapse all</button>
+</div>
+</sc-if>
+<sc-for list="{{formEntry.list.rows}}" as="lr" hint-placeholder-count="2">
+<div role="group" aria-label="{{lr.aria}}" onDragOver="{{lr.dragOver}}" onDrop="{{lr.drop}}" style="display: flex; flex-direction: column; min-width: 0; border: 1px solid {{lr.rowBd}}; border-radius: 8px; opacity: {{lr.rowOpacity}}">
+<div style="display: flex; align-items: stretch; min-width: 0">
+<button class="rr-hover" draggable="true" onDragStart="{{lr.dragStart}}" onDragEnd="{{lr.dragEnd}}" onKeyDown="{{lr.handleKey}}" aria-label="{{lr.handleAria}}" title="Drag to reorder" style="flex: 0 0 auto; width: 32px; align-self: stretch; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 8px 0 0 8px; background: transparent; color: var(--ink3); cursor: grab"><svg width="10" height="16" viewBox="0 0 10 16" aria-hidden="true"><g fill="currentColor"><circle cx="2.5" cy="3" r="1.4"></circle><circle cx="7.5" cy="3" r="1.4"></circle><circle cx="2.5" cy="8" r="1.4"></circle><circle cx="7.5" cy="8" r="1.4"></circle><circle cx="2.5" cy="13" r="1.4"></circle><circle cx="7.5" cy="13" r="1.4"></circle></g></svg></button>
+<button class="rr-hover" onClick="{{lr.toggle}}" aria-expanded="{{lr.expanded}}" style="display: flex; align-items: center; gap: 10px; flex: 1 1 auto; min-width: 0; padding: 10px 14px 10px 4px; border: 0; border-radius: 8px; background: transparent; color: var(--ink); cursor: pointer; text-align: left">
+<svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" style="flex: 0 0 auto; transform: rotate({{lr.chevron}}); transition: transform 0.15s"><path d="M6 3 L11 8 L6 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{lr.title}}</span><span style="font-size: 12px; color: var(--ink2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{lr.sub}}</span></span>
+</button>
+</div>
+<sc-if value="{{lr.isOpen}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 12px; padding: 12px 14px; border-top: 1px solid var(--rule-soft)">
+<sc-for list="{{lr.fields}}" as="ff" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: {{ff.flex}}; order: {{ff.order}}">
+<label for="{{ff.id}}" style="font-size: 13px; font-weight: 600">{{ff.label}}</label>
+<sc-if value="{{ff.isInput}}" hint-placeholder-val="{{ true }}">
+<input id="{{ff.id}}" type="{{ff.type}}" value="{{ff.value}}" onChange="{{ff.onInput}}" spellcheck="false" autocomplete="off" list="{{ff.listId}}" placeholder="{{ff.placeholder}}" style="height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; box-sizing: border-box; width: 100%">
+</sc-if>
+<sc-if value="{{ff.hasOptions}}" hint-placeholder-val="{{ false }}"><datalist id="{{ff.listId}}"><sc-for list="{{ff.options}}" as="op" hint-placeholder-count="4"><option value="{{op.o}}"></option></sc-for></datalist></sc-if>
+<sc-if value="{{ff.isArea}}" hint-placeholder-val="{{ false }}">
+<textarea id="{{ff.id}}" value="{{ff.value}}" onChange="{{ff.onInput}}" rows="{{ff.rows}}" style="padding: 8px 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; box-sizing: border-box; width: 100%"></textarea>
+</sc-if>
+<sc-if value="{{ff.hasHint}}" hint-placeholder-val="{{ true }}"><span style="font-size: 12px; color: var(--ink3)">{{ff.hint}}</span></sc-if>
+<sc-if value="{{ff.hasError}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 12px; color: var(--bad-fg)">{{ff.error}} — not saved yet</span></sc-if>
+</div>
+</sc-for>
+<button class="rr-hover" onClick="{{lr.remove}}" aria-label="{{lr.removeAria}}" style="order: 1; margin-left: auto; height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Remove</button>
+</div>
+</sc-if>
+</div>
+</sc-for>
+<button class="rr-hover" onClick="{{formEntry.list.add}}" style="align-self: flex-start; height: 36px; padding: 0 12px; border: 1px solid var(--ink); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">{{formEntry.list.addLabel}}</button>
+</sc-if>
+<sc-if value="{{formEntry.hasHint}}" hint-placeholder-val="{{ true }}"><span style="font-size: 12px; color: var(--ink3)">{{formEntry.hint}}</span></sc-if>
+</div>
 </div>
 </div>
 </sc-if>
@@ -863,10 +895,6 @@ button:disabled{opacity:.35;cursor:default}
 
 
 
-<div style="display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; background: var(--card); border: 1px solid var(--rule); border-radius: 8px; font-size: 13px; line-height: 1.55; color: var(--ink2)">
-<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">How the files work</span>
-<span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: var(--ink)">?src=</span> names the current register (shown here as risks.md) and <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; color: var(--ink)">?ours=…&amp;theirs=…</span> compares two. Edits here live in memory only, so save the markdown to your own repo. Examples: <a href="?src=examples/acme-risks/risks.md">register</a> · <a href="?ours=examples/acme-risks/risks.md&amp;theirs=examples/partenaire.md">compare with a partner</a>. On the Register page, the A and B pickers choose what it shows: B is the register on view, and A (optional) is the baseline its changes are measured from. The toolbar opens files (drag and drop, a file picker or a URL) and creates, copies, downloads, clones or deletes the file on view.</span>
-</div>
 </section>
 </sc-if>
 
@@ -1350,6 +1378,8 @@ function formatDate(iso) { return formatDay(dayNumber(iso)); }
 function shortMonth(iso) { return MONTHS[new Date(dayNumber(iso) * 86400000).getUTCMonth()]; }
 function signed(n) { return n > 0 ? '+' + n : n < 0 ? '−' + Math.abs(n) : '0'; }
 function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
+/** The first approver, who answers for the entry; null when there is none. */
+function approverOf(r) { return r.daci.A[0] ?? null; }
 function personLine(p) { return p === null ? '' : p.role === null ? p.name : p.name + ' — ' + p.role; }
 /** " · "-joined, skipping blanks. */
 function dotJoin(xs) { return xs.filter((x) => x !== null && x !== '').join(' · '); }
@@ -1455,7 +1485,7 @@ function firstFieldLine(lines, start, end) {
 }
 
 /** Fields every entry has, then the fields only one kind has. */
-const COMMON_FIELDS = ['slugs', 'kind', 'status', 'closed', 'category', 'owner', 'target', 'driver', 'approver', 'contributors', 'informed'];
+const COMMON_FIELDS = ['slugs', 'kind', 'status', 'closed', 'category', 'target', 'driver', 'approver', 'contributors', 'informed'];
 const KIND_FIELDS = Object.freeze({
   risk: ['impact', 'likelihood', 'inherent', 'appetite'],
   opportunity: ['value', 'effort', 'target_value', 'cost', 'realisation'],
@@ -1463,6 +1493,8 @@ const KIND_FIELDS = Object.freeze({
 const ALL_FIELDS = COMMON_FIELDS.concat(KIND_FIELDS.risk, KIND_FIELDS.opportunity);
 /** The only fields an entry must have: its score. Everything else is optional. */
 const REQUIRED_FIELDS = Object.freeze({ risk: ['impact', 'likelihood'], opportunity: ['value', 'effort'] });
+const EVIDENCE_HEADER = ['Ref', 'Title', 'Kind', 'Date', 'Valid days'];
+const ACTION_HEADER = ['Action', 'Owner', 'Due', 'Done'];
 /** Per-kind prose and table markers in the markdown. */
 const KIND_SYNTAX = Object.freeze({
   risk: { cause: '**Cause:** ', effect: '**Consequence:** ', table: '### Controls', header: ['Control', 'Type', 'Effectiveness'], types: CONTROL_TYPES, states: EFFECTIVENESS, stateWhat: 'control effectiveness' },
@@ -1521,7 +1553,7 @@ function parseRiskSection(lines, start, end, file) {
       i = t.next; continue;
     }
     if (table === 'evidence') {
-      const t = parseTable(lines, i + 1, ['Ref', 'Title', 'Kind', 'Date', 'Valid days'], file);
+      const t = parseTable(lines, i + 1, EVIDENCE_HEADER, file);
       evidence = t.rows.filter((r) => r.cells[0] !== '' || r.cells[1] !== '').map((r) => Object.freeze({
         ref: r.cells[0], title: r.cells[1], kind: r.cells[2],
         date: isIsoDate(r.cells[3]) ? r.cells[3] : null, validDays: /^\d+$/.test(r.cells[4]) && Number(r.cells[4]) >= 1 ? Number(r.cells[4]) : null,
@@ -1529,7 +1561,7 @@ function parseRiskSection(lines, start, end, file) {
       i = t.next; continue;
     }
     if (table === 'actions') {
-      const t = parseTable(lines, i + 1, ['Action', 'Owner', 'Due', 'Done'], file);
+      const t = parseTable(lines, i + 1, ACTION_HEADER, file);
       actions = t.rows.filter((r) => r.cells[0] !== '').map((r) => Object.freeze({
         title: r.cells[0], owner: parsePerson(r.cells[1]),
         due: isIsoDate(r.cells[2]) ? r.cells[2] : null,
@@ -1551,7 +1583,6 @@ function parseRiskSection(lines, start, end, file) {
     slugs: has('slugs') ? parseSlugs(fields.slugs) : Object.freeze([]), slugsLine: at('slugs'),
     closed: closedOn,
     category: has('category') ? fields.category : 'Uncategorised',
-    owner: has('owner') ? parsePerson(fields.owner) : null,
     value, effort,
     impact: isRisk ? parseLevel(fields.impact, file, at('impact'), 'impact') : SCALE + 1 - effort,
     likelihood: isRisk ? parseLevel(fields.likelihood, file, at('likelihood'), 'likelihood') : value,
@@ -1702,7 +1733,7 @@ function cellCentre(i, l) { return { x: (i - 0.5) * (100 / SCALE), y: (SCALE - l
 function matchesQuery(r, query) {
   const terms = query.toLowerCase().split(/\s+/).filter((t) => t.length > 0);
   if (terms.length === 0) return true;
-  const hay = [r.id, r.title, r.category, r.description, r.cause, r.consequence, personLine(r.owner)].join(' ').toLowerCase();
+  const hay = [r.id, r.title, r.category, r.description, r.cause, r.consequence, personLine(approverOf(r))].join(' ').toLowerCase();
   return terms.every((t) => hay.includes(t));
 }
 
@@ -1780,7 +1811,7 @@ function buildMatrix(st, S, accent, go, risks) {
       const sel = r.id === selectedId;
       return {
         id: r.id, title: r.title,
-        meta: dotJoin([r.owner === null ? null : r.owner.name, r.category]),
+        meta: dotJoin([approverOf(r) === null ? null : approverOf(r).name, r.category]),
         score: b.score, fill: band.fill, ink: band.ink,
         delta: kind === 'new' ? 'New' : d > 0 ? '▲ ' + d : d < 0 ? '▼ ' + Math.abs(d) : '–',
         deltaColor: lookup(KINDS, kind, 'kind').color,
@@ -1938,6 +1969,64 @@ function buildTrajectories(st, S, accent, go, risks) {
   };
 }
 
+/** The field patch that moves marker `which` ('now', 'inherent' or 'target') to matrix cell [i, l]. An opportunity stores value = l and effort = SCALE + 1 - i. */
+function ratingPatch(kind, which, i, l) {
+  const isOpp = kind === 'opportunity';
+  if (which === 'now') return isOpp ? { value: String(l), effort: String(SCALE + 1 - i) } : { impact: String(i), likelihood: String(l) };
+  return { [which]: isOpp ? l + 'x' + (SCALE + 1 - i) : i + 'x' + l };
+}
+
+/**
+ * A 5 × 5 grid whose markers drag to a new cell. `cells` maps now/inherent/target to an [impact, likelihood] cell, or null
+ * when absent; `movable` lists the markers that move. The drag lives in st.miniDrag under `id`; `drop(which, i, l)` writes it.
+ * A focused marker also moves with the arrow keys.
+ */
+function dragGrid(st, id, cells, movable, setState, drop) {
+  const drag = st.miniDrag !== null && st.miniDrag.id === id ? st.miniDrag : null;
+  const at = (which) => (drag !== null && drag.which === which ? [drag.i, drag.l] : cells[which]);
+  const centre = (which) => (cells[which] === null ? { x: 0, y: 0 } : cellCentre(...at(which)));
+  const can = (which) => movable.includes(which) && cells[which] !== null;
+  const clamp = (v) => Math.min(SCALE, Math.max(1, v));
+  const cellAt = (e) => {
+    const b = e.currentTarget.getBoundingClientRect();
+    return [clamp(Math.ceil(((e.clientX - b.left) / b.width) * SCALE)), clamp(SCALE - Math.floor(((e.clientY - b.top) / b.height) * SCALE))];
+  };
+  const grab = (which) => (can(which) ? (e) => {
+    e.preventDefault();
+    e.currentTarget.ownerSVGElement.setPointerCapture(e.pointerId);
+    setState({ miniDrag: { id, which, i: cells[which][0], l: cells[which][1] } });
+  } : null);
+  const ARROWS = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] };
+  const key = (which) => (can(which) ? (e) => {
+    const d = ARROWS[e.key];
+    if (d === undefined) return;
+    e.preventDefault();
+    const [i, l] = [clamp(cells[which][0] + d[0]), clamp(cells[which][1] + d[1])];
+    if (i !== cells[which][0] || l !== cells[which][1]) drop(which, i, l);
+  } : null);
+  const cursor = (which) => (can(which) ? (drag === null ? 'grab' : 'grabbing') : 'default');
+  const ic = centre('inherent');
+  const tc = centre('target');
+  const nc = centre('now');
+  return {
+    drag, at,
+    miniCells: [5, 4, 3, 2, 1].flatMap((l) => [1, 2, 3, 4, 5].map((i) => ({ fill: bandOf(i * l).tint }))),
+    hasInherent: cells.inherent !== null, hasTarget: cells.target !== null,
+    inherentPts: [[0, -6], [6, 0], [0, 6], [-6, 0]].map(([dx, dy]) => (ic.x + dx) + ',' + (ic.y + dy)).join(' '),
+    targetX: tc.x, targetY: tc.y, nowX: nc.x, nowY: nc.y,
+    dragCursor: cursor('now'), inherentCursor: cursor('inherent'),
+    dragNow: grab('now'), dragInherent: grab('inherent'), dragTarget: grab('target'),
+    keyNow: key('now'), keyInherent: key('inherent'), keyTarget: key('target'),
+    dragMove: (e) => {
+      if (drag === null) return;
+      const [i, l] = cellAt(e);
+      if (i !== drag.i || l !== drag.l) setState({ miniDrag: Object.assign({}, drag, { i, l }) });
+    },
+    dragEnd: () => { if (drag !== null) drop(drag.which, drag.i, drag.l); },
+    dragCancel: () => { if (drag !== null) setState({ miniDrag: null }); },
+  };
+}
+
 /**
  * Drawer for the selected entry. `others` are entries of the other kind (as at the same date); any sharing a slug
  * with the selection are listed as related, e.g. a risk and the opportunity that is its upside.
@@ -1961,12 +2050,18 @@ function buildDetail(st, S, viewRisks, others, go, setState, saveDraft) {
   const base = {
     id: r.id, title: r.title, category: r.category, description: r.description, cause: r.cause, consequence: r.consequence,
     sourceRef: 'Source: ' + r.file + ' · line ' + r.line,
-    sourceOpen: (e) => {
-      e.preventDefault();
-      const fr = tryParse(r.file, st.drafts[r.file]);
-      const k = fr.ok ? fr.file.risks.findIndex((x) => x.line === r.line) : -1;
-      go({ side: 'back', dataMode: 'form', dataFile: r.file, formIdx: Math.max(0, k), formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', dataFlash: '' })();
-    },
+    /* Links to each form tab for this entry: a plain click opens it here, a modified click follows the href (e.g. a new tab). */
+    edit: Object.fromEntries(FORM_TABS.map((tab) => [tab, {
+      href: hrefWith({ page: 'data', kind: r.kind === 'risk' ? null : r.kind, entry: r.id, tab: tab === FORM_TABS[0] ? null : tab, view: null }),
+      aria: 'Edit ' + r.id + ' ' + tab,
+      open: (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        const fr = tryParse(r.file, st.drafts[r.file]);
+        const k = fr.ok ? fr.file.risks.findIndex((x) => x.line === r.line) : -1;
+        go({ side: 'back', dataMode: 'form', dataFile: r.file, formIdx: Math.max(0, k), formEntryTab: tab, formListOpen: null, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', dataFlash: '' })();
+      },
+    }])),
     hasCause: r.cause !== null, hasEffect: r.consequence !== null, hasControls: r.controls.length > 0,
     hasEvidence: r.evidence.length > 0, hasActions: r.actions.length > 0,
     hasDaci: daci.length > 0,
@@ -2033,28 +2128,15 @@ function buildDetail(st, S, viewRisks, others, go, setState, saveDraft) {
     : { k: sinceLabel, v: (now.score > before.score ? '▲ ' : now.score < before.score ? '▼ ' : '') + Math.abs(now.score - before.score) + ' (' + before.score + ' → ' + now.score + ')', color: lookup(KINDS, kind, 'kind').color };
   const hist = r.path.slice(0, toIdx + 1).filter((p) => p !== null);
   const dedup = hist.filter((p, j) => j === 0 || p[0] !== hist[j - 1][0] || p[1] !== hist[j - 1][1]);
-  /* Dragging: cells are [impact, likelihood] matrix positions; an opportunity stores value = l and effort = SCALE + 1 - i. */
+  /* Only an open entry drags; with no inherent rating the diamond marks its first assessment and stays put. */
   const canDrag = lc === 'open';
-  const drag = st.miniDrag !== null && st.miniDrag.id === r.id ? st.miniDrag : null;
-  const at = (which, cell) => (drag !== null && drag.which === which ? [drag.i, drag.l] : cell);
-  const nowCell = at('now', [now.i, now.l]);
-  if (drag !== null && drag.which === 'now') dedup[dedup.length - 1] = nowCell;
-  const ic = cellCentre(...at('inherent', origin));
-  const tc = r.target === null ? { x: 0, y: 0 } : cellCentre(...at('target', r.target));
-  const nc = cellCentre(...nowCell);
-  const isOpp = r.kind === 'opportunity';
-  const pair = (i, l) => (isOpp ? l + 'x' + (SCALE + 1 - i) : i + 'x' + l);
-  const toPatch = (which, i, l) => (which === 'now' ? (isOpp ? { value: String(l), effort: String(SCALE + 1 - i) } : { impact: String(i), likelihood: String(l) }) : { [which]: pair(i, l) });
-  const cellAt = (e) => {
-    const b = e.currentTarget.getBoundingClientRect();
-    const clamp = (v) => Math.min(SCALE, Math.max(1, v));
-    return [clamp(Math.ceil(((e.clientX - b.left) / b.width) * SCALE)), clamp(SCALE - Math.floor(((e.clientY - b.top) / b.height) * SCALE))];
-  };
-  const grab = (which, cell) => (e) => {
-    e.preventDefault();
-    e.currentTarget.ownerSVGElement.setPointerCapture(e.pointerId);
-    setState({ miniDrag: { id: r.id, which, i: cell[0], l: cell[1] } });
-  };
+  const g = dragGrid(st, r.id, { now: [now.i, now.l], inherent: origin, target: r.target }, canDrag ? (hasInherent ? ['now', 'inherent', 'target'] : ['now', 'target']) : [], setState, (which, i, l) => {
+    const fr = tryParse(r.file, st.drafts[r.file]);
+    const rec = fr.ok ? fr.file.risks.find((x) => x.line === r.line) : undefined;
+    if (rec === undefined) { setState({ miniDrag: null }); return; }
+    saveDraft(r.file, patchSection(st.drafts[r.file], rec, ratingPatch(r.kind, which, i, l)));
+  });
+  if (g.drag !== null && g.drag.which === 'now') dedup[dedup.length - 1] = g.at('now');
   /* Facts whose field is missing are left out (null). */
   const limitFact = r.limit === null ? null : { k: L.limitName, v: L.limitSymbol + ' ' + r.limit + (lc === 'open' ? ' · ' + (outside ? L.outsideWord : L.insideWord) : ''), color: outside ? ESCALATE : INK };
   const targetFact = r.target === null ? null : { k: 'Target', v: tScore + ' (' + L.pairText(r.targetRaw) + ')', color: INK };
@@ -2076,35 +2158,14 @@ function buildDetail(st, S, viewRisks, others, go, setState, saveDraft) {
     score: now.score, bandFill: band.fill, bandInk: band.ink,
     bandLabel: (lc === 'closed' ? 'Last score · ' : '') + bandName(L, band),
     ixl: L.ratingLong(now.i, now.l),
-    facts: [S.length > 1 ? change : null].concat(kindFacts, [r.owner === null ? null : { k: 'Owner', v: personLine(r.owner), color: INK }]).filter((f) => f !== null),
+    facts: [S.length > 1 ? change : null].concat(kindFacts).filter((f) => f !== null),
     originLegend: hasInherent ? L.originLabel : LENS.opportunity.originLabel,
-    hasTarget: r.target !== null,
-    miniCells: [5, 4, 3, 2, 1].flatMap((l) => [1, 2, 3, 4, 5].map((i) => ({ fill: bandOf(i * l).tint }))),
     miniAria: 'Path through the matrix: ' + (hasInherent ? L.originLabel : LENS.opportunity.originLabel).toLowerCase() + ' ' + iScore + ', now ' + now.score + (tScore === null ? '' : ', target ' + tScore),
     pathPoints: dedup.map((p) => { const c = cellCentre(p[0], p[1]); return c.x + ',' + c.y; }).join(' '),
-    inherentPts: [[0, -6], [6, 0], [0, 6], [-6, 0]].map(([dx, dy]) => (ic.x + dx) + ',' + (ic.y + dy)).join(' '),
-    targetX: tc.x, targetY: tc.y, nowX: nc.x, nowY: nc.y,
     nowFill: lc === 'open' ? INK : 'var(--ink3)',
     nowLegend: lc === 'open' ? 'Now' : 'Last',
-    canDrag, dragCursor: canDrag ? (drag === null ? 'grab' : 'grabbing') : 'default',
-    inherentCursor: canDrag && hasInherent ? (drag === null ? 'grab' : 'grabbing') : 'default',
-    dragNow: canDrag ? grab('now', [now.i, now.l]) : null,
-    dragInherent: canDrag && hasInherent ? grab('inherent', origin) : null,
-    dragTarget: canDrag && r.target !== null ? grab('target', r.target) : null,
-    dragMove: (e) => {
-      if (drag === null) return;
-      const [i, l] = cellAt(e);
-      if (i !== drag.i || l !== drag.l) setState({ miniDrag: Object.assign({}, drag, { i, l }) });
-    },
-    dragEnd: () => {
-      if (drag === null) return;
-      const fr = tryParse(r.file, st.drafts[r.file]);
-      const rec = fr.ok ? fr.file.risks.find((x) => x.line === r.line) : undefined;
-      if (rec === undefined) { setState({ miniDrag: null }); return; }
-      saveDraft(r.file, patchSection(st.drafts[r.file], rec, toPatch(drag.which, drag.i, drag.l)));
-    },
-    dragCancel: () => { if (drag !== null) setState({ miniDrag: null }); },
-  });
+    canDrag,
+  }, g);
 }
 
 /** Category pills: "All" clears; others toggle (multi-select). Counts are open risks at the as-at date. */
@@ -2200,7 +2261,7 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState, addFiles) {
     .map((n) => ({ n, text: lines[n - 1] === '' ? ' ' : lines[n - 1], bg: n === loc.line ? 'var(--bad-bg)' : 'transparent', weight: n === loc.line ? 600 : 400 }));
   const mode = st.dataMode;
   return {
-    ...buildForm(st, fr, name, text, go, setState),
+    ...buildForm(st, fr, name, text, go, setState, a.model.ok ? a.model.model : null),
     isSource: mode === 'source',
     dataModes: DATA_MODES.map((m) => ({ label: m.label, pressed: String(m.id === mode), bg: m.id === mode ? INK : 'transparent', fg: m.id === mode ? 'var(--on-ink)' : INK, pick: go({ dataMode: m.id, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '' }) })),
     dataMeta: name +(fr.ok ? ' · as at ' + formatDate(fr.file.asAt) + ' · ' + kindCounts(fr.file.risks) + ' · parsed OK' : ' · has an error'),
@@ -2371,7 +2432,7 @@ function buildTable(st, toIdx, go, risks, L) {
       const lc = lookup(LIFECYCLE, open ? 'open' : 'closed', 'lifecycle');
       const sel = r.id === st.selectedId;
       return {
-        id: r.id, title: r.title, category: r.category, owner: personLine(r.owner), status: lc.label, stBg: lc.bg, stFg: lc.fg,
+        id: r.id, title: r.title, category: r.category, approver: personLine(approverOf(r)), status: lc.label, stBg: lc.bg, stFg: lc.fg,
         rating: L.rating(r.impact, r.likelihood), score, fill: open ? band.fill : 'var(--neutral-bg)', ink: open ? band.ink : INK2,
         limit: r.limit === null ? '—' : L.limitSymbol + ' ' + r.limit, target: r.targetRaw === null ? '—' : L.pairText(r.targetRaw),
         controls: r.controls.length, evidence: r.evidence.length, actions: r.actions.length,
@@ -2588,17 +2649,50 @@ function patchSection(text, r, patch) {
   return lines.slice(0, p.start).concat(section, lines.slice(p.end)).join('\n');
 }
 
+/** A "### Name" line → "name"; null for any other line. */
+function tableName(line) { const m = /^#{3,}\s*(.*?)\s*$/.exec(line); return m === null ? null : m[1].toLowerCase(); }
+/** One entry's "### <name>" table as raw cells in `header` order, blank rows included; [] when it has none. */
+function tableCells(text, r, name, header) {
+  const lines = text.replace(/\r\n?/g, '\n').split('\n');
+  const h = lines.findIndex((l, j) => j >= r.line && j < r.endLine && tableName(l) === name.toLowerCase());
+  return h === -1 ? [] : parseTable(lines, h + 1, header, r.file).rows.map((x) => x.cells);
+}
+/** The file text with one entry's "### <name>" table rewritten from `rows` (cells in `header` order); no rows removes it. */
+function patchTable(text, r, name, header, rows) {
+  const lines = text.replace(/\r\n?/g, '\n').split('\n');
+  const start = r.line - 1;
+  const sec = lines.slice(start, r.endLine);
+  /* Cells can't hold a pipe or a line break. */
+  const cell = (c) => c.replace(/\|/g, '/').replace(/\s*\n\s*/g, ' ').trim();
+  const block = rows.length === 0 ? [] : ['### ' + name, '| ' + header.join(' | ') + ' |', '|' + header.map(() => '---|').join('')]
+    .concat(rows.map((cs) => '| ' + cs.map(cell).join(' | ') + ' |'));
+  const h = sec.findIndex((l, j) => j > 0 && tableName(l) === name.toLowerCase());
+  let out;
+  if (h === -1) {
+    out = sec.slice();
+    while (out.length > 1 && out[out.length - 1].trim() === '') out.pop();
+    if (block.length > 0) out = out.concat([''], block);
+  } else {
+    let after = parseTable(lines, start + h + 1, header, r.file).next - start;
+    if (block.length === 0) while (after < sec.length && sec[after].trim() === '') after += 1;
+    out = sec.slice(0, h).concat(block, block.length > 0 && after < sec.length && sec[after].trim() !== '' ? [''] : [], sec.slice(after));
+  }
+  while (out.length > 1 && out[out.length - 1].trim() === '') out.pop();
+  out.push('');
+  return lines.slice(0, start).concat(out, lines.slice(r.endLine)).join('\n');
+}
+
 /** Optional fields the form offers per kind: [key, label, input type, hint]. */
 const FORM_DETAILS = Object.freeze({
-  risk: [['owner', 'Owner', 'text', 'Name (Role)'], ['appetite', 'Appetite', 'number', 'Highest acceptable score, 1–25']],
-  opportunity: [['owner', 'Owner', 'text', 'Name (Role)'], ['target_value', 'Target value', 'number', 'Lowest acceptable score, 1–25'], ['cost', 'Cost', 'text', ''], ['realisation', 'Realisation', 'date', 'When the value should land']],
+  risk: [['appetite', 'Appetite', 'number', 'Highest acceptable score, 1–25']],
+  opportunity: [['target_value', 'Target value', 'number', 'Lowest acceptable score, 1–25'], ['cost', 'Cost', 'text', ''], ['realisation', 'Realisation', 'date', 'When the value should land']],
 });
 /** Free text → a kebab-case slug: "Supplier Failure!" → "supplier-failure". */
 function slugify(t) { return t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
 const FORM_DACI = [['driver', 'Driver'], ['approver', 'Approver'], ['contributors', 'Contributors'], ['informed', 'Informed']];
 
 /** Form mode on the data side: entry list plus a form for one entry. Values that would not parse stay in formPending with the error. */
-function buildForm(st, fr, name, text, go, setState) {
+function buildForm(st, fr, name, text, go, setState, model) {
   if (st.dataMode !== 'form') return { isForm: false, formOk: false, formFailed: false };
   if (!fr.ok) return { isForm: true, formOk: false, formFailed: true, formError: fr.error, formFix: go({ dataMode: 'source', formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '' }) };
   const file = fr.file;
@@ -2630,6 +2724,15 @@ function buildForm(st, fr, name, text, go, setState) {
         id: r.id, title: r.title, pressed: String(on), bg: on ? INK : 'var(--card)', fg: on ? 'var(--on-ink)' : INK, subFg: on ? 'var(--on-ink-muted)' : INK2, bd: on ? INK : 'var(--control)',
         sub: dotJoin(['score ' + r.impact * r.likelihood, r.category === 'Uncategorised' ? null : r.category, r.status === 'closed' ? 'closed' : null]),
         pick: go({ formIdx: k, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '' }),
+        /* View opens the entry in the Register, when this file is one of its sources and the entry is on it. */
+        canView: model !== null && (name === st.cmpB || name === st.cmpA) && model.risks.some((x) => x.id === r.id && x.kind === r.kind),
+        viewHref: hrefWith({ page: pageOf('front'), kind: r.kind === 'risk' ? null : r.kind, entry: null, tab: null }),
+        viewAria: 'View ' + r.id + ' in the register',
+        view: (e) => {
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+          e.preventDefault();
+          go({ side: 'front', lens: r.kind, selectedId: r.id, drawerOpen: true, categories: [], cellFilter: null, kindFilter: null, query: '' })();
+        },
       };
     }),
   };
@@ -2645,38 +2748,15 @@ function buildForm(st, fr, name, text, go, setState) {
     const pending = Object.assign({}, pend, { [key]: { value, error: res.ok ? '' : res.error.replace(/^[^:]+:\d+: /, '') } });
     if (res.ok) commit(next, { formPending: pending }); else setState({ formPending: pending });
   };
-  const field = (key, label, type, raw, hint) => {
+  const field = (key, label, type, raw, hint, wide) => {
     const q = pend[key];
     return {
-      id: 'rr-f-' + key, label, hint, type, isArea: type === 'textarea', isInput: type !== 'textarea',
+      id: 'rr-f-' + key, label, hint, hasHint: hint !== '', type, isArea: type === 'textarea', isInput: type !== 'textarea', rows: 8, span: wide ? '1 / -1' : 'auto',
       value: q === undefined ? raw : q.value, onInput: edit(key),
       error: q === undefined ? '' : q.error, hasError: q !== undefined && q.error !== '',
     };
   };
   const raw = (k) => (Object.prototype.hasOwnProperty.call(p.fields, k) ? p.fields[k] : '');
-  const pills = (label, cur, opts) => ({
-    label,
-    options: opts.map((o) => ({
-      label: o.label, pressed: String(o.id === cur), bg: o.id === cur ? INK : 'transparent', fg: o.id === cur ? 'var(--on-ink)' : INK,
-      pick: () => commit(patchSection(text, r, o.patch), { formPending: pend }),
-    })),
-  });
-  const level = (key) => [1, 2, 3, 4, 5].map((v) => ({ id: v, label: String(v), patch: { [key]: String(v) } }));
-  /* A pair field (inherent, target) as two 1–5 selectors; an unset pair starts from the entry's current rating. */
-  const pairCard = (key, title, hint) => {
-    const m = /^([1-5])x([1-5])$/.exec(raw(key).trim());
-    const cur = m === null ? null : [Number(m[1]), Number(m[2])];
-    const base = cur ?? (r.kind === 'risk' ? [r.impact, r.likelihood] : [r.value, r.effort]);
-    const names = r.kind === 'risk' ? ['Impact', 'Likelihood'] : ['Value', 'Effort'];
-    return {
-      title, hint, isSet: cur !== null, clear: () => commit(patchSection(text, r, { [key]: '' }), { formPending: pend }),
-      score: cur === null ? 'Not set' : 'Score ' + (r.kind === 'risk' ? cur[0] * cur[1] : cur[0] * (SCALE + 1 - cur[1])),
-      rows: [0, 1].map((side) => pills(names[side], cur === null ? null : cur[side], [1, 2, 3, 4, 5].map((v) => {
-        const next = side === 0 ? [v, base[1]] : [base[0], v];
-        return { id: v, label: String(v), patch: { [key]: next[0] + 'x' + next[1] } };
-      }))),
-    };
-  };
   /* Categories: every one used in any loaded file; an entry has at most one. */
   const cat = raw('category').trim();
   const known = Array.from(new Set(Object.values(parseAll(st.drafts)).filter((x) => x.ok)
@@ -2697,48 +2777,143 @@ function buildForm(st, fr, name, text, go, setState) {
     writeSlugs(slugs.concat(slug));
   };
   const isRisk = r.kind === 'risk';
-  const tables = r.controls.length + r.evidence.length + r.actions.length;
   return Object.assign(common, {
-    formEntryId: r.id, formKindLabel: capitalise(L.noun),
+    formEntryId: r.id,
     formDelete: () => commit(text.replace(/\r\n?/g, '\n').split('\n').filter((_, j) => j < p.start || j >= p.end).join('\n'), { formIdx: Math.max(0, idx - 1), formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '' }),
     formDeleteLabel: 'Delete ' + r.id,
-    formPills: [
-      pills(isRisk ? 'Impact' : 'Value', isRisk ? r.impact : r.value, level(isRisk ? 'impact' : 'value')),
-      pills(isRisk ? 'Likelihood' : 'Effort', isRisk ? r.likelihood : r.effort, level(isRisk ? 'likelihood' : 'effort')),
-      pills('Status', r.status, [
-        { id: 'open', label: 'Open', patch: { status: 'open', closed: '' } },
-        { id: 'closed', label: 'Closed', patch: { status: 'closed', closed: raw('closed').trim() === '' ? file.asAt : raw('closed') } },
-      ]),
-    ],
-    /* Entry text as vertical tabs, with the selected one's input beside them. Only the description keeps line breaks. */
+    /* The entry as vertical tabs, with the selected one's panel beside them. */
     ...(() => {
-      const entry = [
-        field('title', 'Title', 'text', p.title, 'One line; it becomes the ## heading.'),
-        field('description', 'Description', 'textarea', p.description, 'Blank lines separate paragraphs.'),
-        field('cause', L.causeLabel, 'text', p.cause, 'One line.'),
-        field('consequence', L.effectLabel, 'text', p.consequence, 'One line.'),
-      ].map((f) => Object.assign(f, { key: f.id.slice(5), tabId: f.id + '-tab' }));
-      const cur = entry.find((f) => f.key === st.formEntryTab) ?? entry[0];
-      const oneLine = (f) => (e) => f.onInput({ target: { value: e.target.value.replace(/\r?\n/g, ' ') } });
+      const drop = (which, i, l) => commit(patchSection(text, r, ratingPatch(r.kind, which, i, l)), { formPending: pend, miniDrag: null });
+      const g = dragGrid(st, 'form', { now: [r.impact, r.likelihood], inherent: r.inherent, target: r.target }, ['now', 'inherent', 'target'], setState, drop);
+      const rated = (cell) => 'Score ' + cell[0] * cell[1] + ' · ' + L.rating(cell[0], cell[1]);
+      /* An unset inherent or target is added at the actual rating, then dragged from there. */
+      const markers = [['now', 'Actual'], ...(isRisk ? [['inherent', 'Inherent']] : []), ['target', 'Target']].map(([which, label]) => {
+        const cell = which === 'now' ? g.at('now') : r[which] === null ? null : g.at(which);
+        return {
+          label, value: cell === null ? 'Not set' : rated(cell), valueFg: cell === null ? 'var(--ink3)' : INK2,
+          isNow: which === 'now', isInherent: which === 'inherent', isTarget: which === 'target',
+          canAdd: cell === null, add: () => drop(which, r.impact, r.likelihood),
+          canClear: which !== 'now' && cell !== null, clear: () => commit(patchSection(text, r, { [which]: '' }), { formPending: pend }),
+          aria: label + ', ' + (cell === null ? 'not set' : rated(cell)) + '. Arrow keys move it.',
+        };
+      });
+      /* Controls, evidence and actions: each table is rewritten whole from its raw cells. A row folds to its title, and adding one folds the rest.
+         Typed text stays in formPending so a trailing space survives the cell trim. Rows reorder by dragging the handle, or with its arrow keys.
+         `cols` are [cell index, label, input type, placeholder, suggestions] in form order; the first is the row's title, with `titleCols` as fallbacks. */
+      const rowList = (key, heading, header, cols, titleCols, noun) => {
+        const rows = tableCells(text, r, heading, header);
+        const listKey = name + ':' + r.line + ':' + key;
+        const opened = st.formListOpen !== null && st.formListOpen.key === listKey ? st.formListOpen.open : [];
+        const drag = st.formRowDrag !== null && st.formRowDrag.key === listKey ? st.formRowDrag : null;
+        const listOpen = (open) => ({ formListOpen: { key: listKey, open } });
+        const write = (next, pending, open) => commit(patchTable(text, r, heading, header, next), Object.assign({ formPending: pending, formRowDrag: null }, listOpen(open)));
+        const move = (from, to) => {
+          if (to < 0 || to >= rows.length || to === from) return;
+          const order = rows.map((_, j) => j);
+          order.splice(to, 0, order.splice(from, 1)[0]);
+          write(order.map((j) => rows[j]), {}, opened.map((j) => order.indexOf(j)));
+        };
+        return {
+          canFold: rows.length > 0,
+          expandAll: () => setState(listOpen(rows.map((_, k) => k))), collapseAll: () => setState(listOpen([])),
+          rows: rows.map((cells, k) => {
+            const open = opened.includes(k);
+            const title = titleCols.map((c) => cells[c].trim()).find((x) => x !== '');
+            return {
+              aria: capitalise(noun) + ' ' + (k + 1), removeAria: 'Remove ' + noun + ' ' + (k + 1),
+              handleAria: 'Move ' + noun + ' ' + (k + 1) + '. Drag, or use the up and down arrow keys.',
+              isOpen: open, expanded: String(open), chevron: open ? '90deg' : '0deg',
+              title: title ?? 'Untitled', sub: open ? '' : dotJoin(cols.slice(1).map(([c]) => cells[c].trim()).filter((x) => x !== title)),
+              rowBd: drag !== null && drag.over === k && drag.from !== k ? 'var(--accent)' : 'var(--rule)',
+              rowOpacity: drag !== null && drag.from === k ? '0.5' : '1',
+              toggle: () => setState(listOpen(open ? opened.filter((j) => j !== k) : opened.concat(k))),
+              remove: () => write(rows.filter((_, j) => j !== k), {}, opened.filter((j) => j !== k).map((j) => (j > k ? j - 1 : j))),
+              handleKey: (e) => {
+                const d = e.key === 'ArrowUp' ? -1 : e.key === 'ArrowDown' ? 1 : 0;
+                if (d !== 0) { e.preventDefault(); move(k, k + d); }
+              },
+              dragStart: (e) => {
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', String(k));
+                const row = e.currentTarget.closest('[role="group"]');
+                if (row !== null) e.dataTransfer.setDragImage(row, 16, 16);
+                /* Re-rendering inside dragstart can cancel the drag in some browsers. */
+                setTimeout(() => setState({ formRowDrag: { key: listKey, from: k, over: k } }), 0);
+              },
+              dragOver: (e) => {
+                if (drag === null) return;
+                e.preventDefault();
+                if (drag.over !== k) setState({ formRowDrag: Object.assign({}, drag, { over: k }) });
+              },
+              drop: (e) => { if (drag !== null) { e.preventDefault(); move(drag.from, k); } },
+              dragEnd: () => { if (drag !== null) setState({ formRowDrag: null }); },
+              fields: cols.map(([c, label, type, placeholder, options], n) => {
+                const pk = key + '-' + k + '-' + c;
+                const q = pend[pk];
+                return {
+                  id: 'rr-f-' + pk, label, placeholder, hint: '', hasHint: false, type, isArea: false, isInput: true,
+                  flex: n === 0 ? '1 1 240px' : '1 1 140px', order: n === 0 ? 0 : 2,
+                  hasOptions: options.length > 0, listId: 'rr-dl-' + key + '-' + c, options: options.map((o) => ({ o })),
+                  value: q === undefined ? cells[c] : q.value, error: '', hasError: false,
+                  onInput: (e) => {
+                    const v = e.target.value;
+                    write(rows.map((cs, j) => (j === k ? cs.map((x, i) => (i === c ? v : x)) : cs)), Object.assign({}, pend, { [pk]: { value: v, error: '' } }), opened);
+                  },
+                };
+              }),
+            };
+          }),
+          add: () => write(rows.concat([header.map(() => '')]), {}, [rows.length]),
+          addLabel: '+ Add ' + noun,
+        };
+      };
+      const count = (n, one, many) => (n === 0 ? '' : plural(n, one, many));
+      const syn = KIND_SYNTAX[r.kind];
+      const supportNoun = L.supportsLabel.toLowerCase().replace(/s$/, '');
+      const tab = (key, label, preview, panel) => Object.assign({ key, label, tabId: 'rr-f-' + key + '-tab', preview, fields: [], hint: '', isGrid: false, isDetails: false, isList: false }, panel);
+      const tabs = [
+        tab('rating', capitalise(L.noun), rated([r.impact, r.likelihood]), {
+          isGrid: true, hint: 'Drag a marker to a new cell, or focus it and use the arrow keys.',
+          grid: Object.assign(g, { markers, axes: L.xAxis + ' · ' + L.yAxis, ariaNow: markers[0].aria, ariaInherent: isRisk ? markers[1].aria : '', ariaTarget: markers[markers.length - 1].aria }),
+          fields: FORM_DETAILS[r.kind].map(([k, label, type, hint]) => field(k, label, type, raw(k), hint)),
+        }),
+        tab('details', 'Details', p.title, {
+          isDetails: true,
+          fields: [field('title', 'Title', 'text', p.title, '', true), field('description', 'Description', 'textarea', p.description, 'Blank lines separate paragraphs.', true)],
+        }),
+        tab('daci', 'DACI', r.daci.A.map((x) => x.name).join(', '), {
+          fields: FORM_DACI.map(([k, label]) => field(k, label, 'text', raw(k), 'Name (Role); separate several with ;', true)),
+        }),
+        tab('context', 'Context', p.cause || p.consequence, {
+          fields: [field('cause', L.causeLabel, 'text', p.cause, '', true), field('consequence', L.effectLabel, 'text', p.consequence, '', true)],
+        }),
+        tab('controls', L.supportsLabel, count(tableCells(text, r, syn.table.slice(4), syn.header).length, supportNoun, L.supportsLabel.toLowerCase()), {
+          isList: true, list: rowList('ctl', syn.table.slice(4), syn.header,
+            [[0, capitalise(supportNoun), 'text', '', []], [1, 'Type', 'text', '', syn.types], [2, syn.header[2], 'text', '', Object.keys(syn.states)]], [0], supportNoun),
+        }),
+        tab('evidence', 'Evidence', count(tableCells(text, r, 'Evidence', EVIDENCE_HEADER).length, 'evidence item', 'evidence items'), {
+          isList: true, list: rowList('ev', 'Evidence', EVIDENCE_HEADER,
+            [[1, 'Title', 'text', 'Text, a URL, or [Title](https://…)', []], [0, 'Ref', 'text', '', []], [2, 'Kind', 'text', '', []], [3, 'Date', 'date', '', []], [4, 'Valid days', 'number', '', []]], [1, 0], 'evidence item'),
+        }),
+        tab('actions', 'Actions', count(tableCells(text, r, 'Actions', ACTION_HEADER).length, 'action', 'actions'), {
+          isList: true, list: rowList('act', 'Actions', ACTION_HEADER,
+            [[0, 'Action', 'text', '', []], [1, 'Owner', 'text', 'Name (Role)', []], [2, 'Due', 'date', '', []], [3, 'Done', 'date', '', []]], [0], 'action'),
+        }),
+      ];
+      const cur = tabs.find((t) => t.key === st.formEntryTab) ?? tabs[0];
       return {
-        formEntryTabs: entry.map((f) => {
-          const on = f === cur;
+        formEntryTabs: tabs.map((t) => {
+          const on = t === cur;
+          const empty = t.preview.trim() === '';
           return {
-            label: f.label, tabId: f.tabId, selected: String(on), pick: go({ formEntryTab: f.key }),
-            preview: f.value.trim() === '' ? 'Empty' : f.value.replace(/\s+/g, ' '), previewFg: f.value.trim() === '' ? 'var(--ink3)' : INK2,
+            label: t.label, tabId: t.tabId, selected: String(on), pick: go({ formEntryTab: t.key }),
+            preview: empty ? 'Empty' : t.preview.replace(/\s+/g, ' '), previewFg: empty ? 'var(--ink3)' : INK2,
             bg: on ? 'var(--sel-bg)' : 'var(--card)', bd: on ? INK : 'var(--rule)', bar: on ? 'var(--accent)' : 'var(--rule)',
           };
         }),
-        formEntry: Object.assign({}, cur, { onInput: cur.key === 'description' ? cur.onInput : oneLine(cur) }),
+        formEntry: Object.assign(cur, { hasFields: cur.fields.length > 0, hasHint: cur.hint !== '', }),
       };
     })(),
-    formSections: [
-      { title: 'Details', fields: (r.status === 'closed' ? [field('closed', 'Closed on', 'date', raw('closed'), '')] : [])
-        .concat(FORM_DETAILS[r.kind].map(([k, label, type, hint]) => field(k, label, type, raw(k), hint))) },
-      { title: 'DACI', fields: FORM_DACI.map(([k, label]) => field(k, label, 'text', raw(k), 'Name (Role); separate several with ;')) },
-    ],
-    formPairs: (r.kind === 'risk' ? [pairCard('inherent', 'Inherent', 'Rating before controls')] : [])
-      .concat([pairCard('target', 'Target', r.kind === 'risk' ? 'Rating once actions land' : 'Rating once enablers are in place')]),
     formCats: known.map((c) => {
       const on = c === cat;
       return { label: c, pressed: String(on), bg: on ? INK : 'var(--card)', fg: on ? 'var(--on-ink)' : INK, bd: on ? INK : 'var(--control)', pick: () => setCat(on ? '' : c) };
@@ -2757,9 +2932,6 @@ function buildForm(st, fr, name, text, go, setState) {
       else if (e.key === 'Backspace' && st.formSlugDraft === '' && slugs.length > 0) writeSlugs(slugs.slice(0, -1));
     },
     formAddSlug: addSlug,
-    formTablesNote: plural(r.controls.length, L.supportsLabel.toLowerCase().replace(/s$/, ''), L.supportsLabel.toLowerCase()) + ' · ' + plural(r.evidence.length, 'evidence item', 'evidence items') + ' · ' + plural(r.actions.length, 'action', 'actions')
-      + (tables === 0 ? '. Add tables in Source.' : '. Edit tables in Source.'),
-    formToSource: go({ dataMode: 'source', formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '' }),
   });
 }
 
@@ -2798,7 +2970,7 @@ function breakPlan(ctx, side, aId, bId) {
 function cmpMatches(r, query) {
   const terms = foldText(query).split(' ').filter((t) => t.length > 0);
   if (terms.length === 0) return true;
-  const hay = foldText([r.id, r.title, r.category, r.description, r.cause, r.consequence, personLine(r.owner), r.slugs.join(' ')].join(' '));
+  const hay = foldText([r.id, r.title, r.category, r.description, r.cause, r.consequence, personLine(approverOf(r)), r.slugs.join(' ')].join(' '));
   return terms.every((t) => hay.includes(t));
 }
 
@@ -3038,7 +3210,7 @@ function buildCompare(st, an, go, applyDrafts, setState) {
   const fieldRows = (x, y) => {
     const people = (p) => personLine(p);
     const rows = [
-      ['ID', x.id, y.id], ['Title', x.title, y.title], ['Category', x.category, y.category], ['Owner', people(x.owner), people(y.owner)],
+      ['ID', x.id, y.id], ['Title', x.title, y.title], ['Category', x.category, y.category], ['Approver', people(approverOf(x)), people(approverOf(y))],
       [L.filters[0].label, L.filters[0].get(x), L.filters[0].get(y)], [L.filters[1].label, L.filters[1].get(x), L.filters[1].get(y)],
       ['Score', sc(x), sc(y)], [L.limitName, x.limit === null ? '—' : L.limitSymbol + ' ' + x.limit, y.limit === null ? '—' : L.limitSymbol + ' ' + y.limit],
       ['Status', x.status, y.status], [L.supportsLabel, x.controls.length, y.controls.length], ['Evidence', x.evidence.length, y.evidence.length], ['Slugs', x.slugs.join(', '), y.slugs.join(', ')],
@@ -3055,7 +3227,7 @@ function buildCompare(st, an, go, applyDrafts, setState) {
       side: mySide, letter: mySide, radius: mySide === 'A' ? '50%' : '4px', doc: mySide === 'A' ? st.cmpA : st.cmpB,
       id: r.id, title: r.title, score: sc(r), fill: band.fill, ink: band.ink, bandLabel: bandName(L, band),
       ixl: L.ratingLong(r.impact, r.likelihood),
-      meta: dotJoin([r.category, personLine(r.owner), r.status === 'closed' ? 'closed' : null]),
+      meta: dotJoin([r.category, personLine(approverOf(r)), r.status === 'closed' ? 'closed' : null]),
       flash: st.cmpFlash, hasFlash: st.cmpFlash !== '',
       ctrlHint: 'Ctrl-click (⌘-click on a Mac) any ' + L.noun + ' in ' + (otherSide === 'A' ? st.cmpA : st.cmpB) + ' to link or unlink it with ' + r.id + '.',
       slugs: r.slugs.map((s) => ({ s, aria: 'Remove slug ' + s + ' from ' + r.id, remove: applyDrafts(withSlugs(st.drafts, mySide === 'A' ? st.cmpA : st.cmpB, mySide === 'A' ? fa : fb, r.id, r.slugs.filter((x) => x !== s))) })),
@@ -3199,24 +3371,35 @@ function buildCompare(st, an, go, applyDrafts, setState) {
 const PAGES = { register: 'front', data: 'back' };
 const DEFAULT_SIDE = window.RR_LANDING ? 'back' : 'front';
 const pageOf = (side) => Object.keys(PAGES).find((k) => PAGES[k] === side);
-/** ?page=, ?theme=, ?kind= (risk | opportunity) and ?view= preset those controls; unknown values are ignored. A view without a page opens Register. */
+/** ?page=, ?theme=, ?kind= (risk | opportunity), ?view= and ?tab= preset those controls; unknown values are ignored. A view without a page opens Register. */
 function queryPrefs() {
   const q = new URLSearchParams(location.search);
   const ok = (key, ids) => (ids.includes(q.get(key)) ? q.get(key) : undefined);
   const view = ok('view', VIEWS.map((v) => v.id));
   const page = ok('page', Object.keys(PAGES));
   return Object.fromEntries(Object.entries({
-    theme: ok('theme', THEMES.map((t) => t.id)), lens: ok('kind', ['risk', 'opportunity']), view,
+    theme: ok('theme', THEMES.map((t) => t.id)), lens: ok('kind', ['risk', 'opportunity']), view, formEntryTab: ok('tab', FORM_TABS),
     side: page ? PAGES[page] : view && 'front',
   }).filter(([, v]) => v !== undefined));
 }
-/** Mirrors page, theme, kind and view into the URL (defaults left out) so the address bar is a shareable link. */
-function syncQuery(side, theme, kind, view) {
+/** The current URL with `params` set (null deletes one); other params, such as ?src, are kept. */
+function hrefWith(params) {
   const q = new URLSearchParams(location.search);
-  for (const [k, v, dflt] of [['page', pageOf(side), pageOf(DEFAULT_SIDE)], ['theme', theme, 'paper'], ['kind', kind, 'risk'], ['view', view, 'matrix']]) {
-    if (v === dflt) q.delete(k); else q.set(k, v);
-  }
-  const url = location.pathname + (q.size ? '?' + q.toString().replace(/=(?=&|$)/g, '').replace(/%2F/gi, '/').replace(/%3A/gi, ':') : '') + location.hash;
+  for (const [k, v] of Object.entries(params)) { if (v === null) q.delete(k); else q.set(k, v); }
+  return location.pathname + (q.size ? '?' + q.toString().replace(/=(?=&|$)/g, '').replace(/%2F/gi, '/').replace(/%3A/gi, ':') : '') + location.hash;
+}
+/** The form's tabs, in order; ?tab= picks one. */
+const FORM_TABS = ['rating', 'details', 'daci', 'context', 'controls', 'evidence', 'actions'];
+/**
+ * Mirrors page, theme, kind and view into the URL (defaults left out) so the address bar is a shareable link.
+ * On Data → Form, `form` adds the entry being edited (?entry=) and its tab (?tab=).
+ */
+function syncQuery(side, theme, kind, view, form) {
+  const unlessDefault = (v, dflt) => (v === dflt ? null : v);
+  const url = hrefWith({
+    page: unlessDefault(pageOf(side), pageOf(DEFAULT_SIDE)), theme: unlessDefault(theme, 'paper'), kind: unlessDefault(kind, 'risk'), view: unlessDefault(view, 'matrix'),
+    entry: form === null ? null : form.entry, tab: form === null ? null : unlessDefault(form.tab, FORM_TABS[0]),
+  });
   if (url !== location.pathname + location.search + location.hash) history.replaceState(null, '', url);
 }
 
@@ -3225,7 +3408,7 @@ function initialState() {
   const a = analyseDrafts(ORIGINALS, src.cmpA, src.cmpB);
   const base = {
     drafts: ORIGINALS, dataFile: CURRENT_FILE, view: DEFAULT_CMP_B === null ? 'matrix' : 'compare', side: DEFAULT_SIDE, dataMode: 'form',
-    formIdx: 0, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', formEntryTab: 'title', miniDrag: null,
+    formIdx: 0, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', formEntryTab: 'rating', formListOpen: null, formRowDrag: null, miniDrag: null,
     cellFilter: null, kindFilter: null, showMovement: true,
     categories: [], query: '', filtersOpen: false,
     theme: 'paper', palette: 'heat', accentId: 'blue', themeOpen: false,
@@ -3239,6 +3422,11 @@ function initialState() {
     lens: 'risk',
     ...queryPrefs(),
   };
+  /* ?entry= opens that entry of the current file in the form, on its own kind. */
+  const entry = new URLSearchParams(location.search).get('entry');
+  const fr = entry === null ? null : tryParse(base.dataFile, base.drafts[base.dataFile]);
+  const k = fr !== null && fr.ok ? fr.file.risks.findIndex((x) => x.id === entry) : -1;
+  if (k !== -1) Object.assign(base, { formIdx: k, lens: fr.file.risks[k].kind });
   return Object.assign(base, a.model.ok ? initialFromModel(a.model.model, base.lens) : { selectedId: null, drawerOpen: false });
 }
 
@@ -3342,7 +3530,7 @@ class Component extends DCLogic {
     const views = VIEWS.filter((v) => N > 1 || !pairOnly.includes(v.id));
     const view = views.some((v) => v.id === st.view) ? st.view : 'matrix';
     const sv = Object.assign({}, st, { fromIdx, toIdx, view, showMovement: st.showMovement && N > 1 });
-    syncQuery(st.side, st.theme, st.lens, view);
+    syncQuery(st.side, st.theme, st.lens, view, isBack && shell.formHasEntry ? { entry: shell.formEntryId, tab: shell.formEntry.key } : null);
     /* Compare's Summary layout is the register's own change list (with the detail drawer); the others are the side-by-side compare page. */
     const sideBySide = st.side === 'front' && view === 'compare' && st.cmpLayout !== 'summary';
 

@@ -13,7 +13,6 @@ Registre d’un partenaire, rédigé en français. Même format que risks.md ; l
 - kind: risk
 - status: open
 - category: Tiers
-- owner: M. Laurent (Directeur des opérations)
 - impact: 5
 - likelihood: 4
 - inherent: 5x4
@@ -49,7 +48,6 @@ Le transporteur principal fait faillite et la plupart des livraisons restent san
 - kind: risk
 - status: open
 - category: Conformité
-- owner: C. Dubois (Déléguée à la protection des données)
 - impact: 4
 - likelihood: 4
 - inherent: 5x4
@@ -86,7 +84,6 @@ Des données personnelles de clients sont exposées lors d’exports ou d’éch
 - kind: risk
 - status: open
 - category: Cyber
-- owner: S. Roux (RSSI)
 - impact: 5
 - likelihood: 4
 - inherent: 5x5
@@ -123,7 +120,6 @@ Un rançongiciel ou un composant logiciel compromis paralyse les systèmes de ge
 - kind: risk
 - status: open
 - category: Technologie
-- owner: J. Moreau (DSI)
 - impact: 4
 - likelihood: 3
 - inherent: 4x4
@@ -158,7 +154,6 @@ L’indisponibilité prolongée de la région cloud principale interrompt le sui
 - kind: risk
 - status: open
 - category: Finance
-- owner: A. Petit (Directrice financière)
 - impact: 3
 - likelihood: 3
 - inherent: 3x4
@@ -192,7 +187,6 @@ La baisse de l’euro face au dollar renchérit les contrats de fret libellés e
 - kind: risk
 - status: open
 - category: Fraude
-- owner: A. Petit (Directrice financière)
 - impact: 4
 - likelihood: 3
 - inherent: 4x5
@@ -226,7 +220,6 @@ Des escrocs se font passer pour un fournisseur et obtiennent un changement de co
 - kind: risk
 - status: open
 - category: Opérations
-- owner: M. Laurent (Directeur des opérations)
 - impact: 4
 - likelihood: 3
 - inherent: 4x4
@@ -260,7 +253,6 @@ Un mouvement social prolongé au port du Havre bloque les conteneurs à l’impo
 - kind: risk
 - status: open
 - category: Projets
-- owner: J. Moreau (DSI)
 - impact: 4
 - likelihood: 3
 - inherent: 4x4
@@ -294,7 +286,6 @@ Le déploiement du nouvel ERP prend du retard et dépasse son budget.
 - kind: risk
 - status: open
 - category: RH
-- owner: L. Garnier (DRH)
 - impact: 4
 - likelihood: 2
 - inherent: 4x3
@@ -328,7 +319,6 @@ Le départ de quelques experts techniques laisse des systèmes critiques sans re
 - kind: risk
 - status: open
 - category: Approvisionnement
-- owner: M. Laurent (Directeur des opérations)
 - impact: 3
 - likelihood: 2
 - inherent: 3x3
@@ -362,7 +352,6 @@ Le manque de palettes certifiées ralentit les expéditions en haute saison.
 - kind: risk
 - status: open
 - category: Réputation
-- owner: N. Fontaine (Directrice de la communication)
 - impact: 4
 - likelihood: 3
 - inherent: 4x3
@@ -396,7 +385,6 @@ Une plainte de client ou une publication de salarié devient virale et nuit à l
 - kind: risk
 - status: open
 - category: Réglementaire
-- owner: A. Petit (Directrice financière)
 - impact: 3
 - likelihood: 5
 - inherent: 3x5
@@ -430,7 +418,6 @@ Le nouveau reporting réglementaire de durabilité entre en vigueur avant que no
 - kind: opportunity
 - status: open
 - category: Opérations
-- owner: M. Laurent (Directeur des opérations)
 - value: 4
 - effort: 3
 - target: 4x2
@@ -465,7 +452,6 @@ Planifier les tournées avec un moteur d’optimisation plutôt qu’avec des to
 - kind: opportunity
 - status: open
 - category: Commercial
-- owner: M. Laurent (Directeur des opérations)
 - value: 3
 - effort: 2
 - target: 3x2
@@ -500,7 +486,6 @@ Proposer aux entreprises locales la capacité de stockage inutilisée en dehors 
 - kind: opportunity
 - status: open
 - category: Achats
-- owner: A. Petit (Directrice financière)
 - value: 2
 - effort: 2
 - target: 3x2

@@ -19,7 +19,6 @@ Opportunities: `value` and `effort` are 1–5 (score = value × (6 − effort), 
 - kind: risk
 - status: open
 - category: Cyber
-- owner: A. Okafor (CISO)
 - impact: 5
 - likelihood: 3
 - inherent: 5x5
@@ -60,7 +59,6 @@ Encryption or exfiltration of core operational systems by a ransomware actor, ha
 - kind: risk
 - status: open
 - category: Third party
-- owner: F. Grant (Procurement Lead)
 - impact: 5
 - likelihood: 4
 - inherent: 5x4
@@ -99,7 +97,6 @@ Our principal last-mile carrier fails financially, leaving most deliveries witho
 - kind: risk
 - status: open
 - category: Technology
-- owner: J. Patel (CTO)
 - impact: 3
 - likelihood: 2
 - inherent: 4x4
@@ -137,7 +134,6 @@ Extended loss of our primary cloud region takes customer-facing services offline
 - kind: risk
 - status: open
 - category: Privacy
-- owner: S. Moreau (Data Protection Officer)
 - impact: 4
 - likelihood: 2
 - inherent: 5x4
@@ -177,7 +173,6 @@ Customer personal data leaves the organisation through uncontrolled report expor
 - kind: risk
 - status: open
 - category: People
-- owner: R. Chen (Chief People Officer)
 - impact: 4
 - likelihood: 3
 - inherent: 4x4
@@ -216,7 +211,6 @@ Departure of a small number of engineers who hold critical platform knowledge.
 - kind: risk
 - status: open
 - category: Financial
-- owner: M. Lindqvist (CFO)
 - impact: 3
 - likelihood: 2
 - inherent: 3x4
@@ -254,7 +248,6 @@ Sterling weakens against the dollar, raising the cost of USD-denominated supplie
 - kind: risk
 - status: open
 - category: Change
-- owner: L. Haddad (ERP Programme Director)
 - impact: 5
 - likelihood: 4
 - inherent: 4x4
@@ -294,7 +287,6 @@ The ERP migration slips past the legacy system’s end-of-support date.
 - kind: risk
 - status: open
 - category: Product
-- owner: K. Novak (Head of Product)
 - impact: 4
 - likelihood: 2
 - inherent: 4x4
@@ -332,7 +324,6 @@ The AI customer assistant gives incorrect or harmful guidance on shipments and c
 - kind: risk
 - status: open
 - category: Financial crime
-- owner: M. Lindqvist (CFO)
 - impact: 3
 - likelihood: 4
 - inherent: 3x5
@@ -370,7 +361,6 @@ Fraudsters impersonate suppliers and redirect payments to accounts they control.
 - kind: risk
 - status: open
 - category: Regulatory
-- owner: E. Walsh (General Counsel)
 - impact: 3
 - likelihood: 5
 - inherent: 3x5
@@ -410,7 +400,6 @@ A new sector reporting requirement takes effect before our data and processes ca
 - status: closed
 - closed: 2026-08-18
 - category: Property
-- owner: T. Byrne (COO)
 - impact: 2
 - likelihood: 1
 - inherent: 4x4
@@ -447,7 +436,6 @@ Our remaining co-location lease ends before workloads have moved out.
 - kind: risk
 - status: open
 - category: Operations
-- owner: D. Mensah (Head of SRE)
 - impact: 2
 - likelihood: 2
 - inherent: 3x4
@@ -485,7 +473,6 @@ Out-of-hours incidents depend on one engineer per critical system.
 - kind: risk
 - status: open
 - category: Reputation
-- owner: P. Ito (Communications Director)
 - impact: 4
 - likelihood: 2
 - inherent: 4x3
@@ -522,7 +509,6 @@ A customer complaint or staff post spreads widely and damages trust in the brand
 - kind: risk
 - status: open
 - category: Legal
-- owner: E. Walsh (General Counsel)
 - impact: 3
 - likelihood: 2
 - inherent: 3x3
@@ -558,7 +544,6 @@ Shipped software includes components whose licence terms we do not meet.
 - kind: risk
 - status: open
 - category: Cyber
-- owner: A. Okafor (CISO)
 - impact: 5
 - likelihood: 4
 - inherent: 5x4
@@ -597,7 +582,6 @@ A compromised third-party package or build tool inserts malicious code into our 
 - kind: risk
 - status: open
 - category: Physical
-- owner: T. Byrne (COO)
 - impact: 4
 - likelihood: 3
 - inherent: 4x3
@@ -635,7 +619,6 @@ Heavy rainfall floods the main warehouse, damaging stock and halting dispatch.
 - kind: opportunity
 - status: open
 - category: Operations
-- owner: T. Byrne (COO)
 - value: 5
 - effort: 2
 - target: 5x2
@@ -674,7 +657,6 @@ Plan delivery routes with an optimisation engine instead of fixed rounds, cuttin
 - kind: opportunity
 - status: open
 - category: Third party
-- owner: F. Grant (Procurement Lead)
 - value: 4
 - effort: 2
 - target: 4x2
@@ -712,7 +694,6 @@ Contract a second carrier on committed volumes, using competition to lower rates
 - kind: opportunity
 - status: open
 - category: Commercial
-- owner: T. Byrne (COO)
 - value: 3
 - effort: 2
 - target: 3x2
@@ -749,7 +730,6 @@ Rent unused racking at the main warehouse to local businesses outside our peak s
 - kind: opportunity
 - status: open
 - category: Technology
-- owner: J. Patel (CTO)
 - value: 3
 - effort: 4
 - target: 4x2
@@ -788,7 +768,6 @@ Generate customs declarations automatically from order data instead of re-keying
 - status: closed
 - closed: 2026-09-15
 - category: Sustainability
-- owner: M. Lindqvist (CFO)
 - value: 2
 - effort: 3
 - target: 4x2
@@ -825,7 +804,6 @@ Apply for a government grant towards converting the delivery fleet to electric v
 - kind: opportunity
 - status: open
 - category: Product
-- owner: K. Novak (Head of Product)
 - value: 5
 - effort: 4
 - target: 5x3
@@ -864,7 +842,6 @@ Sell customers a dashboard of their own shipment performance and delivery trends
 - kind: opportunity
 - status: open
 - category: Technology
-- owner: J. Patel (CTO)
 - value: 3
 - effort: 2
 - target: 3x1
@@ -901,7 +878,6 @@ Move to a single committed-spend cloud agreement while redesigning for multi-reg
 - kind: opportunity
 - status: open
 - category: Financial
-- owner: M. Lindqvist (CFO)
 - value: 2
 - effort: 2
 - target: 3x2
@@ -936,7 +912,6 @@ Quote customer contracts in dollars with a hedged margin, turning currency expos
 - kind: opportunity
 - status: open
 - category: Change
-- owner: L. Haddad (ERP Programme Director)
 - value: 2
 - effort: 5
 - target: 4x3
@@ -973,7 +948,6 @@ Let suppliers manage orders, invoices and bank details themselves through an ERP
 - kind: opportunity
 - status: open
 - category: People
-- owner: R. Chen (Chief People Officer)
 - value: 4
 - effort: 2
 - target: 4x2
