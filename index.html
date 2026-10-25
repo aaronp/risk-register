@@ -283,6 +283,14 @@ button:disabled{opacity:.35;cursor:default}
 </sc-for>
 </div>
 </div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2)">Stars</span>
+<div role="group" aria-label="Stars" style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center">
+<sc-for list="{{starPills}}" as="sp" hint-placeholder-count="4">
+<button class="rr-hover" onClick="{{sp.pick}}" aria-pressed="{{sp.pressed}}" aria-label="{{sp.aria}}" style="display: flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1px solid {{sp.bd}}; border-radius: 999px; background: {{sp.bg}}; color: {{sp.fg}}; font-size: 14px; cursor: pointer"><span>{{sp.label}}</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: {{sp.countFg}}">{{sp.count}}</span></button>
+</sc-for>
+</div>
+</div>
 </div>
 </sc-if>
 </div>
@@ -527,10 +535,10 @@ button:disabled{opacity:.35;cursor:default}
 </sc-if>
 <sc-if value="{{isTable}}" hint-placeholder-val="{{ false }}">
 <div style="background: var(--card); border: 1px solid var(--rule); border-radius: 8px; overflow-x: auto">
-<div style="min-width: 1240px">
-<div style="display: grid; grid-template-columns: 56px minmax(220px, 2fr) 120px 200px 76px 96px 60px 64px 96px 72px 72px 64px; gap: 10px; padding: 12px 16px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2); border-bottom: 1px solid var(--rule)"><span>ID</span><span>Title</span><span>Category</span><span>Approver</span><span>Status</span><span>Rating</span><span>Score</span><span>{{tableLimitName}}</span><span>Target</span><span>{{tableSupportsName}}</span><span>Evidence</span><span>Actions</span></div>
+<div style="min-width: 1160px">
+<div style="display: grid; grid-template-columns: 56px minmax(220px, 2fr) 120px 200px 76px 96px 60px 64px 96px 72px 72px; gap: 10px; padding: 12px 16px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2); border-bottom: 1px solid var(--rule)"><span>ID</span><span>Title</span><span>Category</span><span>Approver</span><span>Status</span><span>Rating</span><span>Score</span><span>{{tableLimitName}}</span><span>Target</span><span>{{tableSupportsName}}</span><span>Evidence</span></div>
 <sc-for list="{{tableRows}}" as="tr" hint-placeholder-count="16">
-<button class="rr-hover" onClick="{{tr.pick}}" aria-label="{{tr.aria}}" aria-pressed="{{tr.pressed}}" style="display: grid; grid-template-columns: 56px minmax(220px, 2fr) 120px 200px 76px 96px 60px 64px 96px 72px 72px 64px; gap: 10px; align-items: center; width: 100%; padding: 10px 16px; border: 0; border-bottom: 1px solid var(--rule-soft); background: {{tr.bg}}; text-align: left; cursor: pointer; min-height: 48px; font-size: 13px">
+<button class="rr-hover" onClick="{{tr.pick}}" aria-label="{{tr.aria}}" aria-pressed="{{tr.pressed}}" style="display: grid; grid-template-columns: 56px minmax(220px, 2fr) 120px 200px 76px 96px 60px 64px 96px 72px 72px; gap: 10px; align-items: center; width: 100%; padding: 10px 16px; border: 0; border-bottom: 1px solid var(--rule-soft); background: {{tr.bg}}; text-align: left; cursor: pointer; min-height: 48px; font-size: 13px">
 <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600">{{tr.id}}</span>
 <span style="font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{tr.title}}</span>
 <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{tr.category}}</span>
@@ -542,7 +550,6 @@ button:disabled{opacity:.35;cursor:default}
 <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">{{tr.target}}</span>
 <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">{{tr.controls}}</span>
 <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">{{tr.evidence}}</span>
-<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">{{tr.actions}}</span>
 </button>
 </sc-for>
 </div>
@@ -559,7 +566,7 @@ button:disabled{opacity:.35;cursor:default}
 <span style="padding: 2px 8px; border-radius: 999px; font-weight: 600; background: {{sel.lcBg}}; color: {{sel.lcFg}}">{{sel.lcLabel}}</span>
 <button class="rr-hover" onClick="{{closeDrawer}}" aria-label="Close risk detail" style="margin-left: auto; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4 L12 12 M12 4 L4 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
 </div>
-<h2 style="margin: 0; font-size: 24px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">{{sel.title}}</h2>
+<div style="display: flex; align-items: flex-start; gap: 8px"><h2 style="flex: 1 1 auto; margin: 0; font-size: 24px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">{{sel.title}}</h2><div role="group" aria-label="Stars" style="display: inline-flex; gap: 2px; flex: 0 0 auto"><sc-for list="{{sel.stars}}" as="sr" hint-placeholder-count="3"><button class="rr-hover" onClick="{{sr.pick}}" aria-pressed="{{sr.pressed}}" aria-label="{{sr.aria}}" title="{{sr.aria}}" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 6px; background: transparent; color: {{sr.fg}}; cursor: pointer"><svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8 L9.9 5.9 L14.3 6.3 L11 9.3 L11.9 13.7 L8 11.4 L4.1 13.7 L5 9.3 L1.7 6.3 L6.1 5.9 Z" fill="{{sr.fill}}" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button></sc-for></div></div>
 <p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink2); text-wrap: pretty">{{sel.description}}</p>
 <a href="{{sel.edit.details.href}}" onClick="{{sel.edit.details.open}}" title="Edit {{sel.id}} in Data" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: var(--ink3); text-decoration: underline; text-underline-offset: 3px">{{sel.sourceRef}}</a>
 </div>
@@ -652,33 +659,18 @@ button:disabled{opacity:.35;cursor:default}
 <sc-if value="{{sel.hasEvidence}}" hint-placeholder-val="{{ true }}">
 <div style="display: flex; flex-direction: column; gap: 4px">
 <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{sel.evidenceTitle}}</h3><a class="rr-edit" href="{{sel.edit.evidence.href}}" onClick="{{sel.edit.evidence.open}}" aria-label="{{sel.edit.evidence.aria}}">Edit</a></div>
-<sc-if value="{{sel.noEvidence}}" hint-placeholder-val="{{ false }}">
-<p style="margin: 0; padding: 10px 0; border-top: 1px solid var(--rule-soft); font-size: 14px; color: var(--bad-fg)">{{sel.noEvidenceNote}}</p>
-</sc-if>
 <ul style="list-style: none; margin: 0; padding: 0">
 <sc-for list="{{sel.evidence}}" as="e" hint-placeholder-count="3">
-<li style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 10px 0; border-top: 1px solid var(--rule-soft)">
-<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><sc-if value="{{e.hasHref}}" hint-placeholder-val="{{ false }}"><a href="{{e.href}}" target="_blank" rel="noopener noreferrer" style="font-size: 14px; font-weight: 500; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere">{{e.title}}</a></sc-if><sc-if value="{{e.noHref}}" hint-placeholder-val="{{ true }}"><span style="font-size: 14px; font-weight: 500; overflow-wrap: anywhere">{{e.title}}</span></sc-if><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: var(--ink2)">{{e.meta}}</span><span style="font-size: 12px; color: var(--ink2)">{{e.validity}}</span></span>
-<span style="flex: 0 0 auto; padding: 3px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; background: {{e.bg}}; color: {{e.fg}}">{{e.status}}</span>
+<li style="display: flex; flex-direction: column; gap: 4px; padding: 10px 0; border-top: 1px solid var(--rule-soft); min-width: 0">
+<span style="font-size: 14px; font-weight: 500; overflow-wrap: anywhere">{{e.title}}</span>
+<sc-if value="{{e.hasDescription}}" hint-placeholder-val="{{ true }}"><span style="font-size: 13px; line-height: 1.5; color: var(--ink2)">{{e.description}}</span></sc-if>
+<span style="display: flex; flex-wrap: wrap; gap: 4px 12px"><sc-for list="{{e.links}}" as="lk" hint-placeholder-count="1"><a href="{{lk.href}}" title="{{lk.href}}" target="_blank" rel="noopener noreferrer" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere">{{lk.host}} ↗</a></sc-for></span>
 </li>
 </sc-for>
 </ul>
 </div>
 </sc-if>
 
-<sc-if value="{{sel.hasActions}}" hint-placeholder-val="{{ true }}">
-<div style="display: flex; flex-direction: column; gap: 4px">
-<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h3 style="margin: 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink2); font-weight: 600">{{sel.actionsTitle}}</h3><a class="rr-edit" href="{{sel.edit.actions.href}}" onClick="{{sel.edit.actions.open}}" aria-label="{{sel.edit.actions.aria}}">Edit</a></div>
-<ul style="list-style: none; margin: 0; padding: 0">
-<sc-for list="{{sel.actions}}" as="ac" hint-placeholder-count="2">
-<li style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 10px 0; border-top: 1px solid var(--rule-soft)">
-<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 14px; font-weight: 500">{{ac.title}}</span><span style="font-size: 12px; color: var(--ink2)">{{ac.meta}}</span></span>
-<span style="flex: 0 0 auto; padding: 3px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; background: {{ac.bg}}; color: {{ac.fg}}">{{ac.status}}</span>
-</li>
-</sc-for>
-</ul>
-</div>
-</sc-if>
 </aside>
 </sc-if>
 <sc-if value="{{drawerClosed}}" hint-placeholder-val="{{ false }}">
@@ -795,23 +787,41 @@ button:disabled{opacity:.35;cursor:default}
 <button class="rr-hover" onClick="{{formDelete}}" style="align-self: stretch; height: 36px; padding: 0 12px; border: 1px solid var(--bad-fg); border-radius: 6px; background: var(--card); color: var(--bad-fg); cursor: pointer; font-size: 13px; font-weight: 600">{{formDeleteLabel}}</button>
 </div>
 <div role="tabpanel" id="rr-entry-panel" aria-labelledby="{{formEntry.tabId}}" style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
-<sc-if value="{{formAi.show}}" hint-placeholder-val="{{ false }}">
-<div style="display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border: 1px dashed var(--control); border-radius: 8px">
-<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
-<button class="rr-hover" onClick="{{formAi.run}}" disabled="{{formAi.busy}}" style="height: 36px; padding: 0 12px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">{{formAi.label}}</button>
-<span role="status" style="font-size: 12px; color: {{formAi.noteFg}}">{{formAi.note}}</span>
+<sc-if value="{{formEntry.hasToolbar}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 6px">
+<sc-if value="{{formAi.show}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{formAi.run}}" disabled="{{formAi.busy}}" title="{{formAi.hint}}" style="height: 32px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px; font-weight: 600; color: var(--accent)">✦ {{formAi.label}}</button></sc-if>
+<sc-if value="{{formEntry.canFold}}" hint-placeholder-val="{{ true }}">
+<button class="rr-hover" onClick="{{formEntry.list.expandAll}}" style="height: 32px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Expand all</button>
+<button class="rr-hover" onClick="{{formEntry.list.collapseAll}}" style="height: 32px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Collapse all</button>
+</sc-if>
 </div>
+</sc-if>
+<sc-if value="{{formAi.open}}" hint-placeholder-val="{{ false }}">
+<div onClick="{{formAi.backdrop}}" onKeyDown="{{formAi.key}}" style="position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0, 0, 0, 0.4)">
+<div role="dialog" aria-modal="true" aria-labelledby="rr-ai-title" style="display: flex; flex-direction: column; gap: 12px; width: min(640px, 100%); max-height: calc(100vh - 32px); box-sizing: border-box; padding: 16px; background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: 10px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3); animation: rr-drop 160ms ease-out">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+<span id="rr-ai-title" style="font-size: 15px; font-weight: 600">{{formAi.title}}</span>
+<button class="rr-hover" onClick="{{formAi.close}}" aria-label="Close suggestions" autoFocus="true" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4 L12 12 M12 4 L4 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
+</div>
+<span role="status" style="font-size: 13px; color: {{formAi.noteFg}}">{{formAi.note}}</span>
+<div style="display: flex; flex-direction: column; overflow-y: auto; min-height: 0">
 <sc-for list="{{formAi.items}}" as="ai" hint-placeholder-count="2">
-<div style="display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--rule-soft)">
+<div style="display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-top: 1px solid var(--rule-soft)">
 <div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px">
 <span style="font-size: 12px; font-weight: 600; color: var(--ink2)">{{ai.label}}</span>
 <span style="font-size: 14px; line-height: 1.5; white-space: pre-wrap">{{ai.text}}</span>
+<sc-if value="{{ai.hasSub}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: var(--ink2)">{{ai.sub}}</span></sc-if>
 <sc-if value="{{ai.hasLink}}" hint-placeholder-val="{{ false }}"><a href="{{ai.href}}" target="_blank" rel="noopener noreferrer" style="font-size: 12px; color: var(--accent); overflow-wrap: anywhere">{{ai.href}}</a></sc-if>
-<sc-if value="{{ai.hasSub}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: var(--ink2)">{{ai.sub}}</span></sc-if>
 </div>
 <button class="rr-hover" onClick="{{ai.use}}" aria-label="{{ai.aria}}" style="height: 36px; padding: 0 12px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; flex: 0 0 auto; color: var(--accent); font-weight: 600">{{ai.useLabel}}</button>
 </div>
 </sc-for>
+</div>
+<div style="display: flex; justify-content: flex-end; gap: 8px; padding-top: 4px; border-top: 1px solid var(--rule-soft)">
+<button class="rr-hover" onClick="{{formAi.run}}" disabled="{{formAi.busy}}" style="height: 36px; padding: 0 12px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">Ask again</button>
+<sc-if value="{{formAi.hasItems}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{formAi.addAll}}" style="height: 36px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--ink); color: var(--on-ink); cursor: pointer; font-size: 13px; font-weight: 600">{{formAi.addAllLabel}}</button></sc-if>
+</div>
+</div>
 </div>
 </sc-if>
 <sc-if value="{{formEntry.isGrid}}" hint-placeholder-val="{{ true }}">
@@ -865,6 +875,11 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 </sc-if>
 <sc-if value="{{formEntry.isDetails}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 13px; font-weight: 600">Stars</span>
+<div role="group" aria-label="Stars" style="display: inline-flex; gap: 2px"><sc-for list="{{formStars}}" as="sr" hint-placeholder-count="3"><button class="rr-hover" onClick="{{sr.pick}}" aria-pressed="{{sr.pressed}}" aria-label="{{sr.aria}}" title="{{sr.aria}}" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 6px; background: transparent; color: {{sr.fg}}; cursor: pointer"><svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8 L9.9 5.9 L14.3 6.3 L11 9.3 L11.9 13.7 L8 11.4 L4.1 13.7 L5 9.3 L1.7 6.3 L6.1 5.9 Z" fill="{{sr.fill}}" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button></sc-for></div>
+<span style="font-size: 12px; color: var(--ink3)">Up to three, to pick out entries; filter the register by them. Click the last lit star to clear.</span>
+</div>
 <div style="display: flex; flex-direction: column; gap: 8px">
 <label for="rr-f-cat" style="font-size: 13px; font-weight: 600">Category</label>
 <div style="display: flex; gap: 8px; align-items: center; max-width: 520px">
@@ -926,12 +941,6 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 </sc-if>
 <sc-if value="{{formEntry.isList}}" hint-placeholder-val="{{ false }}">
-<sc-if value="{{formEntry.list.canFold}}" hint-placeholder-val="{{ true }}">
-<div style="display: flex; justify-content: flex-end; gap: 6px">
-<button class="rr-hover" onClick="{{formEntry.list.expandAll}}" style="height: 32px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Expand all</button>
-<button class="rr-hover" onClick="{{formEntry.list.collapseAll}}" style="height: 32px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Collapse all</button>
-</div>
-</sc-if>
 <sc-for list="{{formEntry.list.rows}}" as="lr" hint-placeholder-count="2">
 <div role="group" aria-label="{{lr.aria}}" onDragOver="{{lr.dragOver}}" onDrop="{{lr.drop}}" style="display: flex; flex-direction: column; min-width: 0; border: 1px solid {{lr.rowBd}}; border-radius: 8px; opacity: {{lr.rowOpacity}}">
 <div style="display: flex; align-items: stretch; min-width: 0">
@@ -942,12 +951,21 @@ button:disabled{opacity:.35;cursor:default}
 </button>
 </div>
 <sc-if value="{{lr.isOpen}}" hint-placeholder-val="{{ true }}">
-<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 12px; padding: 12px 14px; border-top: 1px solid var(--rule-soft)">
+<div style="position: relative; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 12px; padding: 12px {{lr.padRight}} 12px 14px; border-top: 1px solid var(--rule-soft)">
 <sc-for list="{{lr.fields}}" as="ff" hint-placeholder-count="2">
 <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: {{ff.flex}}; order: {{ff.order}}">
 <label for="{{ff.id}}" style="font-size: 13px; font-weight: 600">{{ff.label}}</label>
 <sc-if value="{{ff.isInput}}" hint-placeholder-val="{{ true }}">
 <input id="{{ff.id}}" type="{{ff.type}}" value="{{ff.value}}" onChange="{{ff.onInput}}" spellcheck="false" autocomplete="off" list="{{ff.listId}}" placeholder="{{ff.placeholder}}" style="height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; box-sizing: border-box; width: 100%">
+</sc-if>
+<sc-if value="{{ff.isPills}}" hint-placeholder-val="{{ false }}">
+<div id="{{ff.id}}" role="group" aria-label="{{ff.label}}" style="display: flex; flex-wrap: wrap; gap: 6px">
+<sc-for list="{{ff.pills}}" as="pl" hint-placeholder-count="3">
+<button class="rr-hover" onClick="{{pl.pick}}" aria-pressed="{{pl.pressed}}" title="{{pl.title}}" style="display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; border: 1px solid {{pl.bd}}; border-radius: 999px; background: {{pl.bg}}; color: {{pl.fg}}; cursor: pointer; font-size: 13px; font-weight: 500">
+<sc-if value="{{pl.hasIcon}}" hint-placeholder-val="{{ true }}"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="{{pl.icon}}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></sc-if>
+{{pl.label}}</button>
+</sc-for>
+</div>
 </sc-if>
 <sc-if value="{{ff.hasOptions}}" hint-placeholder-val="{{ false }}"><datalist id="{{ff.listId}}"><sc-for list="{{ff.options}}" as="op" hint-placeholder-count="4"><option value="{{op.o}}"></option></sc-for></datalist></sc-if>
 <sc-if value="{{ff.isArea}}" hint-placeholder-val="{{ false }}">
@@ -957,7 +975,7 @@ button:disabled{opacity:.35;cursor:default}
 <sc-if value="{{ff.hasError}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 12px; color: var(--bad-fg)">{{ff.error}} — not saved yet</span></sc-if>
 </div>
 </sc-for>
-<button class="rr-hover" onClick="{{lr.remove}}" aria-label="{{lr.removeAria}}" style="order: 1; margin-left: auto; height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Remove</button>
+<button class="rr-hover" onClick="{{lr.remove}}" aria-label="{{lr.removeAria}}" style="order: 1; margin-left: auto; position: {{lr.removePos}}; top: 12px; right: 14px; height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Remove</button>
 </div>
 </sc-if>
 </div>
@@ -1352,15 +1370,6 @@ const KINDS = Object.freeze({
   closed: { label: 'Closed', color: INK2, order: 5 },
 });
 
-const PILLS = Object.freeze({
-  current: { label: 'Current', bg: 'var(--ok-bg)', fg: 'var(--ok-fg)' },
-  expiring: { label: 'Expiring', bg: 'var(--warn-bg)', fg: 'var(--warn-fg)' },
-  stale: { label: 'Stale', bg: 'var(--bad-bg)', fg: 'var(--bad-fg)' },
-  done: { label: 'Done', bg: 'var(--ok-bg)', fg: 'var(--ok-fg)' },
-  open: { label: 'Open', bg: 'var(--neutral-bg)', fg: 'var(--neutral-fg)' },
-  overdue: { label: 'Overdue', bg: 'var(--bad-bg)', fg: 'var(--bad-fg)' },
-});
-
 const EFFECTIVENESS = Object.freeze({
   Effective: { bg: 'var(--ok-bg)', fg: 'var(--ok-fg)' },
   Partial: { bg: 'var(--warn-bg)', fg: 'var(--warn-fg)' },
@@ -1603,7 +1612,7 @@ function firstFieldLine(lines, start, end) {
 }
 
 /** Fields every entry has, then the fields only one kind has. */
-const COMMON_FIELDS = ['slugs', 'related', 'kind', 'status', 'closed', 'category', 'target', 'driver', 'approver', 'contributors', 'informed'];
+const COMMON_FIELDS = ['slugs', 'related', 'stars', 'kind', 'status', 'closed', 'category', 'target', 'driver', 'approver', 'contributors', 'informed'];
 const KIND_FIELDS = Object.freeze({
   risk: ['impact', 'likelihood', 'inherent', 'appetite'],
   opportunity: ['value', 'effort', 'target_value', 'cost', 'realisation'],
@@ -1611,8 +1620,16 @@ const KIND_FIELDS = Object.freeze({
 const ALL_FIELDS = COMMON_FIELDS.concat(KIND_FIELDS.risk, KIND_FIELDS.opportunity);
 /** The only fields an entry must have: its score. Everything else is optional. */
 const REQUIRED_FIELDS = Object.freeze({ risk: ['impact', 'likelihood'], opportunity: ['value', 'effort'] });
-const EVIDENCE_HEADER = ['Ref', 'Title', 'Kind', 'Date', 'Valid days'];
-const ACTION_HEADER = ['Action', 'Owner', 'Due', 'Done'];
+const EVIDENCE_HEADER = ['Title', 'Description', 'Resources'];
+/**
+ * Evidence cells → [title, description, resources], resources being http(s) URLs separated by spaces, ; or ,.
+ * Older tables put a link in the title ("[Report](https://…)" or a bare URL); its URL moves to the resources.
+ */
+function evidenceCells([title, description, resources]) {
+  const l = linkOf(title);
+  const urls = resources.split(/[\s;,]+/).filter((u) => /^https?:\/\//.test(u));
+  return [l.hasHref && l.title !== l.href ? l.title : l.hasHref ? '' : title, description, Array.from(new Set(l.hasHref ? [l.href].concat(urls) : urls)).join(' ')];
+}
 /** Per-kind prose and table markers in the markdown. */
 const KIND_SYNTAX = Object.freeze({
   risk: { table: '### Controls', header: ['Control', 'Type', 'Effectiveness'], types: CONTROL_TYPES, states: EFFECTIVENESS, stateWhat: 'control effectiveness' },
@@ -1654,11 +1671,10 @@ function parseRiskSection(lines, start, end, file) {
   const description = [];
   let controls = null;
   let evidence = null;
-  let actions = null;
   while (i < end) {
     const line = lines[i];
     if (line.trim() === '') { i += 1; continue; }
-    /* Tables: cells are free text; a date that isn't YYYY-MM-DD, or a non-numeric "valid days", reads as blank. */
+    /* Tables: cells are free text. */
     const heading = /^#{3,}\s*(.*?)\s*$/.exec(line);
     const table = heading === null ? null : heading[1].toLowerCase();
     if (table === syn.table.slice(4).toLowerCase()) {
@@ -1668,21 +1684,13 @@ function parseRiskSection(lines, start, end, file) {
     }
     if (table === 'evidence') {
       const t = parseTable(lines, i + 1, EVIDENCE_HEADER, file);
-      evidence = t.rows.filter((r) => r.cells[0] !== '' || r.cells[1] !== '').map((r) => Object.freeze({
-        ref: r.cells[0], title: r.cells[1], kind: r.cells[2],
-        date: isIsoDate(r.cells[3]) ? r.cells[3] : null, validDays: /^\d+$/.test(r.cells[4]) && Number(r.cells[4]) >= 1 ? Number(r.cells[4]) : null,
+      evidence = t.rows.map((r) => evidenceCells(r.cells)).filter(([title, , res]) => title !== '' || res !== '').map(([title, description, res]) => Object.freeze({
+        title, description, resources: Object.freeze(res === '' ? [] : res.split(' ')),
       }));
       i = t.next; continue;
     }
-    if (table === 'actions') {
-      const t = parseTable(lines, i + 1, ACTION_HEADER, file);
-      actions = t.rows.filter((r) => r.cells[0] !== '').map((r) => Object.freeze({
-        title: r.cells[0], owner: parsePerson(r.cells[1]),
-        due: isIsoDate(r.cells[2]) ? r.cells[2] : null,
-        done: isIsoDate(r.cells[3]) ? r.cells[3] : null,
-      }));
-      i = t.next; continue;
-    }
+    /* Older files have an Actions table; it's skipped rather than read as description. */
+    if (table === 'actions') { i = parseTable(lines, i + 1, ['Action'], file).next; continue; }
     /* Any other text — including other headings and text after the tables — is description. Bold markers show as plain text
        (older files have "**Cause:** …" lines, which read as "Cause: …"). */
     description.push((heading === null ? line.trim() : heading[1]).replace(/\*\*(.+?)\*\*/g, '$1'));
@@ -1697,6 +1705,8 @@ function parseRiskSection(lines, start, end, file) {
     id: h[1] === undefined ? null : h[1], kind, title: h[2].trim(), status: closed ? 'closed' : 'open',
     slugs: has('slugs') ? parseSlugs(fields.slugs) : Object.freeze([]), slugsLine: at('slugs'),
     related: has('related') ? parseRelated(fields.related) : Object.freeze([]),
+    /* 0–3, written as a digit ("★★" works too); anything else reads as none. */
+    stars: !has('stars') ? 0 : /^[0-3]$/.test(fields.stars) ? Number(fields.stars) : /^★{1,3}$/.test(fields.stars) ? fields.stars.length : 0,
     closed: closedOn,
     category: has('category') ? fields.category : 'Uncategorised',
     value, effort,
@@ -1710,7 +1720,7 @@ function parseRiskSection(lines, start, end, file) {
     realisation: !isRisk && has('realisation') && isIsoDate(fields.realisation) ? fields.realisation : null,
     daci: Object.freeze({ D: people('driver'), A: people('approver'), C: people('contributors'), I: people('informed') }),
     description: description.join(' '),
-    controls: Object.freeze(controls ?? []), evidence: Object.freeze(evidence ?? []), actions: Object.freeze(actions ?? []),
+    controls: Object.freeze(controls ?? []), evidence: Object.freeze(evidence ?? []),
     file, line: start + 1, endLine: end,
   });
 }
@@ -1829,18 +1839,6 @@ function diffKind(a, b) {
   if (b.score < a.score) return 'improved';
   if (a.i !== b.i || a.l !== b.l) return 'shifted';
   return 'unchanged';
-}
-
-function evidenceStatus(e, asAtDay) {
-  const age = asAtDay - dayNumber(e.date);
-  if (age < 0) throw new Error('bug: evidence ' + e.ref + ' is dated after the as-at date');
-  const remaining = e.validDays - age;
-  return remaining < 0 ? 'stale' : remaining <= 30 ? 'expiring' : 'current';
-}
-
-function actionStatus(a, asAtDay) {
-  if (a.done !== null && dayNumber(a.done) <= asAtDay) return 'done';
-  return a.due !== null && dayNumber(a.due) < asAtDay ? 'overdue' : 'open';
 }
 
 function cellCentre(i, l) { return { x: (i - 0.5) * (100 / SCALE), y: (SCALE - l + 0.5) * (100 / SCALE) }; }
@@ -2167,6 +2165,12 @@ function buildDetail(st, S, viewRisks, others, go, setState, saveDraft) {
   const base = {
     id: r.id, title: r.title, category: r.category, description: r.description,
     sourceRef: 'Source: ' + r.file + ' · line ' + r.line,
+    /* Stars are written to the file the shown record came from, like a dragged marker. */
+    stars: starButtons(r.stars, (n) => {
+      const fr = tryParse(r.file, st.drafts[r.file]);
+      const rec = fr.ok ? fr.file.risks.find((x) => x.line === r.line) : undefined;
+      if (rec !== undefined) saveDraft(r.file, patchSection(st.drafts[r.file], rec, { stars: starsField(n) }));
+    }),
     /* Links to each form tab for this entry: a plain click opens it here, a modified click follows the href (e.g. a new tab). */
     edit: Object.fromEntries(FORM_TABS.map((tab) => [tab, {
       href: hrefWith({ page: 'data', kind: r.kind === 'risk' ? null : r.kind, entry: r.id, tab: tab === FORM_TABS[0] ? null : tab, view: null }),
@@ -2180,7 +2184,7 @@ function buildDetail(st, S, viewRisks, others, go, setState, saveDraft) {
       },
     }])),
     hasControls: r.controls.length > 0,
-    hasEvidence: r.evidence.length > 0, hasActions: r.actions.length > 0,
+    hasEvidence: r.evidence.length > 0,
     hasDaci: daci.length > 0,
     lcLabel: lcStyle.label, lcBg: lcStyle.bg, lcFg: lcStyle.fg,
     isPending: lc === 'pending', hasPosition: lc !== 'pending',
@@ -2203,27 +2207,13 @@ function buildDetail(st, S, viewRisks, others, go, setState, saveDraft) {
       };
     }),
   };
-  /* Undated evidence is listed last with no freshness pill; dated evidence from after the as-at date is left out. */
-  const evidence = r.evidence
-    .filter((e) => e.date === null || dayNumber(e.date) <= asAt.day)
-    .slice().sort((a, b) => (b.date === null ? -Infinity : dayNumber(b.date)) - (a.date === null ? -Infinity : dayNumber(a.date)))
-    .map((e) => {
-      const known = e.date !== null && e.validDays !== null;
-      const status = known ? lookup(PILLS, evidenceStatus(e, asAt.day), 'pill') : { label: '', bg: 'transparent', fg: INK2 };
-      return {
-        ...linkOf(e.title || e.ref), meta: dotJoin([e.title === '' ? null : e.ref, e.kind, e.date === null ? null : formatDate(e.date)]),
-        validity: known ? 'Valid ' + e.validDays + ' days, to ' + formatDay(dayNumber(e.date) + e.validDays) : '', status: status.label, bg: status.bg, fg: status.fg,
-      };
-    });
-  const actions = r.actions.map((a) => {
-    const status = lookup(PILLS, actionStatus(a, asAt.day), 'pill');
-    return { title: a.title, meta: dotJoin([a.owner === null || PLACEHOLDER_NAME.test(a.owner.name) ? null : a.owner.name, a.due === null ? null : 'due ' + formatDate(a.due)]), status: status.label, bg: status.bg, fg: status.fg };
-  });
+  /* Each resource links by its host name; the full URL is its tooltip. */
+  const evidence = r.evidence.map((e) => ({
+    title: e.title || 'Untitled', description: e.description, hasDescription: e.description !== '',
+    links: e.resources.map((u) => { let host = u; try { host = new URL(u).hostname.replace(/^www\./, ''); } catch (err) { /* not a URL: show as written */ } return { href: u, host }; }),
+  }));
   const withLists = Object.assign({}, base, {
-    evidenceTitle: 'Evidence as at ' + asAt.label + ' · ' + evidence.length,
-    evidence, noEvidence: evidence.length === 0,
-    noEvidenceNote: 'No evidence on file by ' + asAt.label + '.',
-    actionsTitle: 'Actions · ' + actions.length, actions,
+    evidenceTitle: 'Evidence · ' + evidence.length, evidence,
   });
   if (lc === 'pending') {
     return Object.assign({}, withLists, { score: '', bandFill: 'var(--card)', bandInk: INK, bandLabel: '', ixl: '', facts: [], miniCells: [], miniAria: '', pathPoints: '', inherentPts: '', targetX: 0, targetY: 0, hasTarget: false, nowX: 0, nowY: 0, nowFill: INK, nowLegend: '', originLegend: L.originLabel, canDrag: false, dragCursor: 'default', inherentCursor: 'default', dragNow: null, dragInherent: null, dragTarget: null, dragMove: null, dragEnd: null, dragCancel: null });
@@ -2286,6 +2276,16 @@ function buildDetail(st, S, viewRisks, others, go, setState, saveDraft) {
 }
 
 /** Category pills: "All" clears; others toggle (multi-select). Counts are open risks at the as-at date. */
+/** Three star buttons showing `n`; clicking star k sets k, and clicking the last lit one clears them. */
+function starButtons(n, set) {
+  return [1, 2, 3].map((k) => ({
+    pressed: String(k <= n), fill: k <= n ? 'currentColor' : 'none', fg: k <= n ? 'var(--star, #d99a00)' : 'var(--ink3)',
+    aria: k === n ? 'Clear stars' : k + (k === 1 ? ' star' : ' stars'), pick: () => set(k === n ? 0 : k),
+  }));
+}
+/** The text a "- stars:" line takes for n; 0 removes the line. */
+function starsField(n) { return n === 0 ? '' : String(n); }
+
 function buildCategoryPills(cats, categories, toIdx, go, pool) {
   const openIn = (pred) => pool.filter((r) => pred(r) && positionAt(r, toIdx) !== null).length;
   const pill = (label, on, count, pick) => ({ label, count, pick, pressed: String(on), bg: on ? INK : 'var(--card)', fg: on ? 'var(--on-ink)' : INK, bd: on ? INK : 'var(--control)', countFg: on ? 'var(--on-ink-muted)' : INK2 });
@@ -2405,7 +2405,8 @@ async function openRouterAsk(key, model, system, prompt, schema, web) {
     });
   } catch (e) { throw new Error('Couldn’t reach OpenRouter; are you online?'); }
   const body = await res.json().catch(() => null);
-  if (res.status === 401) throw new Error('OpenRouter rejected the API key; check it in Settings.');
+  /* Say what OpenRouter said, and flag a key from another service (OpenRouter keys start "sk-or-"). */
+  if (res.status === 401) throw new Error('OpenRouter rejected the API key' + (body && body.error && body.error.message ? ' (“' + body.error.message + '”)' : '') + (key.startsWith('sk-or-') ? '; check it in Settings.' : '. OpenRouter keys start “sk-or-”; this one doesn’t, so it may be from another service.'));
   if (!res.ok || body === null) throw new Error('OpenRouter error ' + res.status + (body && body.error ? ': ' + body.error.message : ''));
   const msg = body.choices[0].message;
   let data;
@@ -2459,12 +2460,13 @@ function buildSettings(st, go, setState) {
   const saveOr = () => {
     const key = cleanKey(st.orDraft);
     if (key === '') { setState({ orNote: 'Paste a key first.' }); return; }
-    setState(storeSetting(OR_KEY_STORE, key) ? { orKey: key, orDraft: '', orNote: 'Saved in this browser.' } : { orNote: 'This browser blocked storage; the key was not saved.' });
+    const odd = key.startsWith('sk-or-') ? '' : ' It doesn’t start “sk-or-” like OpenRouter keys do; is it from another service?';
+    setState(storeSetting(OR_KEY_STORE, key) ? { orKey: key, orDraft: '', orNote: 'Saved in this browser.' + odd } : { orNote: 'This browser blocked storage; the key was not saved.' });
   };
   return {
     orDraft: st.orDraft, orSaved: st.orKey !== '',
     orPlaceholder: st.orKey === '' ? 'Paste your key…' : '•••• ' + st.orKey.slice(-4) + ' (paste to replace)',
-    orNote: st.orNote !== '' ? st.orNote : st.orKey === '' ? 'Adds Suggest buttons to the form’s Details, ' + 'Controls, Evidence and Actions tabs.' : 'A key is saved in this browser.',
+    orNote: st.orNote !== '' ? st.orNote : st.orKey === '' ? 'Adds Suggest buttons to the form’s Details, Controls and Evidence tabs.' : 'A key is saved in this browser.',
     onOrDraft: (e) => setState({ orDraft: e.target.value, orNote: '' }),
     onOrKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); saveOr(); } },
     saveOr,
@@ -2823,7 +2825,7 @@ function buildTable(st, toIdx, go, risks, L) {
         id: r.id, title: r.title, category: r.category, approver: personLine(approverOf(r)), status: lc.label, stBg: lc.bg, stFg: lc.fg,
         rating: L.rating(r.impact, r.likelihood), score, fill: open ? band.fill : 'var(--neutral-bg)', ink: open ? band.ink : INK2,
         limit: r.limit === null ? '—' : L.limitSymbol + ' ' + r.limit, target: r.targetRaw === null ? '—' : L.pairText(r.targetRaw),
-        controls: r.controls.length, evidence: r.evidence.length, actions: r.actions.length,
+        controls: r.controls.length, evidence: r.evidence.length,
         bg: sel ? 'var(--sel-bg)' : 'var(--card)', pressed: String(sel),
         aria: r.id + ' ' + r.title + ', score ' + score + (open ? '' : ', closed'),
         pick: go(sel ? { selectedId: null, drawerOpen: false } : { selectedId: r.id, drawerOpen: true }),
@@ -3072,7 +3074,7 @@ const AI_TABS = Object.freeze({
       schema: { type: 'object', additionalProperties: false, required: ['title', 'description'], properties: { title: { type: 'string' }, description: { type: 'string' } } },
     }),
     items: (data, ctx) => [['title', 'Title'], ['description', 'Description']].filter(([k]) => data[k].trim() !== '' && data[k].trim() !== ctx.parts[k].trim())
-      .map(([k, label]) => ({ label, text: data[k].trim(), useLabel: 'Use', apply: (text, r) => patchSection(text, r, { [k]: data[k].trim() }) })),
+      .map(([k, label]) => ({ label, text: data[k].trim(), useLabel: 'Use', patch: { [k]: data[k].trim() } })),
   },
   controls: {
     label: 'Suggest',
@@ -3086,20 +3088,12 @@ const AI_TABS = Object.freeze({
     label: 'Find resources',
     web: true,
     ask: (ctx) => ({
-      prompt: 'Search the web for up to five credible, current sources that inform this ' + ctx.noun + ' (its likelihood, impact, causes or good practice): standards, regulator or government guidance, research, incident reports. Give each source\'s exact URL as found, its title, a kind (Standard, Guidance, Report, Article, Dataset…) and its publication date as YYYY-MM-DD if known, else "".\n\n' + ctx.json,
-      schema: AI_ROWS({ title: { type: 'string' }, url: { type: 'string' }, kind: { type: 'string' }, date: { type: 'string' } }),
+      prompt: 'Search the web for up to five credible, current sources that inform this ' + ctx.noun + ' (its likelihood, impact, causes or good practice): standards, regulator or government guidance, research, incident reports. For each give its title, one sentence on what it shows for this ' + ctx.noun + ', and its exact URL as found.\n\n' + ctx.json,
+      schema: AI_ROWS({ title: { type: 'string' }, description: { type: 'string' }, url: { type: 'string' } }),
     }),
     /* Only sources the search actually cited, when it reports citations: a model can make up a plausible URL. */
     items: (data, ctx) => data.rows.filter((x) => /^https?:\/\//.test(x.url) && (ctx.cited.length === 0 || ctx.cited.some((u) => sameUrl(u, x.url))))
-      .map((x) => ({ label: x.kind, text: x.title, href: x.url, sub: isIsoDate(x.date) ? formatDate(x.date) : '', useLabel: '+ Add', row: ['', '[' + x.title.replace(/[\[\]]/g, '') + '](' + x.url + ')', x.kind, isIsoDate(x.date) ? x.date : '', ''] })),
-  },
-  actions: {
-    label: 'Suggest',
-    ask: (ctx) => ({
-      prompt: 'Suggest up to five concrete next actions for this ' + ctx.noun + ' that it does not already have, each a short imperative under 12 words.\n\n' + ctx.json,
-      schema: AI_ROWS({ action: { type: 'string' } }),
-    }),
-    items: (data) => data.rows.map((x) => ({ label: 'Action', text: x.action, useLabel: '+ Add', row: [x.action, '', '', ''] })),
+      .map((x) => ({ label: 'Source', text: x.title, href: x.url, sub: x.description, useLabel: '+ Add', row: [x.title, x.description, x.url] })),
   },
 });
 /** Two URLs name the same page, ignoring a trailing slash, the fragment and tracking parameters. */
@@ -3110,19 +3104,19 @@ function sameUrl(a, b) {
 /** The form's Suggest block for the open tab; hidden without an OpenRouter key or on a tab with nothing to suggest. */
 function buildFormAi(st, setState, tabKey, r, parts, text, file, commit) {
   const spec = AI_TABS[tabKey];
-  if (spec === undefined || st.orKey === '') return { show: false, items: [] };
+  if (spec === undefined || st.orKey === '') return { show: false, open: false, items: [] };
   const L = lensOf(r.kind);
   const syn = KIND_SYNTAX[r.kind];
   /* Each table's heading and columns, for the tabs that add rows. */
-  const table = { controls: [syn.table.slice(4), syn.header], evidence: ['Evidence', EVIDENCE_HEADER], actions: ['Actions', ACTION_HEADER] }[tabKey];
-  const rows = table === undefined ? [] : tableCells(text, r, table[0], table[1]);
+  const table = { controls: [syn.table.slice(4), syn.header], evidence: ['Evidence', EVIDENCE_HEADER] }[tabKey];
+  const rows = table === undefined ? [] : tableCells(text, r, table[0], table[1]).map(tabKey === 'evidence' ? evidenceCells : (cs) => cs);
   const here = st.ai !== null && st.ai.file === file.name && st.ai.id === r.id && st.ai.tab === tabKey ? st.ai : null;
   const ctx = {
     noun: L.noun, supports: L.supportsLabel.toLowerCase(), syn, parts, cited: here === null ? [] : here.cited,
     json: JSON.stringify({ register: file.register, as_at: file.asAt, kind: L.noun, title: parts.title, category: r.category === 'Uncategorised' ? null : r.category, description: parts.description, already_has: table === undefined ? undefined : rows.map((cs) => cs.filter((c) => c !== '').join(' · ')) }, null, 2),
   };
   const run = async () => {
-    const at = { file: file.name, id: r.id, tab: tabKey, busy: true, error: '', data: null, cited: [] };
+    const at = { file: file.name, id: r.id, tab: tabKey, busy: true, error: '', data: null, cited: [], open: true };
     setState({ ai: at });
     const { prompt, schema } = spec.ask(ctx);
     try {
@@ -3131,22 +3125,54 @@ function buildFormAi(st, setState, tabKey, r, parts, text, file, commit) {
     } catch (e) { setState({ ai: Object.assign({}, at, { busy: false, error: e.message }) }); }
   };
   /* An offer already taken (its row is in the table, or the field already says it) drops out of the list. */
-  const main = tabKey === 'evidence' ? 1 : 0;
-  const has = (row) => rows.some((cs) => cs[main].trim().toLowerCase() === row[main].trim().toLowerCase());
+  const has = (row) => rows.some((cs) => cs[0].trim().toLowerCase() === row[0].trim().toLowerCase());
   const offers = here === null || here.data === null ? [] : spec.items(here.data, ctx).filter((o) => o.row === undefined || !has(o.row));
   const busy = here !== null && here.busy;
-  const note = here === null ? (spec.web ? 'Searches the web with your OpenRouter key.' : 'Asks ' + st.orModel + ' via OpenRouter.')
-    : busy ? 'Thinking…' : here.error !== '' ? here.error : offers.length === 0 ? 'Nothing more to suggest.' : 'Check each before adding: suggestions can be wrong.';
+  /* One edit for any set of offers: new rows go on the end of the table; details patch the fields together. */
+  const apply = (os) => {
+    const added = os.filter((o) => o.row !== undefined).map((o) => o.row);
+    const patch = Object.assign({}, ...os.filter((o) => o.patch !== undefined).map((o) => o.patch));
+    const withRows = added.length === 0 ? text : patchTable(text, r, table[0], table[1], rows.concat(added));
+    return Object.keys(patch).length === 0 ? withRows : patchSection(withRows, r, patch);
+  };
+  const close = () => setState({ ai: null });
+  const note = here === null ? '' : busy ? (spec.web ? 'Searching the web…' : 'Thinking…') : here.error !== '' ? here.error
+    : offers.length === 0 ? 'Nothing more to suggest.' : 'Check each before adding: suggestions can be wrong.';
   return {
-    show: true, busy, label: busy ? 'Suggesting…' : here !== null && here.data !== null ? 'Suggest again' : spec.label, run,
+    show: true, busy, open: here !== null && here.open, label: busy ? 'Suggesting…' : spec.label, run,
+    hint: spec.web ? 'Searches the web with your OpenRouter key' : 'Asks ' + st.orModel + ' via OpenRouter',
+    title: spec.label + ' · ' + r.id,
     note, noteFg: here !== null && here.error !== '' ? 'var(--bad-fg)' : 'var(--ink3)',
+    close, backdrop: (e) => { if (e.target === e.currentTarget) close(); }, key: (e) => { if (e.key === 'Escape') close(); },
+    hasItems: offers.length > 0, addAllLabel: offers.length === 1 ? 'Add it' : 'Add all ' + offers.length,
+    addAll: () => commit(apply(offers), { ai: null, dataFlash: 'Added ' + offers.length + (offers.length === 1 ? ' suggestion' : ' suggestions') + ' to ' + r.id }),
     items: offers.map((o) => ({
       label: o.label, text: o.text, href: o.href ?? '', hasLink: o.href !== undefined, sub: o.sub ?? '', hasSub: (o.sub ?? '') !== '',
       useLabel: o.useLabel, aria: o.useLabel.replace('+ ', '') + ' ' + o.text,
-      use: () => commit(o.row !== undefined ? patchTable(text, r, table[0], table[1], rows.concat([o.row])) : o.apply(text, r)),
+      use: () => commit(apply([o])),
     })),
   };
 }
+
+/** Icons (16×16 stroke paths) for the type and state pills on Controls/Enablers; a value without one shows as text only. */
+const RING = 'M8 2.5 A5.5 5.5 0 1 0 8 13.5 A5.5 5.5 0 1 0 8 2.5 Z';
+const PILL_ICONS = Object.freeze({
+  Preventive: 'M8 1.5 L13.5 3.5 V8 C13.5 11 11 13.5 8 14.5 C5 13.5 2.5 11 2.5 8 V3.5 Z',
+  Detective: 'M1.5 8 C3.5 4.5 12.5 4.5 14.5 8 C12.5 11.5 3.5 11.5 1.5 8 Z M8 6.3 A1.7 1.7 0 1 0 8 9.7 A1.7 1.7 0 1 0 8 6.3 Z',
+  Corrective: 'M13 8 A5 5 0 1 1 11.5 4.5 M13 2.5 V5 H10.5',
+  Directive: 'M2.5 8 H13 M9.5 4.5 L13 8 L9.5 11.5',
+  Funding: RING + ' M8 5 V11 M6.3 6.5 H9.2 M6.8 9.5 H9.7',
+  Capability: 'M8 2 L9.8 6 L14 6.3 L10.8 9 L11.8 13.5 L8 11.1 L4.2 13.5 L5.2 9 L2 6.3 L6.2 6 Z',
+  Dependency: 'M6.5 9.5 L9.5 6.5 M7 4.5 L8.5 3 A2.5 2.5 0 0 1 13 7.5 L11.5 9 M9 11.5 L7.5 13 A2.5 2.5 0 0 1 3 8.5 L4.5 7',
+  Approval: 'M3 8.5 L6.5 12 L13 4.5',
+  Technology: 'M4.5 4.5 H11.5 V11.5 H4.5 Z M6.5 2 V4.5 M9.5 2 V4.5 M6.5 11.5 V14 M9.5 11.5 V14 M2 6.5 H4.5 M2 9.5 H4.5 M11.5 6.5 H14 M11.5 9.5 H14',
+  Effective: 'M3 8.5 L6.5 12 L13 4.5',
+  Partial: RING + ' M8 2.5 V13.5',
+  Ineffective: 'M4 4 L12 12 M12 4 L4 12',
+  Ready: 'M3 8.5 L6.5 12 L13 4.5',
+  'In progress': RING + ' M8 5 V8 L10 9.5',
+  Blocked: RING + ' M4.2 11.8 L11.8 4.2',
+});
 
 /** Optional fields the form offers per kind: [key, label, input type, hint]. */
 const FORM_DETAILS = Object.freeze({
@@ -3188,7 +3214,7 @@ function buildForm(st, fr, name, text, go, setState, model) {
       const on = k === idx;
       return {
         id: r.id, title: r.title, pressed: String(on), bg: on ? INK : 'var(--card)', fg: on ? 'var(--on-ink)' : INK, subFg: on ? 'var(--on-ink-muted)' : INK2, bd: on ? INK : 'var(--control)',
-        sub: dotJoin(['score ' + r.impact * r.likelihood, r.category === 'Uncategorised' ? null : r.category, r.status === 'closed' ? 'closed' : null]),
+        sub: dotJoin([r.stars === 0 ? null : '★'.repeat(r.stars), 'score ' + r.impact * r.likelihood, r.category === 'Uncategorised' ? null : r.category, r.status === 'closed' ? 'closed' : null]),
         pick: go({ formIdx: k, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '' }),
         /* View opens the entry in the Register, when this file is one of its sources and the entry is on it. */
         canView: model !== null && (name === st.cmpB || name === st.cmpA) && model.risks.some((x) => x.id === r.id && x.kind === r.kind),
@@ -3279,11 +3305,13 @@ function buildForm(st, fr, name, text, go, setState, model) {
           aria: label + ', ' + (cell === null ? 'not set' : rated(cell)) + '. Arrow keys move it.',
         };
       });
-      /* Controls, evidence and actions: each table is rewritten whole from its raw cells. A row folds to its title, and adding one folds the rest.
+      /* Controls and evidence: each table is rewritten whole from its raw cells. A row folds to its title, and adding one folds the rest.
          Typed text stays in formPending so a trailing space survives the cell trim. Rows reorder by dragging the handle, or with its arrow keys.
          `cols` are [cell index, label, input type, placeholder, suggestions] in form order; the first is the row's title, with `titleCols` as fallbacks. */
-      const rowList = (key, heading, header, cols, titleCols, noun) => {
-        const rows = tableCells(text, r, heading, header);
+      /* A 'pills' column is a toggle group over its options (`tints` colours the pressed one); 'textarea' takes a full line.
+         `removeTop` puts Remove at the top right instead of beside the inputs. */
+      const rowList = (key, heading, header, cols, titleCols, noun, removeTop = false, normalise = (cs) => cs) => {
+        const rows = tableCells(text, r, heading, header).map(normalise);
         const listKey = name + ':' + r.line + ':' + key;
         const opened = st.formListOpen !== null && st.formListOpen.key === listKey ? st.formListOpen.open : [];
         const drag = st.formRowDrag !== null && st.formRowDrag.key === listKey ? st.formRowDrag : null;
@@ -3305,7 +3333,8 @@ function buildForm(st, fr, name, text, go, setState, model) {
               aria: capitalise(noun) + ' ' + (k + 1), removeAria: 'Remove ' + noun + ' ' + (k + 1),
               handleAria: 'Move ' + noun + ' ' + (k + 1) + '. Drag, or use the up and down arrow keys.',
               isOpen: open, expanded: String(open), chevron: open ? '90deg' : '0deg',
-              title: title ?? 'Untitled', sub: open ? '' : dotJoin(cols.slice(1).map(([c]) => cells[c].trim()).filter((x) => x !== title)),
+              removePos: removeTop ? 'absolute' : 'static', padRight: removeTop ? '96px' : '14px',
+              title: title ?? 'Untitled', sub: open ? '' : dotJoin(cols.map(([c]) => cells[c].trim()).filter((x) => x !== '' && x !== title)),
               rowBd: drag !== null && drag.over === k && drag.from !== k ? 'var(--accent)' : 'var(--rule)',
               rowOpacity: drag !== null && drag.from === k ? '0.5' : '1',
               toggle: () => setState(listOpen(open ? opened.filter((j) => j !== k) : opened.concat(k))),
@@ -3329,13 +3358,29 @@ function buildForm(st, fr, name, text, go, setState, model) {
               },
               drop: (e) => { if (drag !== null) { e.preventDefault(); move(drag.from, k); } },
               dragEnd: () => { if (drag !== null) setState({ formRowDrag: null }); },
-              fields: cols.map(([c, label, type, placeholder, options], n) => {
+              fields: cols.map(([c, label, type, placeholder, options, tints = {}], n) => {
                 const pk = key + '-' + k + '-' + c;
                 const q = pend[pk];
+                const setCell = (v) => write(rows.map((cs, j) => (j === k ? cs.map((x, i) => (i === c ? v : x)) : cs)), pend, opened);
+                const isPills = type === 'pills';
+                /* A value that isn't one of the options keeps its own (pressed) pill, so free text isn't lost. */
+                const cur = cells[c].trim();
+                const choices = isPills && cur !== '' && !options.includes(cur) ? options.concat(cur) : options;
                 return {
-                  id: 'rr-f-' + pk, label, placeholder, hint: '', hasHint: false, type, isArea: false, isInput: true,
-                  flex: n === 0 ? '1 1 240px' : '1 1 140px', order: n === 0 ? 0 : 2,
-                  hasOptions: options.length > 0, listId: 'rr-dl-' + key + '-' + c, options: options.map((o) => ({ o })),
+                  id: 'rr-f-' + pk, label, placeholder, hint: '', hasHint: false, type,
+                  isArea: type === 'textarea', isInput: type !== 'textarea' && !isPills, isPills, rows: 2,
+                  pills: isPills ? choices.map((o) => {
+                    const on = o === cur;
+                    const tint = tints[o];
+                    return {
+                      label: o, icon: PILL_ICONS[o] ?? '', hasIcon: PILL_ICONS[o] !== undefined, pressed: String(on), title: on ? 'Click again to clear' : '',
+                      bg: on ? (tint ? tint.bg : INK) : 'var(--card)', fg: on ? (tint ? tint.fg : 'var(--on-ink)') : INK, bd: on ? (tint ? tint.fg : INK) : 'var(--control)',
+                      pick: () => setCell(on ? '' : o),
+                    };
+                  }) : [],
+                  flex: type === 'textarea' ? '1 1 100%' : isPills ? '0 1 auto' : n === 0 ? '1 1 240px' : '1 1 140px',
+                  order: type === 'textarea' ? 2 : isPills ? 0 : n === 0 ? 0 : 2,
+                  hasOptions: !isPills && options.length > 0, listId: 'rr-dl-' + key + '-' + c, options: options.map((o) => ({ o })),
                   value: q === undefined ? cells[c] : q.value, error: '', hasError: false,
                   onInput: (e) => {
                     const v = e.target.value;
@@ -3368,19 +3413,15 @@ function buildForm(st, fr, name, text, go, setState, model) {
         }),
         tab('controls', L.supportsLabel, count(tableCells(text, r, syn.table.slice(4), syn.header).length, supportNoun, L.supportsLabel.toLowerCase()), {
           isList: true, list: rowList('ctl', syn.table.slice(4), syn.header,
-            [[0, capitalise(supportNoun), 'text', '', []], [1, 'Type', 'text', '', syn.types], [2, syn.header[2], 'text', '', Object.keys(syn.states)]], [0], supportNoun),
+            [[1, 'Type', 'pills', '', syn.types], [2, syn.header[2], 'pills', '', Object.keys(syn.states), syn.states], [0, capitalise(supportNoun), 'textarea', '', []]], [0], supportNoun, true),
         }),
         tab('evidence', 'Evidence', count(tableCells(text, r, 'Evidence', EVIDENCE_HEADER).length, 'evidence item', 'evidence items'), {
           isList: true, list: rowList('ev', 'Evidence', EVIDENCE_HEADER,
-            [[1, 'Title', 'text', 'Text, a URL, or [Title](https://…)', []], [0, 'Ref', 'text', '', []], [2, 'Kind', 'text', '', []], [3, 'Date', 'date', '', []], [4, 'Valid days', 'number', '', []]], [1, 0], 'evidence item'),
-        }),
-        tab('actions', 'Actions', count(tableCells(text, r, 'Actions', ACTION_HEADER).length, 'action', 'actions'), {
-          isList: true, list: rowList('act', 'Actions', ACTION_HEADER,
-            [[0, 'Action', 'text', '', []], [1, 'Owner', 'text', 'Name (Role)', []], [2, 'Due', 'date', '', []], [3, 'Done', 'date', '', []]], [0], 'action'),
+            [[0, 'Title', 'text', '', []], [1, 'Description', 'textarea', '', []], [2, 'Resources', 'textarea', 'URLs, separated by spaces or new lines', []]], [0, 2], 'evidence item', true, evidenceCells),
         }),
       ];
       const cur = tabs.find((t) => t.key === st.formEntryTab) ?? tabs[0];
-      const formAi = buildFormAi(st, setState, cur.key, r, p, text, file, (next) => commit(next, { formPending: pend }));
+      const formAi = buildFormAi(st, setState, cur.key, r, p, text, file, (next, extra = {}) => commit(next, Object.assign({ formPending: pend }, extra)));
       return {
         formAi,
         formEntryTabs: tabs.map((t) => {
@@ -3392,9 +3433,10 @@ function buildForm(st, fr, name, text, go, setState, model) {
             bg: on ? 'var(--sel-bg)' : 'var(--card)', bd: on ? INK : 'var(--rule)', bar: on ? 'var(--accent)' : 'var(--rule)',
           };
         }),
-        formEntry: Object.assign(cur, { hasFields: cur.fields.length > 0, hasHint: cur.hint !== '', }),
+        formEntry: Object.assign(cur, { hasFields: cur.fields.length > 0, hasHint: cur.hint !== '', canFold: cur.isList && cur.list.canFold, hasToolbar: formAi.show || (cur.isList && cur.list.canFold) }),
       };
     })(),
+    formStars: starButtons(r.stars, (n) => commit(patchSection(text, r, { stars: starsField(n) }), { formPending: pend })),
     formCats: known.map((c) => {
       const on = c === cat;
       return { label: c, pressed: String(on), bg: on ? INK : 'var(--card)', fg: on ? 'var(--on-ink)' : INK, bd: on ? INK : 'var(--control)', pick: () => setCat(on ? '' : c) };
@@ -3901,7 +3943,7 @@ function hrefWith(params) {
   return location.pathname + (q.size ? '?' + q.toString().replace(/=(?=&|$)/g, '').replace(/%2F/gi, '/').replace(/%3A/gi, ':') : '') + location.hash;
 }
 /** The form's tabs, in order; ?tab= picks one. */
-const FORM_TABS = ['rating', 'details', 'daci', 'controls', 'evidence', 'actions'];
+const FORM_TABS = ['rating', 'details', 'daci', 'controls', 'evidence'];
 /**
  * Mirrors page, theme, kind and view into the URL (defaults left out) so the address bar is a shareable link.
  * On Data → Form, `form` adds the entry being edited (?entry=) and its tab (?tab=).
@@ -3922,7 +3964,7 @@ function initialState() {
     drafts: ORIGINALS, dataFile: CURRENT_FILE, view: DEFAULT_CMP_B === null ? 'matrix' : 'compare', side: DEFAULT_SIDE, dataMode: 'form',
     formIdx: 0, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', formEntryTab: 'rating', formListOpen: null, formRowDrag: null, miniDrag: null,
     cellFilter: null, kindFilter: null, showMovement: true,
-    categories: [], query: '', filtersOpen: false,
+    categories: [], query: '', filtersOpen: false, minStars: 0,
     theme: 'paper', palette: 'heat', accentId: 'blue', themeOpen: false,
     settingsOpen: false, jevKey: loadSetting(JEV_KEY_STORE), orKey: loadSetting(OR_KEY_STORE), orModel: loadSetting(OR_MODEL_STORE) || OR_DEFAULT_MODEL, orDraft: '', orNote: '', orModels: [], ai: null, jevDraft: '', jevNote: '', suggest: null, autoLink: null, autoThreshold: 75, autoPicks: {},
     ...src, cmpLayout: 'summary', cmpShow: 'all', cmpQuery: '',
@@ -4062,9 +4104,10 @@ class Component extends DCLogic {
     cats.forEach((c) => { if (!lensCategories.includes(c)) throw new Error('bug: category "' + c + '" has no ' + L.nouns); });
     const query = st.query;
     const byQuery = all.filter((r) => matchesQuery(r, query));
-    const risks = cats.length === 0 ? byQuery : byQuery.filter((r) => cats.includes(r.category));
+    const byCat = cats.length === 0 ? byQuery : byQuery.filter((r) => cats.includes(r.category));
+    const risks = byCat.filter((r) => r.stars >= st.minStars);
     const hasQuery = query.trim().length > 0;
-    const filterCount = cats.length + (hasQuery ? 1 : 0);
+    const filterCount = cats.length + (hasQuery ? 1 : 0) + (st.minStars > 0 ? 1 : 0);
     const hasSelection = st.selectedId !== null;
     const openTo = risks.filter((r) => positionAt(r, toIdx) !== null);
     const outside = openTo.filter((r) => L.outside(positionAt(r, toIdx).score, r.limit)).length;
@@ -4150,15 +4193,26 @@ class Component extends DCLogic {
         filtersExpanded: String(st.filtersOpen),
         toggleFilters: go({ filtersOpen: !st.filtersOpen }),
         filterCount,
-        catCount: cats.length,
-        filterBadgeDisplay: cats.length === 0 ? 'none' : 'inline-flex',
+        catCount: cats.length + (st.minStars > 0 ? 1 : 0),
+        filterBadgeDisplay: cats.length === 0 && st.minStars === 0 ? 'none' : 'inline-flex',
+        /* "At least n stars"; counts are what each would show with the other filters as they are. */
+        starPills: [0, 1, 2, 3].map((n) => {
+          const on = n === st.minStars;
+          return {
+            label: n === 0 ? 'Any' : '★'.repeat(n) + (n < 3 ? '+' : ''), aria: n === 0 ? 'Any stars' : 'At least ' + n + (n === 1 ? ' star' : ' stars'),
+            count: byCat.filter((r) => r.stars >= n && positionAt(r, toIdx) !== null).length, pressed: String(on),
+            bg: on ? INK : 'var(--card)', fg: on ? 'var(--on-ink)' : INK, bd: on ? INK : 'var(--control)', countFg: on ? 'var(--on-ink-muted)' : INK2,
+            pick: go({ minStars: n, cellFilter: null }),
+          };
+        }),
         filterChevron: st.filtersOpen ? 180 : 0,
         anyFilter: filterCount > 0,
-        clearFilters: go({ categories: [], query: '', cellFilter: null }),
+        clearFilters: go({ categories: [], query: '', cellFilter: null, minStars: 0 }),
         filterSummary: filterCount === 0 ? 'All ' + all.length + ' ' + L.nouns
           : 'Showing ' + risks.length + ' of ' + all.length + ' ' + L.nouns
             + (cats.length === 0 ? '' : ' · ' + cats.join(', '))
-            + (hasQuery ? ' · “' + query.trim() + '”' : ''),
+            + (hasQuery ? ' · “' + query.trim() + '”' : '')
+            + (st.minStars === 0 ? '' : ' · ' + '★'.repeat(st.minStars) + (st.minStars < 3 ? '+' : '')),
       },
       buildMatrix(sv, S, accent, go, risks),
       buildDistribution(sv, S, risks),

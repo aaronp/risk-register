@@ -89,6 +89,7 @@ risk. Fields that belong to the other kind are ignored.
 | `category` | Free text, used for grouping and filters |
 | `slugs` | Stable tags that identify the same entry across registers |
 | `related` | Ids of other entries in the register it bears on, risks or opportunities, separated by `;` or `,` (`R03; O02`). A link shows on both entries; an id that matches nothing is ignored |
+| `stars` | 0–3, to pick out entries (`★★` works too); the register filters by it. Anything else reads as none |
 | `target` | Target scores, `4x2` (`4 x 2` and `4×2` work too) |
 | `driver`, `approver`, `contributors`, `informed` | People (DACI). The RACI keys `responsible`, `accountable` and `consulted` are read as `driver`, `approver` and `contributors`. The first approver is shown as the entry's owner |
 
@@ -127,7 +128,7 @@ markers show as plain text, so an older `**Cause:** …` line reads as `Cause: �
 
 ### Tables
 
-Three optional tables, each under a `###` heading (any case):
+Two optional tables, each under a `###` heading (any case):
 
 ```markdown
 ### Controls
@@ -136,14 +137,9 @@ Three optional tables, each under a `###` heading (any case):
 | Dual sourcing | Preventive | Partial |
 
 ### Evidence
-| Ref | Title | Kind | Date | Valid days |
-|---|---|---|---|---|
-| EV-01 | Supplier credit check | Report | 2026-09-01 | 90 |
-
-### Actions
-| Action | Owner | Due | Done |
-|---|---|---|---|
-| Sign a second supplier | Sam (Procurement) | 2026-12-01 | |
+| Title | Description | Resources |
+|---|---|---|
+| Supplier credit check | Rated B-; two late filings this year | https://example.com/credit.pdf |
 ```
 
 Opportunities use `### Enablers` with `| Enabler | Type | Status |` in place of
@@ -151,17 +147,15 @@ Controls.
 
 - Columns are found by header name, in any order; a missing column reads as
   blank. The `|---|` separator row is optional.
-- An evidence title can be a link, `[OECD report](https://…)` or a bare
-  `https://…` URL; it opens in a new tab. Only http(s) links are linked.
+- Evidence `Resources` are optional http(s) URLs, separated by spaces, `;` or
+  `,`; each opens in a new tab. Older tables with a link in the title
+  (`[OECD report](https://…)`) still read: the link becomes a resource. Other
+  columns (`Ref`, `Kind`, `Date`, `Valid days`) are ignored.
 - Every cell is free text. These words get a colour; anything else shows
   neutral:
   - Effectiveness: `Effective`, `Partial`, `Ineffective`
   - Enabler status: `Ready`, `In progress`, `Blocked`
-- Evidence is "current", "expiring" (30 days or less left) or "stale", from
-  `Date` + `Valid days`. Without both it has no freshness label.
-- An action is done when `Done` is a date on or before `as_at`, overdue when
-  `Due` is a date before `as_at`, and open otherwise.
-- Dates are `YYYY-MM-DD`; any other text in a date cell reads as blank.
+- An `### Actions` table, from older files, is skipped.
 
 ## Errors
 
@@ -186,5 +180,5 @@ change. An entry closed in both files is left out of the views.
 Data → Form edits one entry at a time and rewrites only that entry's lines. It
 writes fields in the canonical lower-case form (`- impact: 3`), so a loosely
 written key such as `- Impact:` is tidied when you change that field. Its
-Controls (or Enablers), Evidence and Actions tabs rewrite the whole table, with
+Controls (or Enablers) and Evidence tabs rewrite the whole table, with
 the standard columns in the standard order; any other column is dropped.

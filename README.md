@@ -63,8 +63,9 @@ that's what Data → Form → Related → **Suggest** uses, with the Jev API key
 under the settings cog. Suggest only works when served this way.
 
 An OpenRouter API key (also under the cog) adds a Suggest button to the form's
-Details, Controls/Enablers, Evidence and Actions tabs: better wording, new
-rows, and web-searched sources (only links the search actually cited). The
+Details, Controls/Enablers and Evidence tabs' toolbars: better wording, new
+rows, and web-searched sources (only links the search actually cited), shown
+in a dialog where you add them one by one or all at once. The
 model is a setting; the default `openrouter/auto` picks one that can answer in
 JSON. Keys stay in this browser's localStorage.
 
