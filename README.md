@@ -62,6 +62,12 @@ example's URL; some browsers block the scripts over file://. It also proxies
 that's what Data → Form → Related → **Suggest** uses, with the Jev API key set
 under the settings cog. Suggest only works when served this way.
 
+An OpenRouter API key (also under the cog) adds a Suggest button to the form's
+Details, Controls/Enablers, Evidence and Actions tabs: better wording, new
+rows, and web-searched sources (only links the search actually cited). The
+model is a setting; the default `openrouter/auto` picks one that can answer in
+JSON. Keys stay in this browser's localStorage.
+
 ## Hosting & external data
 
 Served on GitHub Pages by `.github/workflows/pages.yml` on pushes to `main`

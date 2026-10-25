@@ -79,7 +79,7 @@ button:disabled{opacity:.35;cursor:default}
 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
 </button>
 <sc-if value="{{settingsOpen}}" hint-placeholder-val="{{ false }}">
-<div id="rr-settings" aria-label="Settings" style="position: absolute; right: 0; top: calc(100% + 8px); z-index: 30; width: min({{settingsWidth}}, calc(100vw - 32px)); box-sizing: border-box; background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: 10px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22); padding: 16px; display: flex; flex-direction: column; gap: 14px; animation: rr-drop 160ms ease-out">
+<div id="rr-settings" aria-label="Settings" style="position: absolute; right: 0; top: calc(100% + 8px); z-index: 30; width: min({{settingsWidth}}, calc(100vw - 32px)); max-height: calc(100vh - 120px); overflow-y: auto; box-sizing: border-box; background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: 10px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22); padding: 16px; display: flex; flex-direction: column; gap: 14px; animation: rr-drop 160ms ease-out">
 <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
 <span style="font-size: 15px; font-weight: 600">Settings</span>
 <button class="rr-hover" onClick="{{closeSettings}}" aria-label="Close settings" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4 L12 12 M12 4 L4 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
@@ -92,6 +92,21 @@ button:disabled{opacity:.35;cursor:default}
 <sc-if value="{{jevSaved}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{clearJev}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">Forget key</button></sc-if>
 </div>
 <span role="status" style="font-size: 12px; color: var(--ink3)">{{jevNote}}</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 14px; border-top: 1px solid var(--rule-soft)">
+<label for="rr-or-key" style="font-size: 13px; font-weight: 600">OpenRouter API key</label>
+<input id="rr-or-key" type="password" value="{{orDraft}}" onChange="{{onOrDraft}}" onKeyDown="{{onOrKey}}" placeholder="{{orPlaceholder}}" spellcheck="false" autocomplete="off" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-size: 14px; box-sizing: border-box">
+<div style="display: flex; gap: 8px">
+<button class="rr-hover" onClick="{{saveOr}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--ink); color: var(--on-ink); cursor: pointer; font-size: 13px; font-weight: 600">Save</button>
+<sc-if value="{{orSaved}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{clearOr}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">Forget key</button></sc-if>
+</div>
+<span role="status" style="font-size: 12px; color: var(--ink3)">{{orNote}}</span>
+<sc-if value="{{orSaved}}" hint-placeholder-val="{{ false }}">
+<label for="rr-or-model" style="font-size: 13px; font-weight: 600">Model</label>
+<input id="rr-or-model" type="text" list="rr-or-models" value="{{orModel}}" onChange="{{onOrModel}}" spellcheck="false" autocomplete="off" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-size: 14px; box-sizing: border-box">
+<datalist id="rr-or-models"><sc-for list="{{orModelOptions}}" as="om" hint-placeholder-count="3"><option value="{{om.id}}"></option></sc-for></datalist>
+<span style="font-size: 12px; color: var(--ink3)">An OpenRouter model id. openrouter/auto picks one that can answer in JSON.</span>
+</sc-if>
 </div>
 <sc-if value="{{jevSaved}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 14px; border-top: 1px solid var(--rule-soft)">
@@ -780,6 +795,25 @@ button:disabled{opacity:.35;cursor:default}
 <button class="rr-hover" onClick="{{formDelete}}" style="align-self: stretch; height: 36px; padding: 0 12px; border: 1px solid var(--bad-fg); border-radius: 6px; background: var(--card); color: var(--bad-fg); cursor: pointer; font-size: 13px; font-weight: 600">{{formDeleteLabel}}</button>
 </div>
 <div role="tabpanel" id="rr-entry-panel" aria-labelledby="{{formEntry.tabId}}" style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+<sc-if value="{{formAi.show}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border: 1px dashed var(--control); border-radius: 8px">
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
+<button class="rr-hover" onClick="{{formAi.run}}" disabled="{{formAi.busy}}" style="height: 36px; padding: 0 12px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">{{formAi.label}}</button>
+<span role="status" style="font-size: 12px; color: {{formAi.noteFg}}">{{formAi.note}}</span>
+</div>
+<sc-for list="{{formAi.items}}" as="ai" hint-placeholder-count="2">
+<div style="display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--rule-soft)">
+<div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 12px; font-weight: 600; color: var(--ink2)">{{ai.label}}</span>
+<span style="font-size: 14px; line-height: 1.5; white-space: pre-wrap">{{ai.text}}</span>
+<sc-if value="{{ai.hasLink}}" hint-placeholder-val="{{ false }}"><a href="{{ai.href}}" target="_blank" rel="noopener noreferrer" style="font-size: 12px; color: var(--accent); overflow-wrap: anywhere">{{ai.href}}</a></sc-if>
+<sc-if value="{{ai.hasSub}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: var(--ink2)">{{ai.sub}}</span></sc-if>
+</div>
+<button class="rr-hover" onClick="{{ai.use}}" aria-label="{{ai.aria}}" style="height: 36px; padding: 0 12px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; flex: 0 0 auto; color: var(--accent); font-weight: 600">{{ai.useLabel}}</button>
+</div>
+</sc-for>
+</div>
+</sc-if>
 <sc-if value="{{formEntry.isGrid}}" hint-placeholder-val="{{ true }}">
 <div style="display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: flex-start">
 <div style="display: flex; flex-direction: column; gap: 6px; flex: 0 0 240px">
@@ -2263,12 +2297,14 @@ function buildCategoryPills(cats, categories, toIdx, go, pool) {
 
 /** Where the Jev API key lives: this browser's localStorage, so it never leaves the machine unless a request sends it. */
 const JEV_KEY_STORE = 'rr.jevApiKey';
-function loadJevKey() {
-  try { return localStorage.getItem(JEV_KEY_STORE) ?? ''; } catch (e) { return ''; }
+const OR_KEY_STORE = 'rr.openRouterApiKey';
+const OR_MODEL_STORE = 'rr.openRouterModel';
+function loadSetting(name) {
+  try { return localStorage.getItem(name) ?? ''; } catch (e) { return ''; }
 }
 /** Settings popover: the Jev API key. Returns false when the browser won't store it (e.g. storage blocked). */
-function storeJevKey(key) {
-  try { if (key === '') localStorage.removeItem(JEV_KEY_STORE); else localStorage.setItem(JEV_KEY_STORE, key); return true; } catch (e) { return false; }
+function storeSetting(name, value) {
+  try { if (value === '') localStorage.removeItem(name); else localStorage.setItem(name, value); return true; } catch (e) { return false; }
 }
 /** An entry as Jev reads it: its words. */
 function jevEntry(e) {
@@ -2344,12 +2380,45 @@ function scoreAllPairs(key, entries, progress) {
   return scorePairs(key, entries, pairs, progress);
 }
 
+/** Keys are often copied with a "Bearer " prefix or in quotes; keep just the key. */
+function cleanKey(s) { return s.trim().replace(/^bearer\s+/i, '').replace(/^['"`]+|['"`]+$/g, '').trim(); }
+
+/* ---------- OpenRouter: an LLM for the form's Suggest buttons ---------- */
+const OR_URL = 'https://openrouter.ai/api/v1/chat/completions';
+/** Lets OpenRouter pick a model; require_parameters (below) keeps it to models that can return the JSON we ask for. */
+const OR_DEFAULT_MODEL = 'openrouter/auto';
+/**
+ * One chat completion whose answer must match `schema` (JSON Schema, strict). With `web`, OpenRouter's web plugin searches
+ * first and the URLs it cited come back in `cited`. Resolves to { data, cited }; throws with a readable message.
+ */
+async function openRouterAsk(key, model, system, prompt, schema, web) {
+  let res;
+  try {
+    res = await fetch(OR_URL, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + key, 'Content-Type': 'application/json', 'X-Title': 'Risk register' },
+      body: JSON.stringify(Object.assign({
+        model, messages: [{ role: 'system', content: system }, { role: 'user', content: prompt }],
+        response_format: { type: 'json_schema', json_schema: { name: 'suggestions', strict: true, schema } },
+        provider: { require_parameters: true },
+      }, web ? { plugins: [{ id: 'web', max_results: 5 }] } : {})),
+    });
+  } catch (e) { throw new Error('Couldn’t reach OpenRouter; are you online?'); }
+  const body = await res.json().catch(() => null);
+  if (res.status === 401) throw new Error('OpenRouter rejected the API key; check it in Settings.');
+  if (!res.ok || body === null) throw new Error('OpenRouter error ' + res.status + (body && body.error ? ': ' + body.error.message : ''));
+  const msg = body.choices[0].message;
+  let data;
+  try { data = JSON.parse(msg.content); } catch (e) { throw new Error('The model didn’t return the expected JSON; try another model in Settings.'); }
+  const cited = (msg.annotations ?? []).filter((a) => a.type === 'url_citation').map((a) => a.url_citation.url);
+  return { data, cited };
+}
+
 function buildSettings(st, go, setState) {
   const save = () => {
-    /* Keys are often copied with a "Bearer " prefix or in quotes; keep just the key. */
-    const key = st.jevDraft.trim().replace(/^bearer\s+/i, '').replace(/^['"`]+|['"`]+$/g, '').trim();
+    const key = cleanKey(st.jevDraft);
     if (key === '') { setState({ jevNote: 'Paste a key first.' }); return; }
-    setState(storeJevKey(key) ? { jevKey: key, jevDraft: '', jevNote: 'Saved in this browser.' } : { jevNote: 'This browser blocked storage; the key was not saved.' });
+    setState(storeSetting(JEV_KEY_STORE, key) ? { jevKey: key, jevDraft: '', jevNote: 'Saved in this browser.' } : { jevNote: 'This browser blocked storage; the key was not saved.' });
   };
   /* Auto-link works on the file on view: the one open in Data, else register B. Results belong to the file they came from. */
   const name = st.side === 'back' ? st.dataFile : st.cmpB;
@@ -2387,7 +2456,21 @@ function buildSettings(st, go, setState) {
   };
   const autoNote = run === null ? '' : run.busy ? 'Asking Jev… ' + run.done + ' of ' + (run.total || '…') + ' requests done.'
     : run.error !== '' ? run.error : pairs.length === 0 && run.note === '' ? 'No unlinked pairs left.' : '';
+  const saveOr = () => {
+    const key = cleanKey(st.orDraft);
+    if (key === '') { setState({ orNote: 'Paste a key first.' }); return; }
+    setState(storeSetting(OR_KEY_STORE, key) ? { orKey: key, orDraft: '', orNote: 'Saved in this browser.' } : { orNote: 'This browser blocked storage; the key was not saved.' });
+  };
   return {
+    orDraft: st.orDraft, orSaved: st.orKey !== '',
+    orPlaceholder: st.orKey === '' ? 'Paste your key…' : '•••• ' + st.orKey.slice(-4) + ' (paste to replace)',
+    orNote: st.orNote !== '' ? st.orNote : st.orKey === '' ? 'Adds Suggest buttons to the form’s Details, ' + 'Controls, Evidence and Actions tabs.' : 'A key is saved in this browser.',
+    onOrDraft: (e) => setState({ orDraft: e.target.value, orNote: '' }),
+    onOrKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); saveOr(); } },
+    saveOr,
+    clearOr: () => { storeSetting(OR_KEY_STORE, ''); setState({ orKey: '', orDraft: '', orNote: 'Key removed from this browser.' }); },
+    orModel: st.orModel, orModelOptions: st.orModels.map((id) => ({ id })),
+    onOrModel: (e) => { const m = e.target.value.trim(); storeSetting(OR_MODEL_STORE, m === OR_DEFAULT_MODEL ? '' : m); setState({ orModel: m === '' ? OR_DEFAULT_MODEL : e.target.value }); },
     settingsWidth: pairs.length > 0 ? '560px' : '340px',
     autoIntro: !fr.ok ? name + ' doesn’t parse; fix it in Data → Source first.' : todo === 0 ? 'Every pair in ' + name + ' is already linked.'
       : 'Asks Jev how related each unlinked pair of risks and opportunities in ' + name + ' is: ' + todo + ' pairs.',
@@ -2413,14 +2496,19 @@ function buildSettings(st, go, setState) {
     autoDoneWeight: run !== null && run.note !== '' ? '600' : '400',
     autoClear: () => setState({ autoLink: null, autoPicks: {} }),
     settingsOpen: st.settingsOpen, settingsExpanded: String(st.settingsOpen),
-    toggleSettings: go({ settingsOpen: !st.settingsOpen, themeOpen: false, jevDraft: '', jevNote: '' }), closeSettings: go({ settingsOpen: false, jevDraft: '', jevNote: '' }),
+    toggleSettings: () => {
+      setState({ settingsOpen: !st.settingsOpen, themeOpen: false, jevDraft: '', jevNote: '', orDraft: '', orNote: '' });
+      /* The model box suggests OpenRouter's current models; without the list it still takes any id. */
+      if (!st.settingsOpen && st.orModels.length === 0) fetch('https://openrouter.ai/api/v1/models').then((r) => r.json())
+        .then((b) => setState({ orModels: b.data.map((m) => m.id).sort() }), () => {});
+    }, closeSettings: go({ settingsOpen: false, jevDraft: '', jevNote: '' }),
     jevDraft: st.jevDraft, jevSaved: st.jevKey !== '',
     jevPlaceholder: st.jevKey === '' ? 'Paste your key…' : '•••• ' + st.jevKey.slice(-4) + ' (paste to replace)',
     jevNote: st.jevNote !== '' ? st.jevNote : st.jevKey === '' ? 'Stored only in this browser (localStorage), never in the register.' : 'A key is saved in this browser.',
     onJevDraft: (e) => setState({ jevDraft: e.target.value, jevNote: '' }),
     onJevKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); save(); } },
     saveJev: save,
-    clearJev: () => { storeJevKey(''); setState({ jevKey: '', jevDraft: '', jevNote: 'Key removed from this browser.' }); },
+    clearJev: () => { storeSetting(JEV_KEY_STORE, ''); setState({ jevKey: '', jevDraft: '', jevNote: 'Key removed from this browser.' }); },
   };
 }
 
@@ -2969,6 +3057,97 @@ function patchTable(text, r, name, header, rows) {
   return lines.slice(0, start).concat(out, lines.slice(r.endLine)).join('\n');
 }
 
+/* ---------- Form Suggest: one OpenRouter call per tab, its answers offered as edits ---------- */
+const AI_SYSTEM = 'You help maintain a risk register: risks (what could go wrong) and opportunities (what could go right). Be specific and practical; never invent figures, names or dates you were not given. Answer only with JSON matching the schema.';
+const AI_ROWS = (props) => ({ type: 'object', additionalProperties: false, required: ['rows'], properties: { rows: { type: 'array', items: { type: 'object', additionalProperties: false, required: Object.keys(props), properties: props } } } });
+/**
+ * What Suggest does on each tab: `ask` builds the prompt and schema from the entry, `items` turns the answer into
+ * offers; each offer's `apply(text)` returns the file with it applied. Tables gain a row; details replace a field.
+ */
+const AI_TABS = Object.freeze({
+  details: {
+    label: 'Suggest improvements',
+    ask: (ctx) => ({
+      prompt: 'Improve the title and description of this ' + ctx.noun + '. The title should be short and specific. The description should say plainly what could happen, why (its causes) and what it would lead to (its consequences)' + (ctx.noun === 'risk' ? '' : ', i.e. the rationale and the benefit') + ', in two to four sentences. Keep every fact already given.\n\n' + ctx.json,
+      schema: { type: 'object', additionalProperties: false, required: ['title', 'description'], properties: { title: { type: 'string' }, description: { type: 'string' } } },
+    }),
+    items: (data, ctx) => [['title', 'Title'], ['description', 'Description']].filter(([k]) => data[k].trim() !== '' && data[k].trim() !== ctx.parts[k].trim())
+      .map(([k, label]) => ({ label, text: data[k].trim(), useLabel: 'Use', apply: (text, r) => patchSection(text, r, { [k]: data[k].trim() }) })),
+  },
+  controls: {
+    label: 'Suggest',
+    ask: (ctx) => ({
+      prompt: 'Suggest up to five ' + ctx.supports + ' for this ' + ctx.noun + ' that it does not already have. Keep each name under 12 words. Use one of these types: ' + ctx.syn.types.join(', ') + '; and for ' + ctx.syn.header[2].toLowerCase() + ' one of: ' + Object.keys(ctx.syn.states).join(', ') + ' (a suggestion not yet in place is ' + (ctx.noun === 'risk' ? 'Ineffective' : 'Blocked') + ' unless the text says otherwise).\n\n' + ctx.json,
+      schema: AI_ROWS({ name: { type: 'string' }, type: { type: 'string' }, state: { type: 'string' } }),
+    }),
+    items: (data, ctx) => data.rows.map((x) => ({ label: x.type, text: x.name, sub: x.state, useLabel: '+ Add', row: [x.name, x.type, x.state] })),
+  },
+  evidence: {
+    label: 'Find resources',
+    web: true,
+    ask: (ctx) => ({
+      prompt: 'Search the web for up to five credible, current sources that inform this ' + ctx.noun + ' (its likelihood, impact, causes or good practice): standards, regulator or government guidance, research, incident reports. Give each source\'s exact URL as found, its title, a kind (Standard, Guidance, Report, Article, Dataset…) and its publication date as YYYY-MM-DD if known, else "".\n\n' + ctx.json,
+      schema: AI_ROWS({ title: { type: 'string' }, url: { type: 'string' }, kind: { type: 'string' }, date: { type: 'string' } }),
+    }),
+    /* Only sources the search actually cited, when it reports citations: a model can make up a plausible URL. */
+    items: (data, ctx) => data.rows.filter((x) => /^https?:\/\//.test(x.url) && (ctx.cited.length === 0 || ctx.cited.some((u) => sameUrl(u, x.url))))
+      .map((x) => ({ label: x.kind, text: x.title, href: x.url, sub: isIsoDate(x.date) ? formatDate(x.date) : '', useLabel: '+ Add', row: ['', '[' + x.title.replace(/[\[\]]/g, '') + '](' + x.url + ')', x.kind, isIsoDate(x.date) ? x.date : '', ''] })),
+  },
+  actions: {
+    label: 'Suggest',
+    ask: (ctx) => ({
+      prompt: 'Suggest up to five concrete next actions for this ' + ctx.noun + ' that it does not already have, each a short imperative under 12 words.\n\n' + ctx.json,
+      schema: AI_ROWS({ action: { type: 'string' } }),
+    }),
+    items: (data) => data.rows.map((x) => ({ label: 'Action', text: x.action, useLabel: '+ Add', row: [x.action, '', '', ''] })),
+  },
+});
+/** Two URLs name the same page, ignoring a trailing slash, the fragment and tracking parameters. */
+function sameUrl(a, b) {
+  const norm = (u) => { try { const x = new URL(u); x.hash = ''; ['utm_source', 'utm_medium', 'utm_campaign'].forEach((k) => x.searchParams.delete(k)); return x.href.replace(/\/$/, ''); } catch (e) { return u; } };
+  return norm(a) === norm(b);
+}
+/** The form's Suggest block for the open tab; hidden without an OpenRouter key or on a tab with nothing to suggest. */
+function buildFormAi(st, setState, tabKey, r, parts, text, file, commit) {
+  const spec = AI_TABS[tabKey];
+  if (spec === undefined || st.orKey === '') return { show: false, items: [] };
+  const L = lensOf(r.kind);
+  const syn = KIND_SYNTAX[r.kind];
+  /* Each table's heading and columns, for the tabs that add rows. */
+  const table = { controls: [syn.table.slice(4), syn.header], evidence: ['Evidence', EVIDENCE_HEADER], actions: ['Actions', ACTION_HEADER] }[tabKey];
+  const rows = table === undefined ? [] : tableCells(text, r, table[0], table[1]);
+  const here = st.ai !== null && st.ai.file === file.name && st.ai.id === r.id && st.ai.tab === tabKey ? st.ai : null;
+  const ctx = {
+    noun: L.noun, supports: L.supportsLabel.toLowerCase(), syn, parts, cited: here === null ? [] : here.cited,
+    json: JSON.stringify({ register: file.register, as_at: file.asAt, kind: L.noun, title: parts.title, category: r.category === 'Uncategorised' ? null : r.category, description: parts.description, already_has: table === undefined ? undefined : rows.map((cs) => cs.filter((c) => c !== '').join(' · ')) }, null, 2),
+  };
+  const run = async () => {
+    const at = { file: file.name, id: r.id, tab: tabKey, busy: true, error: '', data: null, cited: [] };
+    setState({ ai: at });
+    const { prompt, schema } = spec.ask(ctx);
+    try {
+      const res = await openRouterAsk(st.orKey, st.orModel, AI_SYSTEM, prompt, schema, spec.web === true);
+      setState({ ai: Object.assign({}, at, { busy: false, data: res.data, cited: res.cited }) });
+    } catch (e) { setState({ ai: Object.assign({}, at, { busy: false, error: e.message }) }); }
+  };
+  /* An offer already taken (its row is in the table, or the field already says it) drops out of the list. */
+  const main = tabKey === 'evidence' ? 1 : 0;
+  const has = (row) => rows.some((cs) => cs[main].trim().toLowerCase() === row[main].trim().toLowerCase());
+  const offers = here === null || here.data === null ? [] : spec.items(here.data, ctx).filter((o) => o.row === undefined || !has(o.row));
+  const busy = here !== null && here.busy;
+  const note = here === null ? (spec.web ? 'Searches the web with your OpenRouter key.' : 'Asks ' + st.orModel + ' via OpenRouter.')
+    : busy ? 'Thinking…' : here.error !== '' ? here.error : offers.length === 0 ? 'Nothing more to suggest.' : 'Check each before adding: suggestions can be wrong.';
+  return {
+    show: true, busy, label: busy ? 'Suggesting…' : here !== null && here.data !== null ? 'Suggest again' : spec.label, run,
+    note, noteFg: here !== null && here.error !== '' ? 'var(--bad-fg)' : 'var(--ink3)',
+    items: offers.map((o) => ({
+      label: o.label, text: o.text, href: o.href ?? '', hasLink: o.href !== undefined, sub: o.sub ?? '', hasSub: (o.sub ?? '') !== '',
+      useLabel: o.useLabel, aria: o.useLabel.replace('+ ', '') + ' ' + o.text,
+      use: () => commit(o.row !== undefined ? patchTable(text, r, table[0], table[1], rows.concat([o.row])) : o.apply(text, r)),
+    })),
+  };
+}
+
 /** Optional fields the form offers per kind: [key, label, input type, hint]. */
 const FORM_DETAILS = Object.freeze({
   risk: [['appetite', 'Appetite', 'number', 'Highest acceptable score, 1–25']],
@@ -3201,7 +3380,9 @@ function buildForm(st, fr, name, text, go, setState, model) {
         }),
       ];
       const cur = tabs.find((t) => t.key === st.formEntryTab) ?? tabs[0];
+      const formAi = buildFormAi(st, setState, cur.key, r, p, text, file, (next) => commit(next, { formPending: pend }));
       return {
+        formAi,
         formEntryTabs: tabs.map((t) => {
           const on = t === cur;
           const empty = t.preview.trim() === '';
@@ -3743,7 +3924,7 @@ function initialState() {
     cellFilter: null, kindFilter: null, showMovement: true,
     categories: [], query: '', filtersOpen: false,
     theme: 'paper', palette: 'heat', accentId: 'blue', themeOpen: false,
-    settingsOpen: false, jevKey: loadJevKey(), jevDraft: '', jevNote: '', suggest: null, autoLink: null, autoThreshold: 75, autoPicks: {},
+    settingsOpen: false, jevKey: loadSetting(JEV_KEY_STORE), orKey: loadSetting(OR_KEY_STORE), orModel: loadSetting(OR_MODEL_STORE) || OR_DEFAULT_MODEL, orDraft: '', orNote: '', orModels: [], ai: null, jevDraft: '', jevNote: '', suggest: null, autoLink: null, autoThreshold: 75, autoPicks: {},
     ...src, cmpLayout: 'summary', cmpShow: 'all', cmpQuery: '',
     cmpImpact: [], cmpLik: [], cmpSuggestOn: true, cmpDismissed: [],
     cmpFocus: null, cmpPeer: null, cmpSlugDraft: '', cmpSlugError: '', cmpFlash: '',
