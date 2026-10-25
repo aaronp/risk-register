@@ -2396,18 +2396,23 @@ const signedNum = (v) => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v);
 /** "Score: 102 − 172 = −70": opportunity weight minus risk weight. */
 function scoreLine(sc) { return 'Score: ' + sc.positives + ' − ' + sc.negatives + ' = ' + signedNum(sc.net); }
 
-/** Balance view: the scale for B, the overall status, and A's status when there is one. */
-function buildBalance(M, fromIdx, toIdx, selectedId, pick) {
+/**
+ * Balance view: the scale for B, the overall status, and A's status when there is one.
+ * `step(key)` is the [kind, id] an arrow key moves to: up and down within a pan, left and right to the other pan at the same height from the bottom.
+ */
+function buildBalance(M, fromIdx, toIdx, selectedId, lens, pick) {
   const [risks, opps] = balanceWeights(M, toIdx);
   const sc = balanceScale(risks, opps);
   const colors = ['var(--escalate)', 'var(--improve)'];
-  const byId = Object.fromEntries(risks.concat(opps).map((x) => [x.id, x]));
+  /* Ids are unique per kind only, so each pan looks up its own kind. */
+  const kinds = ['risk', 'opportunity'];
+  const sel = (k, id) => kinds[k] === lens && id === selectedId;
   const pans = sc.pans.map((p, k) => Object.assign({}, p, {
     color: colors[k], total: (k === 0 ? '−' : '+') + p.weight,
     blocks: p.blocks.map((b) => Object.assign({}, b, {
       label: b.id.length <= 8 ? b.id + ' · ' + b.weight : String(b.weight),
-      title: b.id + ' · ' + b.title + ' · score ' + b.weight + ' — show on the matrix',
-      stroke: b.id === selectedId ? 'var(--ink)' : 'none', pick: pick(byId[b.id]),
+      title: b.id + ' · ' + b.title + ' · score ' + b.weight + ' — show its detail',
+      stroke: sel(k, b.id) ? 'var(--ink)' : 'none', pick: pick(kinds[k], b.id),
     })),
   }));
   const now = balanceStatus(sc.negatives, sc.positives);
@@ -2417,7 +2422,21 @@ function buildBalance(M, fromIdx, toIdx, selectedId, pick) {
     status: now.status, tone: now.tone, share: now.share === null ? '' : pct(now.share) + ' · ' + Math.round((1 - now.share) * 100) + '% opportunity, by score',
     hasBefore: was !== null, before: was === null ? '' : 'In A: ' + was.status + (was.share === null ? '' : ' (' + pct(was.share) + ')'),
     net: 'Net ' + signedNum(sc.net), beam: sc.beam, pans,
-    aria: now.status + '. Opportunities weigh ' + sc.positives + ', risks weigh ' + sc.negatives + '; net ' + signedNum(sc.net) + '.',
+    aria: now.status + '. Opportunities weigh ' + sc.positives + ', risks weigh ' + sc.negatives + '; net ' + signedNum(sc.net) + '. Arrow keys move between entries.',
+    step: (key) => {
+      /* Each pan's entries from top to bottom; with nothing selected, an arrow picks the heaviest (bottom) entry of its side. */
+      const cols = sc.pans.map((p) => p.blocks.slice().sort((a, b) => a.y - b.y).map((b) => b.id));
+      const k = cols.findIndex((c, j) => c.some((id) => sel(j, id)));
+      const bottom = (j) => (cols[j].length === 0 ? null : [kinds[j], cols[j][cols[j].length - 1]]);
+      if (k === -1) return bottom(key === 'ArrowRight' ? 1 : 0) ?? bottom(0) ?? bottom(1);
+      const col = cols[k];
+      const i = col.indexOf(selectedId);
+      if (key === 'ArrowUp') return [kinds[k], col[Math.max(0, i - 1)]];
+      if (key === 'ArrowDown') return [kinds[k], col[Math.min(col.length - 1, i + 1)]];
+      const j = key === 'ArrowLeft' ? 0 : 1;
+      if (j === k || cols[j].length === 0) return [kinds[k], selectedId];
+      return [kinds[j], cols[j][Math.max(0, cols[j].length - (col.length - i))]];
+    },
   };
 }
 
@@ -3459,11 +3478,16 @@ class Component extends DCLogic {
   }
   undo() { this.setState(historyStep(this.state, 'undo')); }
   redo() { this.setState(historyStep(this.state, 'redo')); }
-  /* ⌘/Ctrl+Z and ⇧⌘/Ctrl+Shift+Z (or Ctrl+Y) outside text fields; inside them the browser's own undo applies. */
+  /* ⌘/Ctrl+Z and ⇧⌘/Ctrl+Shift+Z (or Ctrl+Y) outside text fields; inside them the browser's own undo applies. Arrows step through Balance. */
   componentDidMount() {
     this.onKey = (e) => {
-      if (!(e.metaKey || e.ctrlKey) || e.altKey) return;
       if (e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+      /* Plain arrow keys step through the Balance view's entries. */
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key) && !(e.metaKey || e.ctrlKey || e.altKey || e.shiftKey)) {
+        if (!e.defaultPrevented && this.arrowKey && this.arrowKey(e.key)) e.preventDefault();
+        return;
+      }
+      if (!(e.metaKey || e.ctrlKey) || e.altKey) return;
       const k = e.key.toLowerCase();
       const dir = k === 'z' ? (e.shiftKey ? 'redo' : 'undo') : k === 'y' && !e.shiftKey ? 'redo' : null;
       if (dir === null || this.state[dir].length === 0) return;
@@ -3517,6 +3541,7 @@ class Component extends DCLogic {
       fixErrors: go({ side: 'back', dataMode: 'source', dataFile: errLoc !== null && Object.prototype.hasOwnProperty.call(st.drafts, errLoc.file) ? errLoc.file : CURRENT_FILE }),
       backToRegister: go({ side: 'front' }),
     });
+    this.arrowKey = null;
     if (!a.model.ok) return shell;
 
     const M = a.model.model;
@@ -3565,6 +3590,15 @@ class Component extends DCLogic {
       const top = topEntry(M, kind, toIdx);
       return { lens: kind, selectedId: top === null ? null : top.id, drawerOpen: top !== null, categories: [], cellFilter: null, kindFilter: null, cmpFocus: null, cmpPeer: null, cmpImpact: [], cmpLik: [], cmpFlash: '' };
     };
+    /* Balance shows both kinds: picking a block switches to its kind and opens its detail beside the scale. */
+    const showOnBalance = (kind, id) => Object.assign(lensPatch(kind), { selectedId: id, drawerOpen: true });
+    const bal = st.side === 'front' && view === 'balance' ? buildBalance(M, fromIdx, toIdx, st.selectedId, st.lens, (kind, id) => go(showOnBalance(kind, id))) : null;
+    this.arrowKey = bal === null ? null : (key) => {
+      const to = bal.step(key);
+      if (to === null || (to[0] === st.lens && to[1] === st.selectedId)) return false;
+      this.setState(showOnBalance(to[0], to[1]));
+      return true;
+    };
 
     return Object.assign(
       {}, shell,
@@ -3608,7 +3642,7 @@ class Component extends DCLogic {
         isTrajectories: view === 'trajectories',
         isTable: view === 'table',
         isBalance: view === 'balance',
-        bal: view === 'balance' ? buildBalance(M, fromIdx, toIdx, st.selectedId, (r) => go(Object.assign(lensPatch(r.kind), { view: 'matrix', selectedId: r.id, drawerOpen: true }))) : null,
+        bal,
         sel: hasSelection ? buildDetail(sv, S, all, others, go, (patch) => this.setState(patch), (name, text) => this.setState(Object.assign(reconcile(this.state, Object.freeze(Object.assign({}, this.state.drafts, { [name]: text }))), { miniDrag: null }))) : null,
         drawerOpen: hasSelection && st.drawerOpen,
         drawerClosed: hasSelection && !st.drawerOpen,
