@@ -837,11 +837,11 @@ button:disabled{opacity:.35;cursor:default}
 <sc-if value="{{ff.hasError}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 12px; color: var(--bad-fg)">{{ff.error}} — not saved yet</span></sc-if>
 </div>
 </sc-for>
-<sc-if value="{{formEntry.isList}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{formEntry.list.add}}" style="margin-right: auto; height: 32px; padding: 0 12px; border: 1px solid var(--ink); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">{{formEntry.list.addLabel}}</button></sc-if>
-<sc-if value="{{formAi.show}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{formAi.run}}" disabled="{{formAi.busy}}" title="{{formAi.hint}}" style="height: 32px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px; font-weight: 600; color: var(--accent)">✦ {{formAi.label}}</button></sc-if>
+<sc-if value="{{formEntry.isList}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{formEntry.list.add}}" style="margin-right: auto; height: 40px; padding: 0 12px; border: 1px solid var(--ink); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">{{formEntry.list.addLabel}}</button></sc-if>
+<sc-if value="{{formAi.show}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{formAi.run}}" disabled="{{formAi.busy}}" title="{{formAi.hint}}" style="flex: none; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; box-sizing: border-box; height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px; font-weight: 600; color: var(--accent)"><span aria-hidden="true">✦</span>{{formAi.label}}</button></sc-if>
 <sc-if value="{{formEntry.canFold}}" hint-placeholder-val="{{ true }}">
-<button class="rr-hover" onClick="{{formEntry.list.expandAll}}" style="height: 32px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Expand all</button>
-<button class="rr-hover" onClick="{{formEntry.list.collapseAll}}" style="height: 32px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Collapse all</button>
+<button class="rr-hover" onClick="{{formEntry.list.expandAll}}" style="height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Expand all</button>
+<button class="rr-hover" onClick="{{formEntry.list.collapseAll}}" style="height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Collapse all</button>
 </sc-if>
 </div>
 </sc-if>
@@ -938,7 +938,7 @@ button:disabled{opacity:.35;cursor:default}
 <option value="">Link a risk or opportunity…</option>
 <sc-for list="{{formRelatedOptions}}" as="ro" hint-placeholder-count="3"><option value="{{ro.id}}">{{ro.label}}</option></sc-for>
 </select>
-<button class="rr-hover" onClick="{{formSuggest}}" disabled="{{formSuggestBusy}}" aria-describedby="rr-f-suggest-note" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px; font-weight: 600; color: var(--accent)">✦ {{formSuggestLabel}}</button>
+<button class="rr-hover" onClick="{{formSuggest}}" disabled="{{formSuggestBusy}}" aria-describedby="rr-f-suggest-note" style="flex: none; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; box-sizing: border-box; height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px; font-weight: 600; color: var(--accent)"><span aria-hidden="true">✦</span>{{formSuggestLabel}}</button>
 </div>
 <sc-if value="{{formHasSuggestNote}}" hint-placeholder-val="{{ false }}"><span id="rr-f-suggest-note" role="status" style="font-size: 12px; color: {{formSuggestNoteFg}}">{{formSuggestNote}}</span></sc-if>
 <sc-if value="{{formHasSuggestions}}" hint-placeholder-val="{{ false }}">
@@ -2601,7 +2601,9 @@ function buildSettings(st, go, setState) {
   };
 }
 
-function buildThemePicker(st, go) {
+function buildThemePicker(st, go, setState) {
+  /* A pick is also written to the register's front matter, so it becomes the file's default look. */
+  const pickLook = (key, patch) => () => setState(Object.assign(reconcile(st, Object.freeze(Object.assign({}, st.drafts, { [CURRENT_FILE]: setFrontMatter(st.drafts[CURRENT_FILE], key, Object.values(patch)[0]) }))), patch));
   byId(THEMES, st.theme, 'theme');
   byId(PALETTES, st.palette, 'palette');
   byId(ACCENTS, st.accentId, 'accent');
@@ -2610,9 +2612,9 @@ function buildThemePicker(st, go) {
     themeId: st.theme, paletteId: st.palette, accentId: st.accentId,
     themeOpen: st.themeOpen, themeExpanded: String(st.themeOpen),
     toggleTheme: go({ themeOpen: !st.themeOpen, settingsOpen: false }), closeTheme: go({ themeOpen: false }),
-    themeOptions: THEMES.map((t) => ({ label: t.label, bg: t.bg, card: t.card, ink: t.ink, rule: t.rule, pressed: String(t.id === st.theme), ring: ring(t.id === st.theme), pick: go({ theme: t.id }) })),
-    paletteOptions: PALETTES.map((p) => ({ label: p.label, note: p.note, c1: p.colors[0], c2: p.colors[1], c3: p.colors[2], c4: p.colors[3], pressed: String(p.id === st.palette), ring: ring(p.id === st.palette), pick: go({ palette: p.id }) })),
-    accentOptions: ACCENTS.map((a) => ({ hex: a.hex, aria: 'Accent ' + a.label, pressed: String(a.id === st.accentId), ring: a.id === st.accentId ? 'var(--ink)' : 'transparent', pick: go({ accentId: a.id }) })),
+    themeOptions: THEMES.map((t) => ({ label: t.label, bg: t.bg, card: t.card, ink: t.ink, rule: t.rule, pressed: String(t.id === st.theme), ring: ring(t.id === st.theme), pick: pickLook('theme', { theme: t.id }) })),
+    paletteOptions: PALETTES.map((p) => ({ label: p.label, note: p.note, c1: p.colors[0], c2: p.colors[1], c3: p.colors[2], c4: p.colors[3], pressed: String(p.id === st.palette), ring: ring(p.id === st.palette), pick: pickLook('palette', { palette: p.id }) })),
+    accentOptions: ACCENTS.map((a) => ({ hex: a.hex, aria: 'Accent ' + a.label, pressed: String(a.id === st.accentId), ring: a.id === st.accentId ? 'var(--ink)' : 'transparent', pick: pickLook('accent', { accentId: a.id }) })),
   };
 }
 
@@ -2658,15 +2660,19 @@ function readFiles(list, handles = []) {
 const FILE_HANDLES = new Map();
 /** Each file's text as last opened or saved, by document name; a draft that differs has unsaved changes. */
 const SAVED_TEXT = new Map();
+/** How long edits must pause before autosave writes them. */
+const AUTOSAVE_MS = 1500;
 /** Unsaved: differs from the text last opened or saved (the embedded original when neither); a new copy never saved counts. */
 function unsaved(name, drafts) {
   const base = SAVED_TEXT.has(name) ? SAVED_TEXT.get(name) : ORIGINALS[name];
   return base !== drafts[name];
 }
 /** Save over the file `name` was opened from (or last saved to); asks for write permission on the first save. */
-async function saveInPlace(name, text) {
+async function saveInPlace(name, text, ask = true) {
   const handle = FILE_HANDLES.get(name);
   if (handle === undefined) throw new Error('bug: ' + name + ' has no file to save to');
+  /* Asking needs a click, so autosave (ask = false) skips a file until a Save has been allowed. */
+  if (!ask && (await handle.queryPermission({ mode: 'readwrite' })) !== 'granted') return null;
   if ((await handle.requestPermission({ mode: 'readwrite' })) !== 'granted') throw new Error('no permission to write ' + handle.name);
   const w = await handle.createWritable();
   await w.write(text);
@@ -3015,11 +3021,21 @@ const EMBEDDED_FILES = Object.freeze(window.RR_FILES);
 /** The files as built into the page; drafts start equal to these and Revert restores them. */
 const ORIGINALS = Object.freeze(Object.fromEntries(EMBEDDED_FILES.map((f) => [f.name, f.text])));
 /** The register's look from its front matter (theme, palette, accent by id or label); missing or unknown values keep the defaults. ?theme= wins. */
-const FILE_LOOK = (() => {
-  const { meta } = parseFrontMatter(ORIGINALS[CURRENT_FILE].replace(/\r\n?/g, '\n').split('\n'));
+function lookOf(text) {
+  const { meta } = parseFrontMatter(text.replace(/\r\n?/g, '\n').split('\n'));
   const pick = (v, xs, dflt) => (xs.find((x) => v !== undefined && [x.id, x.label.toLowerCase()].includes(v.toLowerCase())) ?? { id: dflt }).id;
   return Object.freeze({ theme: pick(meta.theme, THEMES, 'paper'), palette: pick(meta.palette, PALETTES, 'heat'), accentId: pick(meta.accent, ACCENTS, 'blue') });
-})();
+}
+const FILE_LOOK = lookOf(ORIGINALS[CURRENT_FILE]);
+/** `text` with front-matter `key: value` set (added, with front matter if there is none); other lines are kept. */
+function setFrontMatter(text, key, value) {
+  const lines = text.replace(/\r\n?/g, '\n').split('\n');
+  const end = lines[0] === '---' ? lines.indexOf('---', 1) : -1;
+  if (end === -1) return ['---', key + ': ' + value, '---'].concat(lines).join('\n');
+  const k = lines.slice(1, end).findIndex((l) => new RegExp('^' + key + ':', 'i').test(l));
+  if (k === -1) return lines.slice(0, end).concat([key + ': ' + value], lines.slice(end)).join('\n');
+  return lines.map((l, j) => (j === k + 1 ? key + ': ' + value : l)).join('\n');
+}
 
 const PARSE_CACHE = new Map();
 /** Parse one file into a result whose error message carries file:line. Cached per file name and exact text. */
@@ -4141,10 +4157,10 @@ const FORM_TABS = ['details', 'rating', 'daci', 'controls', 'evidence'];
  * Mirrors page, theme, kind and view into the URL (defaults left out) so the address bar is a shareable link.
  * On Data → Form, `form` adds the entry being edited (?entry=) and its tab (?tab=).
  */
-function syncQuery(side, theme, kind, view, form) {
+function syncQuery(side, theme, kind, view, form, fileTheme) {
   const unlessDefault = (v, dflt) => (v === dflt ? null : v);
   const url = hrefWith({
-    page: unlessDefault(pageOf(side), pageOf(DEFAULT_SIDE)), theme: unlessDefault(theme, FILE_LOOK.theme), kind: unlessDefault(kind, 'risk'), view: unlessDefault(view, 'matrix'),
+    page: unlessDefault(pageOf(side), pageOf(DEFAULT_SIDE)), theme: unlessDefault(theme, fileTheme), kind: unlessDefault(kind, 'risk'), view: unlessDefault(view, 'matrix'),
     entry: form === null ? null : form.entry, tab: form === null ? null : unlessDefault(form.tab, FORM_TABS[0]),
   });
   if (url !== location.pathname + location.search + location.hash) history.replaceState(null, '', url);
@@ -4202,8 +4218,20 @@ class Component extends DCLogic {
 
   setState(patch, done) {
     const p = typeof patch === 'function' ? patch(this.state) : patch;
+    if (p.drafts !== undefined) this.autosaveSoon();
     if (p.__skipHistory) { delete p.__skipHistory; super.setState(p, done); return; }
     super.setState(withHistory(this.state, p, Date.now()), done);
+  }
+  /** Debounced: once edits pause, save every file that has somewhere to save to and unsaved changes. */
+  autosaveSoon() {
+    clearTimeout(this.autosaveTimer);
+    this.autosaveTimer = setTimeout(() => {
+      const drafts = this.state.drafts;
+      Array.from(FILE_HANDLES.keys()).filter((n) => Object.prototype.hasOwnProperty.call(drafts, n) && unsaved(n, drafts)).forEach((n) => saveInPlace(n, drafts[n], false).then(
+        (saved) => { if (saved !== null) this.setState({ dataFlash: 'Autosaved ' + n }); },
+        (e) => this.setState({ dataFlash: 'Autosave failed: ' + e.message }),
+      ));
+    }, AUTOSAVE_MS);
   }
   undo() { this.setState(historyStep(this.state, 'undo')); }
   redo() { this.setState(historyStep(this.state, 'redo')); }
@@ -4268,7 +4296,7 @@ class Component extends DCLogic {
     else if (this.flipLayout !== st.cmpLayout) this.flipAnim = 'none';
     this.flipSide = st.side;
     this.flipLayout = st.cmpLayout;
-    const shell = Object.assign({}, buildThemePicker(st, go), buildSettings(st, go, (p) => this.setState(p)), buildPickers(st, a, go, (p) => this.setState(p)), buildDataSide(st, a, go, applyDrafts, onEdit, (p) => this.setState(p), (pending, done = {}) => this.addFiles(pending, done)), {
+    const shell = Object.assign({}, buildThemePicker(st, go, (p) => this.setState(p)), buildSettings(st, go, (p) => this.setState(p)), buildPickers(st, a, go, (p) => this.setState(p)), buildDataSide(st, a, go, applyDrafts, onEdit, (p) => this.setState(p), (pending, done = {}) => this.addFiles(pending, done)), {
       lensAttr: st.lens, flipAnim: this.flipAnim,
       undo: () => this.undo(), redo: () => this.redo(),
       undoDisabled: st.undo.length === 0, redoDisabled: st.redo.length === 0,
@@ -4296,7 +4324,7 @@ class Component extends DCLogic {
     const views = VIEWS.filter((v) => N > 1 || !pairOnly.includes(v.id));
     const view = views.some((v) => v.id === st.view) ? st.view : 'matrix';
     const sv = Object.assign({}, st, { fromIdx, toIdx, view, showMovement: st.showMovement && N > 1 });
-    syncQuery(st.side, st.theme, st.lens, view, isBack && shell.formHasEntry ? { entry: shell.formEntryId, tab: shell.formEntry.key } : null);
+    syncQuery(st.side, st.theme, st.lens, view, isBack && shell.formHasEntry ? { entry: shell.formEntryId, tab: shell.formEntry.key } : null, lookOf(st.drafts[CURRENT_FILE] ?? '').theme);
     /* Compare's Summary layout is the register's own change list (with the detail drawer); the others are the side-by-side compare page. */
     const sideBySide = st.side === 'front' && view === 'compare' && st.cmpLayout !== 'summary';
 

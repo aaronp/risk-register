@@ -39,7 +39,7 @@ as_at: 2026-10-20
 | `palette` | Score colours: `heat`, `viridis` or `ocean` | `heat` |
 | `accent` | Accent colour: `blue`, `violet`, `teal` or `graphite` | `blue` |
 
-Other keys, and unknown theme, palette or accent values, are ignored.
+Other keys, and unknown theme, palette or accent values, are ignored. Picking a theme, palette or accent in the viewer writes it here.
 
 Text between the front matter and the first `##` (a title, notes, a scoring
 guide) is ignored by the viewer.
