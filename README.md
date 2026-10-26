@@ -10,7 +10,7 @@ at with query parameters.
 
 | Query | Shows |
 |-------|-------|
-| _(none)_ | Data → Form on a new register (`examples/minimal.md`), ready to fill in. |
+| _(none)_ | Data → Form on a blank register, `untitled.md`, ready to fill in. |
 | `?src=<url>` | The register on its own; Compare lets you pick a second source in the page. |
 | `?ours=<url>&theirs=<url>` | The Compare view from A = ours to B = theirs. |
 

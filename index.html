@@ -69,6 +69,15 @@ button:disabled{opacity:.35;cursor:default}
 <a href="?view=balance" onClick="{{openBalance}}" title="Open the Balance view" style="align-self: flex-start; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 14px; font-weight: 600; color: {{scoreTone}}; text-decoration: underline; text-underline-offset: 3px">{{scoreLine}}</a>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center">
+<div style="display: flex; gap: 8px; align-items: center; flex: 1 1 240px; min-width: 0">
+<div style="position: relative; display: flex; align-items: center; flex: 1 1 auto; min-width: 0; width: 280px">
+<label for="rr-search" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search</label>
+<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="position: absolute; left: 12px; pointer-events: none"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"></circle><path d="M10.5 10.5 L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
+<input id="rr-search" type="text" value="{{query}}" onChange="{{onQuery}}" onKeyDown="{{onQueryKey}}" placeholder="Filter or search…" autocomplete="off" style="width: 100%; height: 40px; padding: 0 36px; border: 1px solid var(--control); border-radius: 6px; font-family: inherit; font-size: 14px; background: var(--card); color: var(--ink); box-sizing: border-box">
+<sc-if value="{{hasQuery}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{clearQuery}}" aria-label="Clear search" style="position: absolute; right: 6px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 4px; background: transparent; color: var(--ink2); cursor: pointer"><svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3 L13 13 M13 3 L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button></sc-if>
+</div>
+<sc-if value="{{canSearch}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{runSearch}}" disabled="{{searchDisabled}}" title="Rank entries by meaning with Jev" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px; font-weight: 600; color: var(--accent); white-space: nowrap">✦ {{searchLabel}}</button></sc-if>
+</div>
 <div role="group" aria-label="Side" style="display: flex; gap: 4px; padding: 3px; border: 1px solid var(--ink); border-radius: 8px; background: var(--card)">
 <sc-for list="{{sides}}" as="sd" hint-placeholder-count="3">
 <button class="rr-hover" onClick="{{sd.pick}}" aria-pressed="{{sd.pressed}}" style="border: 0; border-radius: 5px; padding: 0 14px; height: 34px; font-size: 13px; font-weight: 600; cursor: pointer; background: {{sd.bg}}; color: {{sd.fg}}">{{sd.label}}</button>
@@ -185,6 +194,25 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 </div>
 </header>
+<sc-if value="{{hasSearch}}" hint-placeholder-val="{{ false }}">
+<section aria-label="Search results" style="display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; background: var(--card); border: 1px solid var(--ink); border-radius: 8px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+<span role="status" style="font-size: 13px; color: {{searchNoteFg}}">{{searchNote}}</span>
+<button class="rr-hover" onClick="{{closeSearch}}" aria-label="Close search results" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer"><svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3 L13 13 M13 3 L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
+</div>
+<sc-if value="{{hasSearchHits}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; max-height: 280px; overflow-y: auto; border: 1px solid var(--rule-soft); border-radius: 6px">
+<sc-for list="{{searchHits}}" as="sh" hint-placeholder-count="3">
+<button class="rr-hover" onClick="{{sh.open}}" aria-label="{{sh.aria}}" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 10px; border: 0; border-top: {{sh.rule}}; background: var(--card); color: var(--ink); cursor: pointer; text-align: left; font-size: 13px">
+<span style="display: flex; flex-direction: column; gap: 3px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600">{{sh.pct}}</span><span aria-hidden="true" style="height: 4px; border-radius: 2px; background: var(--rule-soft)"><span style="display: block; height: 4px; border-radius: 2px; width: {{sh.pct}}; background: var(--accent)"></span></span></span>
+<span style="min-width: 0">{{sh.label}}</span>
+<span style="font-size: 12px; color: var(--ink2)">{{sh.kind}}</span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+</section>
+</sc-if>
 </sc-if>
 <sc-if value="{{showSources}}" hint-placeholder-val="{{ true }}">
 <nav aria-label="Sources" style="display: flex; flex-direction: column; gap: 6px">
@@ -263,11 +291,6 @@ button:disabled{opacity:.35;cursor:default}
 <span style="display: {{filterBadgeDisplay}}; min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box; border-radius: 999px; background: var(--ink); color: var(--on-ink); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; font-weight: 600; align-items: center; justify-content: center">{{catCount}}</span>
 <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true" style="transform: rotate({{filterChevron}}deg); transition: transform 150ms ease"><path d="M4 6 L8 10 L12 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
 </button>
-<div style="position: relative; display: flex; align-items: center; flex: 1 1 240px; min-width: 0; max-width: 420px">
-<label for="rr-search" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search risks</label>
-<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="position: absolute; left: 12px; pointer-events: none"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"></circle><path d="M10.5 10.5 L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
-<input id="rr-search" type="search" value="{{query}}" onChange="{{onQuery}}" placeholder="Search title, ID, approver, description…" autocomplete="off" style="width: 100%; height: 44px; padding: 0 12px 0 36px; border: 1px solid var(--control); border-radius: 6px; font-family: inherit; font-size: 14px; background: var(--card); color: var(--ink); box-sizing: border-box">
-</div>
 <span style="font-size: 13px; color: var(--ink2)">{{filterSummary}}</span>
 <sc-if value="{{anyFilter}}" hint-placeholder-val="{{ false }}">
 <button class="rr-hover" onClick="{{clearFilters}}" style="height: 36px; padding: 0 12px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">Clear filters</button>
@@ -568,6 +591,8 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 <div style="display: flex; align-items: flex-start; gap: 8px"><h2 style="flex: 1 1 auto; margin: 0; font-size: 24px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance">{{sel.title}}</h2><div role="group" aria-label="Stars" style="display: inline-flex; gap: 2px; flex: 0 0 auto"><sc-for list="{{sel.stars}}" as="sr" hint-placeholder-count="3"><button class="rr-hover" onClick="{{sr.pick}}" aria-pressed="{{sr.pressed}}" aria-label="{{sr.aria}}" title="{{sr.aria}}" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 6px; background: transparent; color: {{sr.fg}}; cursor: pointer"><svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8 L9.9 5.9 L14.3 6.3 L11 9.3 L11.9 13.7 L8 11.4 L4.1 13.7 L5 9.3 L1.7 6.3 L6.1 5.9 Z" fill="{{sr.fill}}" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button></sc-for></div></div>
 <p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink2); text-wrap: pretty">{{sel.description}}</p>
+<sc-if value="{{sel.hasConfidence}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-size: 13px; color: var(--ink2)">Confidence <span role="img" aria-label="{{sel.confidenceAria}}" style="color: var(--star, #d99a00); letter-spacing: 1px">{{sel.confidence}}</span></p></sc-if>
+<sc-if value="{{sel.hasClarification}}" hint-placeholder-val="{{ false }}"><div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; font-weight: 600; color: var(--ink2)">Clarification</span><p style="margin: 0; font-size: 13px; line-height: 1.5; color: var(--ink2); white-space: pre-wrap; text-wrap: pretty">{{sel.clarification}}</p></div></sc-if>
 <a href="{{sel.edit.details.href}}" onClick="{{sel.edit.details.open}}" title="Edit {{sel.id}} in Data" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: var(--ink3); text-decoration: underline; text-underline-offset: 3px">{{sel.sourceRef}}</a>
 </div>
 
@@ -697,7 +722,7 @@ button:disabled{opacity:.35;cursor:default}
 <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600">File
 <select value="{{dataFileName}}" onChange="{{onDataFile}}" style="height: 40px; max-width: min(360px, calc(100vw - 80px)); padding: 0 10px; border: 1px solid {{dataFileBd}}; border-radius: 6px; background: var(--card); color: var(--ink); font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; cursor: pointer">
 <sc-for list="{{dataFiles}}" as="df" hint-placeholder-count="10">
-<option value="{{df.name}}">{{df.name}} · {{df.sub}}</option>
+<option value="{{df.name}}">{{df.label}} · {{df.sub}}</option>
 </sc-for>
 </select>
 </label>
@@ -708,6 +733,7 @@ button:disabled{opacity:.35;cursor:default}
 <button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{toggleOpen}}" aria-expanded="{{openExpanded}}" title="Open a file" aria-label="Open a file"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.75 4 A1.25 1.25 0 0 1 3 2.75 H6.25 L7.75 4.25 H13 A1.25 1.25 0 0 1 14.25 5.5 V12 A1.25 1.25 0 0 1 13 13.25 H3 A1.25 1.25 0 0 1 1.75 12 Z M1.75 6.75 H14.25" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path></svg></button>
 <button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{openNew}}" aria-expanded="{{newExpanded}}" title="New file" aria-label="New file"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M9 1.75 H4 A1.25 1.25 0 0 0 2.75 3 V13 A1.25 1.25 0 0 0 4 14.25 H12 A1.25 1.25 0 0 0 13.25 13 V6 Z M9 1.75 V6 H13.25 M8 8 V12.5 M5.75 10.25 H10.25" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
 <button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{copyToClipboard}}" title="Copy {{copySource}} to the clipboard" aria-label="Copy {{copySource}} to the clipboard"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2.5" width="10" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"></rect><path d="M6 2.5 V1.75 H10 V2.5 M5.5 7 H10.5 M5.5 10 H10.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></button>
+<sc-if value="{{canSave}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{saveFile}}" disabled="{{saveDisabled}}" title="{{saveTitle}}" aria-label="{{saveTitle}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 3.5 A1 1 0 0 1 3.5 2.5 H11 L13.5 5 V12.5 A1 1 0 0 1 12.5 13.5 H3.5 A1 1 0 0 1 2.5 12.5 Z M5 2.5 V6 H10.5 V2.5 M5 13.5 V9.5 H11 V13.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path></svg></button></sc-if>
 <button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{downloadFile}}" title="Download {{copySource}}" aria-label="Download {{copySource}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 V10 M4.5 6.5 L8 10 L11.5 6.5 M2.5 11 V13.5 H13.5 V11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
 <button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{openCopy}}" aria-expanded="{{copyExpanded}}" title="Clone {{copySource}} as a new file" aria-label="Clone {{copySource}} as a new file"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"></rect><path d="M10.5 3 H4 A1.5 1.5 0 0 0 2.5 4.5 V10.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></button>
 <button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--bad-fg); cursor: pointer" onClick="{{deleteFile}}" disabled="{{deleteDisabled}}" title="{{deleteTitle}}" aria-label="{{deleteTitle}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4 H13.5 M6 4 V2.5 H10 V4 M4 4 L4.75 13.5 H11.25 L12 4 M6.75 6.75 V11 M9.25 6.75 V11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
@@ -880,6 +906,13 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 </div>
 </sc-if>
+<sc-if value="{{formEntry.isGrid}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 13px; font-weight: 600">Confidence</span>
+<div role="group" aria-label="Confidence" style="display: inline-flex; gap: 2px"><sc-for list="{{formConfidence}}" as="sr" hint-placeholder-count="5"><button class="rr-hover" onClick="{{sr.pick}}" aria-pressed="{{sr.pressed}}" aria-label="{{sr.aria}}" title="{{sr.aria}}" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 6px; background: transparent; color: {{sr.fg}}; cursor: pointer"><svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8 L9.9 5.9 L14.3 6.3 L11 9.3 L11.9 13.7 L8 11.4 L4.1 13.7 L5 9.3 L1.7 6.3 L6.1 5.9 Z" fill="{{sr.fill}}" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button></sc-for></div>
+<span style="font-size: 12px; color: var(--ink3)">Optional: how sure this rating is, from low (1) to high (5). Click the last lit star to clear.</span>
+</div>
+</sc-if>
 <sc-if value="{{formEntry.hasFields}}" hint-placeholder-val="{{ true }}">
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 12px 16px">
 <sc-for list="{{formEntry.fields}}" as="ff" hint-placeholder-count="2">
@@ -944,7 +977,7 @@ button:disabled{opacity:.35;cursor:default}
 <button class="rr-hover" onClick="{{fc.pick}}" aria-pressed="{{fc.pressed}}" style="height: 32px; padding: 0 12px; border: 1px solid {{fc.bd}}; border-radius: 999px; background: {{fc.bg}}; color: {{fc.fg}}; cursor: pointer; font-size: 13px; font-weight: 500">{{fc.label}}</button>
 </sc-for>
 </div>
-<span style="font-size: 12px; color: var(--ink3)">Pick one; click it again to clear. Enter adds a new one and selects it.</span>
+<span style="font-size: 12px; color: var(--ink3)">Pick any number; click one again to clear it. Enter adds a new one and selects it.</span>
 </div>
 <div style="display: flex; flex-direction: column; gap: 8px">
 <label for="rr-f-slug" style="font-size: 13px; font-weight: 600">Slugs</label>
@@ -1358,8 +1391,8 @@ const ESCALATE = 'var(--escalate)';
 const IMPROVE = 'var(--improve)';
 const SCALE = 5;
 
-/** The register named by ?src (or ?ours); any other file is a second source or an in-memory copy. */
-const CURRENT_FILE = 'risks.md';
+/** The register named by ?src (or ?ours), or untitled.md; any other file is a second source or an in-memory copy. */
+const CURRENT_FILE = window.RR_FILES[0].name;
 
 /** Score bands: contiguous over 1..25, lightness falls as severity rises. */
 const BANDS = Object.freeze([
@@ -1595,6 +1628,11 @@ function parseTable(lines, i, header, file) {
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 /** "- slugs: a-b; c-d" (or "[]") → unique kebab-case slugs; other text is slugified ("Carrier Insolvency" → carrier-insolvency). */
+/** "- category: Safety; Operations" → its categories, unique, in order; none reads as ['Uncategorised']. */
+function parseCategories(s) {
+  const cs = Array.from(new Set(s.split(';').map((x) => x.trim()).filter((x) => x !== '')));
+  return Object.freeze(cs.length === 0 ? ['Uncategorised'] : cs);
+}
 function parseSlugs(s) {
   return Object.freeze(Array.from(new Set(s.split(/[;,]/).map(slugify).filter((x) => x !== ''))));
 }
@@ -1634,7 +1672,7 @@ function firstFieldLine(lines, start, end) {
 }
 
 /** Fields every entry has, then the fields only one kind has. */
-const COMMON_FIELDS = ['slugs', 'related', 'stars', 'kind', 'status', 'closed', 'category', 'target', 'driver', 'approver', 'contributors', 'informed'];
+const COMMON_FIELDS = ['slugs', 'related', 'stars', 'confidence', 'kind', 'status', 'closed', 'category', 'target', 'driver', 'approver', 'contributors', 'informed'];
 const KIND_FIELDS = Object.freeze({
   risk: ['impact', 'likelihood', 'inherent', 'appetite'],
   opportunity: ['value', 'effort', 'target_value', 'cost', 'realisation'],
@@ -1691,6 +1729,7 @@ function parseRiskSection(lines, start, end, file) {
   const syn = KIND_SYNTAX[kind];
 
   const description = [];
+  let clarification = '';
   let controls = null;
   let evidence = null;
   while (i < end) {
@@ -1711,6 +1750,13 @@ function parseRiskSection(lines, start, end, file) {
       }));
       i = t.next; continue;
     }
+    /* Clarification: free text up to the next heading; a line written as "\#" reads as "#". */
+    if (table === 'clarification') {
+      let j = i + 1;
+      while (j < end && !lines[j].startsWith('#')) j += 1;
+      clarification = lines.slice(i + 1, j).join('\n').replace(/^\\#/gm, '#').trim();
+      i = j; continue;
+    }
     /* Older files have an Actions table; it's skipped rather than read as description. */
     if (table === 'actions') { i = parseTable(lines, i + 1, ['Action'], file).next; continue; }
     /* Any other text — including other headings and text after the tables — is description. Bold markers show as plain text
@@ -1723,6 +1769,7 @@ function parseRiskSection(lines, start, end, file) {
   const value = isRisk ? null : parseLevel(fields.value, file, at('value'), 'value');
   const effort = isRisk ? null : parseLevel(fields.effort, file, at('effort'), 'effort');
   const targetRaw = has('target') ? parsePair(fields.target, file, at('target'), isRisk ? 'target (impact x likelihood)' : 'target (value x effort)') : null;
+  const categories = parseCategories(has('category') ? fields.category : '');
   return Object.freeze({
     id: h[1] === undefined ? null : h[1], kind, title: h[2].trim(), status: closed ? 'closed' : 'open',
     slugs: has('slugs') ? parseSlugs(fields.slugs) : Object.freeze([]), slugsLine: at('slugs'),
@@ -1730,7 +1777,12 @@ function parseRiskSection(lines, start, end, file) {
     /* 0–3, written as a digit ("★★" works too); anything else reads as none. */
     stars: !has('stars') ? 0 : /^[0-3]$/.test(fields.stars) ? Number(fields.stars) : /^★{1,3}$/.test(fields.stars) ? fields.stars.length : 0,
     closed: closedOn,
-    category: has('category') ? fields.category : 'Uncategorised',
+    /* 1–5, how sure the rating is, written as a digit ("★★★" works too); anything else reads as none (0). */
+    confidence: !has('confidence') ? 0 : /^[1-5]$/.test(fields.confidence) ? Number(fields.confidence) : /^★{1,5}$/.test(fields.confidence) ? fields.confidence.length : 0,
+    clarification,
+    categories,
+    /* For display and search: the categories as one line. */
+    category: categories.join(' · '),
     value, effort,
     impact: isRisk ? parseLevel(fields.impact, file, at('impact'), 'impact') : SCALE + 1 - effort,
     likelihood: isRisk ? parseLevel(fields.likelihood, file, at('likelihood'), 'likelihood') : value,
@@ -1794,7 +1846,7 @@ function buildModel(parsed) {
     return Object.freeze({ id, kind, records: Object.freeze(records), path });
   // ponytail: an entry closed in every source it appears in has no position, so the views leave it out.
   }).filter((r) => r.path.some((p) => p !== null)));
-  const categories = Object.freeze(Array.from(new Set(parsed.flatMap((f) => f.risks.map((r) => r.category)))).sort());
+  const categories = Object.freeze(Array.from(new Set(parsed.flatMap((f) => f.risks.flatMap((r) => r.categories)))).sort());
   return Object.freeze({ register: parsed[last].register, files: parsed, snapshots, risks, categories });
 }
 
@@ -2186,6 +2238,8 @@ function buildDetail(st, S, viewRisks, others, go, setState, saveDraft) {
   const asAt = S[toIdx];
   const base = {
     id: r.id, title: r.title, category: r.category, description: r.description,
+    hasConfidence: r.confidence > 0, confidence: '★'.repeat(r.confidence) + '☆'.repeat(5 - r.confidence), confidenceAria: 'Confidence ' + r.confidence + ' of 5',
+    hasClarification: r.clarification !== '', clarification: r.clarification,
     sourceRef: 'Source: ' + r.file + ' · line ' + r.line,
     /* Stars are written to the file the shown record came from, like a dragged marker. */
     stars: starButtons(r.stars, (n) => {
@@ -2299,8 +2353,8 @@ function buildDetail(st, S, viewRisks, others, go, setState, saveDraft) {
 
 /** Category pills: "All" clears; others toggle (multi-select). Counts are open risks at the as-at date. */
 /** Three star buttons showing `n`; clicking star k sets k, and clicking the last lit one clears them. */
-function starButtons(n, set) {
-  return [1, 2, 3].map((k) => ({
+function starButtons(n, set, max = 3) {
+  return Array.from({ length: max }, (_, j) => j + 1).map((k) => ({
     pressed: String(k <= n), fill: k <= n ? 'currentColor' : 'none', fg: k <= n ? 'var(--star, #d99a00)' : 'var(--ink3)',
     aria: k === n ? 'Clear stars' : k + (k === 1 ? ' star' : ' stars'), pick: () => set(k === n ? 0 : k),
   }));
@@ -2313,7 +2367,7 @@ function buildCategoryPills(cats, categories, toIdx, go, pool) {
   const pill = (label, on, count, pick) => ({ label, count, pick, pressed: String(on), bg: on ? INK : 'var(--card)', fg: on ? 'var(--on-ink)' : INK, bd: on ? INK : 'var(--control)', countFg: on ? 'var(--on-ink-muted)' : INK2 });
   return [pill('All', cats.length === 0, openIn(() => true), go({ categories: [], cellFilter: null }))].concat(categories.map((c) => {
     const on = cats.includes(c);
-    return pill(c, on, openIn((r) => r.category === c), go({ categories: on ? cats.filter((x) => x !== c) : cats.concat(c).sort(), cellFilter: null }));
+    return pill(c, on, openIn((r) => r.categories.includes(c)), go({ categories: on ? cats.filter((x) => x !== c) : cats.concat(c).sort(), cellFilter: null }));
   }));
 }
 
@@ -2395,6 +2449,17 @@ async function scorePairs(key, entries, pairs, progress = () => {}) {
 async function suggestRelated(key, entries, entry, candidates) {
   const at = (e) => entries.indexOf(e);
   return (await scorePairs(key, entries, candidates.map((c) => [at(entry), at(c)]))).map((x) => ({ id: x.b, p: x.p }));
+}
+const SEARCH_MIN = 0.05;
+/** Search: how well each entry matches `query` in meaning, as [{ i, p }] (indexes into `entries`), best first. */
+// ponytail: one request for the whole register; chunk like scorePairs if registers outgrow JEV_PAIRS_PER_REQUEST entries.
+async function searchEntries(key, entries, query) {
+  const answers = await jevAsk(key, { query, entries: entries.map(jevEntry) }, Object.fromEntries(entries.map((e, i) => ['p' + i, {
+    type: 'noul',
+    instructions: 'Does `entries[' + i + ']` match the search `query`?',
+    criteria: { true: 'Yes: it is about what the query asks for, in meaning, not just in wording', false: 'No: it is about something else' },
+  }])));
+  return entries.map((e, i) => ({ i, p: answers['p' + i].noul })).sort((x, y) => y.p - x.p);
 }
 /** Auto-link: every unlinked pair in `entries`, each asked once. */
 function scoreAllPairs(key, entries, progress) {
@@ -2591,6 +2656,24 @@ function readFiles(list, handles = []) {
  * expose file handles (File System Access API); elsewhere this stays empty and Download saves to the usual downloads folder.
  */
 const FILE_HANDLES = new Map();
+/** Each file's text as last opened or saved, by document name; a draft that differs has unsaved changes. */
+const SAVED_TEXT = new Map();
+/** Unsaved: differs from the text last opened or saved (the embedded original when neither); a new copy never saved counts. */
+function unsaved(name, drafts) {
+  const base = SAVED_TEXT.has(name) ? SAVED_TEXT.get(name) : ORIGINALS[name];
+  return base !== drafts[name];
+}
+/** Save over the file `name` was opened from (or last saved to); asks for write permission on the first save. */
+async function saveInPlace(name, text) {
+  const handle = FILE_HANDLES.get(name);
+  if (handle === undefined) throw new Error('bug: ' + name + ' has no file to save to');
+  if ((await handle.requestPermission({ mode: 'readwrite' })) !== 'granted') throw new Error('no permission to write ' + handle.name);
+  const w = await handle.createWritable();
+  await w.write(text);
+  await w.close();
+  SAVED_TEXT.set(name, text);
+  return handle.name;
+}
 const MD_TYPES = [{ description: 'Markdown', accept: { 'text/markdown': ['.md', '.markdown'], 'text/plain': ['.txt'] } }];
 /** Save `text` with a save dialog starting next to where `name` (else the last file) was opened; falls back to a plain download. */
 async function saveFile(name, text) {
@@ -2600,6 +2683,7 @@ async function saveFile(name, text) {
     a.download = name;
     a.click();
     URL.revokeObjectURL(a.href);
+    SAVED_TEXT.set(name, text);
     return null;
   }
   const near = FILE_HANDLES.get(name) ?? Array.from(FILE_HANDLES.values()).pop();
@@ -2608,6 +2692,7 @@ async function saveFile(name, text) {
   await w.write(text);
   await w.close();
   FILE_HANDLES.set(name, handle);
+  SAVED_TEXT.set(name, text);
   return handle.name;
 }
 /** Fetch one URL as a file named after its last path segment. */
@@ -2687,14 +2772,14 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState, addFiles) {
     ...buildForm(st, fr, name, text, go, setState, a.model.ok ? a.model.model : null),
     isSource: mode === 'source',
     dataModes: DATA_MODES.map((m) => ({ label: m.label, pressed: String(m.id === mode), bg: m.id === mode ? INK : 'transparent', fg: m.id === mode ? 'var(--on-ink)' : INK, pick: go({ dataMode: m.id, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '' }) })),
-    dataMeta: name +(fr.ok ? ' · as at ' + formatDate(fr.file.asAt) + ' · ' + kindCounts(fr.file.risks) + ' · parsed OK' : ' · has an error'),
+    dataMeta: name + (unsaved(name, st.drafts) ? ' *' : '') + (fr.ok ? ' · as at ' + formatDate(fr.file.asAt) + ' · ' + kindCounts(fr.file.risks) + ' · parsed OK' : ' · has an error'),
     dataFileName: name,
     dataFileBd: fr.ok ? 'var(--control)' : 'var(--bad-fg)',
     onDataFile: (e) => setState({ formIdx: 0, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', dataFile: e.target.value, dataFlash: '' }),
     dataFiles: names.map((n) => {
       const r = lookup(a.files, n, 'parsed file');
       const sub = (n === CURRENT_FILE ? 'current' : isCopyName(n) ? 'new' : 'other register') + (r.ok ? ' · ' + formatDate(r.file.asAt) : ' · error') + (!isCopyName(n) && edited(n) ? ' · edited' : '');
-      return { name: n, sub };
+      return { name: n, label: n + (unsaved(n, st.drafts) ? ' *' : ''), sub };
     }),
     hasRegError: !a.model.ok, regError: a.model.ok ? '' : a.model.error,
     editFileName: name, editText: text, onEdit,
@@ -2760,8 +2845,14 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState, addFiles) {
       () => setState({ dataFlash: 'Copied ' + name }),
       (e) => setState({ dataFlash: 'Copy failed: ' + e.message }),
     ),
+    canSave: FILE_HANDLES.has(name), saveDisabled: !unsaved(name, st.drafts),
+    saveTitle: FILE_HANDLES.has(name) ? 'Save ' + name + ' to ' + FILE_HANDLES.get(name).name : '',
+    saveFile: () => saveInPlace(name, text).then(
+      (saved) => setState({ dataFlash: 'Saved ' + saved }),
+      (e) => setState({ dataFlash: 'Save failed: ' + e.message }),
+    ),
     downloadFile: () => saveFile(name, text).then(
-      (saved) => { if (saved !== null) setState({ dataFlash: 'Saved ' + name + ' as ' + saved }); },
+      (saved) => setState({ dataFlash: saved === null ? 'Downloaded ' + name : 'Saved ' + name + ' as ' + saved }),
       (e) => { if (e.name !== 'AbortError') setState({ dataFlash: 'Save failed: ' + e.message }); },
     ),
     cancelCopy: go({ copyOpen: false, copyName: '', copyError: '' }),
@@ -2923,6 +3014,12 @@ function initialSources() {
 const EMBEDDED_FILES = Object.freeze(window.RR_FILES);
 /** The files as built into the page; drafts start equal to these and Revert restores them. */
 const ORIGINALS = Object.freeze(Object.fromEntries(EMBEDDED_FILES.map((f) => [f.name, f.text])));
+/** The register's look from its front matter (theme, palette, accent by id or label); missing or unknown values keep the defaults. ?theme= wins. */
+const FILE_LOOK = (() => {
+  const { meta } = parseFrontMatter(ORIGINALS[CURRENT_FILE].replace(/\r\n?/g, '\n').split('\n'));
+  const pick = (v, xs, dflt) => (xs.find((x) => v !== undefined && [x.id, x.label.toLowerCase()].includes(v.toLowerCase())) ?? { id: dflt }).id;
+  return Object.freeze({ theme: pick(meta.theme, THEMES, 'paper'), palette: pick(meta.palette, PALETTES, 'heat'), accentId: pick(meta.accent, ACCENTS, 'blue') });
+})();
 
 const PARSE_CACHE = new Map();
 /** Parse one file into a result whose error message carries file:line. Cached per file name and exact text. */
@@ -2978,7 +3075,7 @@ function reconcile(st, drafts) {
     ...cmp,
     drafts,
     selectedId: keepSel ? st.selectedId : null, drawerOpen: keepSel && st.drawerOpen,
-    categories: st.categories.filter((c) => M.risks.some((r) => r.kind === st.lens && viewRisk(r, toIdx).category === c)), cellFilter: null,
+    categories: st.categories.filter((c) => M.risks.some((r) => r.kind === st.lens && viewRisk(r, toIdx).categories.includes(c))), cellFilter: null,
   };
 }
 
@@ -3087,11 +3184,28 @@ function patchSection(text, r, patch) {
   });
   ALL_FIELDS.filter((k) => has(k) && !Object.prototype.hasOwnProperty.call(p.fields, k) && patch[k].trim() !== '').forEach((k) => fieldLines.push('- ' + k + ': ' + patch[k]));
   const desc = (has('description') ? patch.description : p.description).trim();
-  const rest = lines.slice(p.descEnd, p.end);
+  const rest = has('clarification') ? withClarification(lines.slice(p.descEnd, p.end), patch.clarification) : lines.slice(p.descEnd, p.end);
   const section = [heading].concat(fieldLines, [''], desc === '' ? [] : desc.split('\n').concat(['']), rest);
   while (section.length > 1 && section[section.length - 1].trim() === '') section.pop();
   section.push('');
   return lines.slice(0, p.start).concat(section, lines.slice(p.end)).join('\n');
+}
+
+/** An entry's lines after its description, with its "### Clarification" block replaced by `body` ('' removes it). */
+function withClarification(rest, body) {
+  const h = rest.findIndex((l) => tableName(l) === 'clarification');
+  let out = rest;
+  if (h !== -1) {
+    let j = h + 1;
+    while (j < rest.length && !rest[j].startsWith('#')) j += 1;
+    out = rest.slice(0, h).concat(rest.slice(j));
+  }
+  if (body.trim() === '') return out;
+  /* A line starting with # would read as a heading, so it's written as \#. */
+  const block = ['### Clarification'].concat(body.trim().split('\n').map((l) => l.replace(/^#/, '\\#')), ['']);
+  if (h !== -1) return out.slice(0, h).concat(block, out.slice(h));
+  while (out.length > 0 && out[out.length - 1].trim() === '') out = out.slice(0, -1);
+  return out.concat(out.length === 0 ? [] : [''], block);
 }
 
 /** A "### Name" line → "name"; null for any other line. */
@@ -3204,6 +3318,8 @@ function buildFormAi(st, setState, tabKey, r, parts, text, file, commit) {
     return Object.keys(patch).length === 0 ? withRows : patchSection(withRows, r, patch);
   };
   const close = () => setState({ ai: null });
+  /* A field typed into shows its pending value over the file's, so a suggestion written to that field drops it. */
+  const unpend = (os) => ({ formPending: Object.fromEntries(Object.entries(st.formPending).filter(([k]) => !os.some((o) => o.patch !== undefined && k in o.patch))) });
   const note = here === null ? '' : busy ? (spec.web ? 'Searching the web…' : 'Thinking…') : here.error !== '' ? here.error
     : offers.length === 0 ? 'Nothing more to suggest.' : 'Check each before adding: suggestions can be wrong.';
   return {
@@ -3213,11 +3329,11 @@ function buildFormAi(st, setState, tabKey, r, parts, text, file, commit) {
     note, noteFg: here !== null && here.error !== '' ? 'var(--bad-fg)' : 'var(--ink3)',
     close, backdrop: (e) => { if (e.target === e.currentTarget) close(); }, key: (e) => { if (e.key === 'Escape') close(); },
     hasItems: offers.length > 0, addAllLabel: offers.length === 1 ? 'Add it' : 'Add all ' + offers.length,
-    addAll: () => commit(apply(offers), { ai: null, dataFlash: 'Added ' + offers.length + (offers.length === 1 ? ' suggestion' : ' suggestions') + ' to ' + r.id }),
+    addAll: () => commit(apply(offers), Object.assign(unpend(offers), { ai: null, dataFlash: 'Added ' + offers.length + (offers.length === 1 ? ' suggestion' : ' suggestions') + ' to ' + r.id })),
     items: offers.map((o) => ({
       label: o.label, text: o.text, href: o.href ?? '', hasLink: o.href !== undefined, sub: o.sub ?? '', hasSub: (o.sub ?? '') !== '',
       useLabel: o.useLabel, aria: o.useLabel.replace('+ ', '') + ' ' + o.text,
-      use: () => commit(apply([o])),
+      use: () => commit(apply([o]), unpend([o])),
     })),
   };
 }
@@ -3260,6 +3376,8 @@ function buildForm(st, fr, name, text, go, setState, model) {
   /* The list shows the active lens only (the same Risks/Opportunities toggle as the register); formIdx stays a position in the file. */
   const shown = file.risks.map((r, k) => ({ r, k })).filter((x) => x.r.kind === st.lens);
   const idx = shown.some((x) => x.k === st.formIdx) ? st.formIdx : shown.length === 0 ? -1 : shown[0].k;
+  /* The search box narrows the list only; the entry open in the form stays open. */
+  const listed = shown.filter((x) => matchesQuery(x.r, st.query));
   const formReset = { formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '' };
   const commit = (next, extra) => setState(Object.assign(reconcile(st, Object.freeze(Object.assign({}, st.drafts, { [name]: next }))), extra));
   const newEntry = (kind) => () => {
@@ -3279,8 +3397,9 @@ function buildForm(st, fr, name, text, go, setState, model) {
       };
     }),
     formNew: newEntry(st.lens), formNewLabel: '+ New ' + LENS[st.lens].noun,
-    formEmpty: idx === -1, formEmptyNote: 'No ' + LENS[st.lens].nouns + ' in this file yet.', formHasEntry: idx !== -1,
-    formEntries: shown.map(({ r, k }) => {
+    formEmpty: idx === -1 || listed.length === 0,
+    formEmptyNote: idx === -1 ? 'No ' + LENS[st.lens].nouns + ' in this file yet.' : 'No ' + LENS[st.lens].nouns + ' match “' + st.query.trim() + '”.', formHasEntry: idx !== -1,
+    formEntries: listed.map(({ r, k }) => {
       const on = k === idx;
       return {
         id: r.id, title: r.title, pressed: String(on), bg: on ? INK : 'var(--card)', fg: on ? 'var(--on-ink)' : INK, subFg: on ? 'var(--on-ink-muted)' : INK2, bd: on ? INK : 'var(--control)',
@@ -3319,16 +3438,17 @@ function buildForm(st, fr, name, text, go, setState, model) {
     };
   };
   const raw = (k) => (Object.prototype.hasOwnProperty.call(p.fields, k) ? p.fields[k] : '');
-  /* Categories: every one used in any loaded file; an entry has at most one. */
-  const cat = raw('category').trim();
+  /* Categories: every one used in any loaded file; an entry can have several. */
+  const mine = r.categories.filter((c) => c !== 'Uncategorised');
   const known = Array.from(new Set(Object.values(parseAll(st.drafts)).filter((x) => x.ok)
-    .flatMap((x) => x.file.risks.map((e) => e.category)).filter((c) => c !== 'Uncategorised').concat(cat === '' ? [] : [cat]))).sort((a, b) => a.localeCompare(b));
-  const setCat = (c) => commit(patchSection(text, r, { category: c }), { formPending: pend, formCatDraft: '' });
+    .flatMap((x) => x.file.risks.flatMap((e) => e.categories)).filter((c) => c !== 'Uncategorised').concat(mine))).sort((a, b) => a.localeCompare(b));
+  const writeCats = (cs) => commit(patchSection(text, r, { category: cs.join('; ') }), { formPending: pend, formCatDraft: '' });
+  const toggleCat = (c) => writeCats(mine.includes(c) ? mine.filter((x) => x !== c) : mine.concat(c));
   const addCat = () => {
-    const t = st.formCatDraft.trim();
+    const t = st.formCatDraft.trim().replace(/;/g, ',');
     if (t === '') return;
-    const same = known.find((c) => c.toLowerCase() === t.toLowerCase());
-    setCat(same ?? t);
+    const same = known.find((c) => c.toLowerCase() === t.toLowerCase()) ?? t;
+    writeCats(mine.includes(same) ? mine : mine.concat(same));
   };
   const slugs = r.slugs;
   const writeSlugs = (xs) => commit(patchSection(text, r, { slugs: xs.join('; ') }), { formPending: pend, formSlugDraft: '', formSlugError: '', formCatDraft: '' });
@@ -3477,7 +3597,8 @@ function buildForm(st, fr, name, text, go, setState, model) {
         tab('rating', capitalise(L.noun), rated([r.impact, r.likelihood]), {
           isGrid: true, hint: 'Drag a marker to a new cell, or focus it and use the arrow keys.',
           grid: Object.assign(g, { markers, axes: L.xAxis + ' · ' + L.yAxis, ariaNow: markers[0].aria, ariaInherent: isRisk ? markers[1].aria : '', ariaTarget: markers[markers.length - 1].aria }),
-          fields: FORM_DETAILS[r.kind].map(([k, label, type, hint]) => field(k, label, type, raw(k), hint)),
+          fields: FORM_DETAILS[r.kind].map(([k, label, type, hint]) => field(k, label, type, raw(k), hint))
+            .concat([field('clarification', 'Clarification', 'textarea', r.clarification, 'What the ratings mean here, e.g. what counts as high impact. Blank lines separate paragraphs.', true)]),
         }),
         tab('daci', 'DACI', r.daci.A.map((x) => x.name).join(', '), {
           fields: FORM_DACI.map(([k, label]) => field(k, label, 'text', raw(k), 'Name (Role); separate several with ;', true)),
@@ -3507,10 +3628,11 @@ function buildForm(st, fr, name, text, go, setState, model) {
         formEntry: Object.assign(cur, { hasFields: cur.fields.length > 0, hasHint: cur.hint !== '', canFold: cur.isList && cur.list.canFold, hasToolbar: formAi.show || cur.isList || cur.leads.length > 0 }),
       };
     })(),
+    formConfidence: starButtons(r.confidence, (n) => commit(patchSection(text, r, { confidence: starsField(n) }), { formPending: pend }), 5),
     formStars: starButtons(r.stars, (n) => commit(patchSection(text, r, { stars: starsField(n) }), { formPending: pend })),
     formCats: known.map((c) => {
-      const on = c === cat;
-      return { label: c, pressed: String(on), bg: on ? INK : 'var(--card)', fg: on ? 'var(--on-ink)' : INK, bd: on ? INK : 'var(--control)', pick: () => setCat(on ? '' : c) };
+      const on = mine.includes(c);
+      return { label: c, pressed: String(on), bg: on ? INK : 'var(--card)', fg: on ? 'var(--on-ink)' : INK, bd: on ? INK : 'var(--control)', pick: () => toggleCat(c) };
     }),
     formCatDraft: st.formCatDraft,
     onFormCat: (e) => setState({ formCatDraft: e.target.value }),
@@ -4022,7 +4144,7 @@ const FORM_TABS = ['details', 'rating', 'daci', 'controls', 'evidence'];
 function syncQuery(side, theme, kind, view, form) {
   const unlessDefault = (v, dflt) => (v === dflt ? null : v);
   const url = hrefWith({
-    page: unlessDefault(pageOf(side), pageOf(DEFAULT_SIDE)), theme: unlessDefault(theme, 'paper'), kind: unlessDefault(kind, 'risk'), view: unlessDefault(view, 'matrix'),
+    page: unlessDefault(pageOf(side), pageOf(DEFAULT_SIDE)), theme: unlessDefault(theme, FILE_LOOK.theme), kind: unlessDefault(kind, 'risk'), view: unlessDefault(view, 'matrix'),
     entry: form === null ? null : form.entry, tab: form === null ? null : unlessDefault(form.tab, FORM_TABS[0]),
   });
   if (url !== location.pathname + location.search + location.hash) history.replaceState(null, '', url);
@@ -4035,8 +4157,8 @@ function initialState() {
     drafts: ORIGINALS, dataFile: CURRENT_FILE, view: DEFAULT_CMP_B === null ? 'matrix' : 'compare', side: DEFAULT_SIDE, dataMode: 'form',
     formIdx: 0, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', formEntryTab: 'details', formListOpen: null, formRowDrag: null, miniDrag: null,
     cellFilter: null, kindFilter: null, showMovement: true,
-    categories: [], query: '', filtersOpen: false, minStars: 0,
-    theme: 'paper', palette: 'heat', accentId: 'blue', themeOpen: false,
+    categories: [], query: '', search: null, filtersOpen: false, minStars: 0,
+    ...FILE_LOOK, themeOpen: false,
     settingsOpen: false, jevKey: loadSetting(JEV_KEY_STORE), orKey: loadSetting(OR_KEY_STORE), orModel: loadSetting(OR_MODEL_STORE) || OR_DEFAULT_MODEL, orDraft: '', orNote: '', orModels: [], ai: null, jevDraft: '', jevNote: '', suggest: null, autoLink: null, autoThreshold: 75, autoPicks: {},
     ...src, cmpLayout: 'summary', cmpShow: 'all', cmpQuery: '',
     cmpImpact: [], cmpLik: [], cmpSuggestOn: true, cmpDismissed: [],
@@ -4112,12 +4234,23 @@ class Component extends DCLogic {
     Promise.all(pending).then((files) => {
       const st = this.state;
       const drafts = Object.assign({}, st.drafts);
-      const names = files.map((f) => { const n = openedName(f.name, drafts); drafts[n] = f.text; if (f.handle) FILE_HANDLES.set(n, f.handle); return n; });
+      const names = files.map((f) => { const n = openedName(f.name, drafts); drafts[n] = f.text; SAVED_TEXT.set(n, f.text); if (f.handle) FILE_HANDLES.set(n, f.handle); return n; });
       const last = names[names.length - 1];
       this.setState(Object.assign(reconcile(Object.assign({}, st, { cmpB: last, cmpA: st.cmpA === last ? null : st.cmpA }), Object.freeze(drafts)), {
         recent: withRecent(st.recent, files), dataFile: last, formIdx: 0, formPending: {}, openOpen: false, openError: '', dropActive: false, dataFlash: 'Opened ' + names.join(', '),
       }, done));
     }, (e) => this.setState(Object.assign({ openError: 'Could not open: ' + e.message, dropActive: false }, done)));
+  }
+
+  /** Rank `entries` against the search box with Jev; matches under SEARCH_MIN are left out. */
+  runSearch(entries) {
+    const q = this.state.query.trim();
+    const at = { q, busy: true, error: '', hits: [] };
+    this.setState({ search: at });
+    searchEntries(this.state.jevKey, entries, q).then(
+      (ranked) => this.setState({ search: Object.assign({}, at, { busy: false, hits: ranked.filter((x) => x.p >= SEARCH_MIN).map((x) => Object.assign({}, entries[x.i], { p: x.p })) }) }),
+      (e) => this.setState({ search: Object.assign({}, at, { busy: false, error: e.message }) }),
+    );
   }
 
   renderVals() {
@@ -4171,12 +4304,12 @@ class Component extends DCLogic {
     const everything = M.risks.map((r) => viewRisk(r, toIdx));
     const all = everything.filter((r) => r.kind === L.id);
     const others = everything.filter((r) => r.kind !== L.id);
-    const lensCategories = Array.from(new Set(all.map((r) => r.category))).sort();
+    const lensCategories = Array.from(new Set(all.flatMap((r) => r.categories))).sort();
     const cats = st.categories;
     cats.forEach((c) => { if (!lensCategories.includes(c)) throw new Error('bug: category "' + c + '" has no ' + L.nouns); });
     const query = st.query;
     const byQuery = all.filter((r) => matchesQuery(r, query));
-    const byCat = cats.length === 0 ? byQuery : byQuery.filter((r) => cats.includes(r.category));
+    const byCat = cats.length === 0 ? byQuery : byQuery.filter((r) => r.categories.some((c) => cats.includes(c)));
     const risks = byCat.filter((r) => r.stars >= st.minStars);
     const hasQuery = query.trim().length > 0;
     const filterCount = cats.length + (hasQuery ? 1 : 0) + (st.minStars > 0 ? 1 : 0);
@@ -4259,8 +4392,28 @@ class Component extends DCLogic {
         closeDrawer: go({ drawerOpen: false }),
         railLabel: hasSelection ? st.selectedId + ' · ' + capitalise(L.noun) + ' detail' : '',
         categoryPills: buildCategoryPills(cats, lensCategories, toIdx, go, byQuery),
-        query,
+        query, hasQuery,
         onQuery: (e) => this.setState({ query: e.target.value, cellFilter: null }),
+        clearQuery: () => { this.setState({ query: '', cellFilter: null, search: null }); document.getElementById('rr-search')?.focus(); },
+        canSearch: st.jevKey !== '', searchDisabled: !hasQuery || (st.search !== null && st.search.busy),
+        searchLabel: st.search !== null && st.search.busy ? 'Searching…' : 'Search',
+        runSearch: () => this.runSearch(everything),
+        onQueryKey: (e) => {
+          if (e.key === 'Escape') this.setState({ query: '', cellFilter: null, search: null });
+          else if (e.key === 'Enter' && st.jevKey !== '' && hasQuery) this.runSearch(everything);
+        },
+        hasSearch: st.search !== null, closeSearch: go({ search: null }),
+        searchNote: st.search === null ? '' : st.search.busy ? 'Searching for “' + st.search.q + '”…' : st.search.error !== '' ? st.search.error
+          : plural(st.search.hits.length, 'match', 'matches') + ' for “' + st.search.q + '”' + (st.search.hits.length === 0 ? '' : ', best first'),
+        searchNoteFg: st.search !== null && st.search.error !== '' ? 'var(--bad-fg)' : 'var(--ink2)',
+        hasSearchHits: st.search !== null && st.search.hits.length > 0,
+        searchHits: st.search === null ? [] : st.search.hits.map((h, k) => ({
+          pct: Math.round(h.p * 100) + '%', label: h.id + ' · ' + h.title, kind: capitalise(LENS[h.kind].noun),
+          aria: 'Open ' + h.id + ' ' + h.title + ', ' + Math.round(h.p * 100) + '% match', rule: k === 0 ? '0' : '1px solid var(--rule-soft)',
+          /* Keep the text filter only if it still shows this entry. */
+          open: go(Object.assign({ side: 'front', lens: h.kind, selectedId: h.id, drawerOpen: true, categories: [], cellFilter: null, kindFilter: null, minStars: 0 },
+            matchesQuery(h, st.query) ? {} : { query: '' })),
+        })),
         filtersOpen: st.filtersOpen,
         filtersExpanded: String(st.filtersOpen),
         toggleFilters: go({ filtersOpen: !st.filtersOpen }),
@@ -4299,7 +4452,7 @@ class Component extends DCLogic {
 /* Loader: fetch the register markdown named in the query string, then boot the runtime.
    ?src=<url> (alias ?ours=) is the register.
    ?theirs=<url> adds a second document and opens the Compare view on ours vs theirs.
-   With neither, the page opens on Data → Form with examples/minimal.md as risks.md. */
+   With neither, the page opens on Data → Form with a blank register, untitled.md. */
 (async () => {
   const q = new URLSearchParams(location.search);
   const ours = q.get('src') ?? q.get('ours');
@@ -4311,14 +4464,16 @@ class Component extends DCLogic {
   };
   try {
     window.RR_LANDING = ours === null;
-    const oursUrl = new URL(ours ?? 'examples/minimal.md', location.href);
-    const text = await get(oursUrl);
-    const files = [{ name: 'risks.md', text }];
+    const mdName = (url, fallback) => { const base = decodeURIComponent(url.pathname.split('/').pop()); return /^[a-z0-9][a-z0-9._-]*\.md$/i.test(base) ? base : fallback; };
+    const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    const files = ours === null
+      ? [{ name: 'untitled.md', text: '---\nregister: Untitled\nas_at: ' + today + '\n---\n' }]
+      : [{ name: mdName(new URL(ours, location.href), 'risks.md'), text: await get(new URL(ours, location.href)) }];
     let theirsName = null;
     if (theirs !== null) {
       const theirsUrl = new URL(theirs, location.href);
-      const base = theirsUrl.pathname.split('/').pop();
-      theirsName = /^[a-z0-9][a-z0-9._-]*\.md$/.test(base) && !files.some((f) => f.name === base) ? base : 'theirs.md';
+      const base = mdName(theirsUrl, 'theirs.md');
+      theirsName = files.some((f) => f.name === base) ? 'theirs.md' : base;
       files.push({ name: theirsName, text: await get(theirsUrl) });
     }
     window.RR_FILES = files;

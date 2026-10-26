@@ -35,8 +35,11 @@ as_at: 2026-10-20
 | `register` | Name shown for the file | `Register` |
 | `as_at` | Date the register describes, `YYYY-MM-DD` | today |
 | `scale` | Scoring scale; only `5x5` is supported | `5x5` |
+| `theme` | Default look: `paper`, `slate`, `night` or `contrast`. A `?theme=` in the URL wins | `paper` |
+| `palette` | Score colours: `heat`, `viridis` or `ocean` | `heat` |
+| `accent` | Accent colour: `blue`, `violet`, `teal` or `graphite` | `blue` |
 
-Other keys are ignored.
+Other keys, and unknown theme, palette or accent values, are ignored.
 
 Text between the front matter and the first `##` (a title, notes, a scoring
 guide) is ignored by the viewer.
@@ -86,10 +89,11 @@ risk. Fields that belong to the other kind are ignored.
 |---|---|
 | `status` | `closed` closes the entry; any other value (or none) means open |
 | `closed` | Date it closed, `YYYY-MM-DD` |
-| `category` | Free text, used for grouping and filters |
+| `category` | Free text, used for grouping and filters; several separated by `;` (`Safety; Operations`) |
 | `slugs` | Stable tags that identify the same entry across registers |
 | `related` | Ids of other entries in the register it bears on, risks or opportunities, separated by `;` or `,` (`R03; O02`). A link shows on both entries; an id that matches nothing is ignored |
 | `stars` | 0–3, to pick out entries (`★★` works too); the register filters by it. Anything else reads as none |
+| `confidence` | Optional 1–5, how sure the rating is, from low to high (`★★★` works too). Anything else reads as none |
 | `target` | Target scores, `4x2` (`4 x 2` and `4×2` work too) |
 | `driver`, `approver`, `contributors`, `informed` | People (DACI). The RACI keys `responsible`, `accountable` and `consulted` are read as `driver`, `approver` and `contributors`. The first approver is shown as the entry's owner |
 
@@ -122,9 +126,21 @@ Optional values that don't make sense are ignored, not rejected: a non-date
 
 ### Text
 
-Any prose in the entry, anywhere in it and under any other heading, is its
-description. Put causes and consequences there in your own words; `**bold**`
+Any prose in the entry, anywhere in it and under any other heading (but
+Clarification), is its description. Put causes and consequences there in your own words; `**bold**`
 markers show as plain text, so an older `**Cause:** …` line reads as `Cause: …`.
+
+### Clarification
+
+An optional `### Clarification` heading holds free text, up to the next
+heading, that says what the ratings mean for this entry, e.g. what counts as
+high impact. Blank lines separate paragraphs; a line that starts with `#` is
+written as `\#` so it isn't read as a heading.
+
+```markdown
+### Clarification
+High impact here means a loss over £1m or a regulator fine.
+```
 
 ### Tables
 
