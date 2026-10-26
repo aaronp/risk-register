@@ -2602,8 +2602,9 @@ function buildSettings(st, go, setState) {
 }
 
 function buildThemePicker(st, go, setState) {
-  /* A pick is also written to the register's front matter, so it becomes the file's default look. */
-  const pickLook = (key, patch) => () => setState(Object.assign(reconcile(st, Object.freeze(Object.assign({}, st.drafts, { [CURRENT_FILE]: setFrontMatter(st.drafts[CURRENT_FILE], key, Object.values(patch)[0]) }))), patch));
+  /* A pick is also written to the front matter of the file on view (open in Data, else register B), so it becomes its default look. */
+  const name = st.side === 'back' ? st.dataFile : st.cmpB;
+  const pickLook = (key, patch) => () => setState(Object.assign(reconcile(st, Object.freeze(Object.assign({}, st.drafts, { [name]: setFrontMatter(st.drafts[name], key, Object.values(patch)[0]) }))), patch));
   byId(THEMES, st.theme, 'theme');
   byId(PALETTES, st.palette, 'palette');
   byId(ACCENTS, st.accentId, 'accent');
@@ -4324,7 +4325,7 @@ class Component extends DCLogic {
     const views = VIEWS.filter((v) => N > 1 || !pairOnly.includes(v.id));
     const view = views.some((v) => v.id === st.view) ? st.view : 'matrix';
     const sv = Object.assign({}, st, { fromIdx, toIdx, view, showMovement: st.showMovement && N > 1 });
-    syncQuery(st.side, st.theme, st.lens, view, isBack && shell.formHasEntry ? { entry: shell.formEntryId, tab: shell.formEntry.key } : null, lookOf(st.drafts[CURRENT_FILE] ?? '').theme);
+    syncQuery(st.side, st.theme, st.lens, view, isBack && shell.formHasEntry ? { entry: shell.formEntryId, tab: shell.formEntry.key } : null, lookOf(st.drafts[st.side === 'back' ? st.dataFile : st.cmpB] ?? '').theme);
     /* Compare's Summary layout is the register's own change list (with the detail drawer); the others are the side-by-side compare page. */
     const sideBySide = st.side === 'front' && view === 'compare' && st.cmpLayout !== 'summary';
 
