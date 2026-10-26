@@ -727,6 +727,19 @@ button:disabled{opacity:.35;cursor:default}
 <sc-if value="{{openOpen}}" hint-placeholder-val="{{ false }}">
 <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; box-sizing: border-box; padding: 14px 16px; background: var(--card); border: 1px solid var(--ink); border-radius: 8px; animation: rr-drop 140ms ease-out">
 <span style="font-size: 13px; font-weight: 600">Open a register</span>
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<sc-if value="{{hasRecent}}" hint-placeholder-val="{{ false }}">
+<nav aria-label="Recent files" style="flex: 0 1 220px; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 12px; font-weight: 600; color: var(--ink2); padding: 0 8px 4px">Recent</span>
+<sc-for list="{{recent}}" as="rf" hint-placeholder-count="3">
+<button class="rr-hover" onClick="{{rf.open}}" title="{{rf.where}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 6px 8px; border: 0; border-radius: 6px; background: transparent; color: var(--ink); cursor: pointer; text-align: left; min-width: 0">
+<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{rf.name}}</span>
+<span style="font-size: 11px; color: var(--ink2); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{rf.where}}</span>
+</button>
+</sc-for>
+</nav>
+</sc-if>
+<div style="flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
 <div onDragOver="{{onDragOver}}" onDragLeave="{{onDragLeave}}" onDrop="{{onDrop}}" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; min-height: 96px; padding: 16px; border: 2px dashed {{dropBd}}; border-radius: 8px; background: {{dropBg}}; text-align: center">
 <span style="font-size: 14px; color: var(--ink2)">Drop .md files here, or</span>
 <label class="rr-hover" style="display: inline-flex; align-items: center; height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">Choose files…<input type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" multiple onChange="{{onPickFiles}}" onClick="{{onPickClick}}" style="position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden"></label>
@@ -737,8 +750,10 @@ button:disabled{opacity:.35;cursor:default}
 <button class="rr-hover" onClick="{{openFromUrl}}" disabled="{{openUrlDisabled}}" style="height: 42px; padding: 0 16px; border: 1px solid var(--ink); border-radius: 6px; background: var(--ink); color: var(--on-ink); cursor: pointer; font-size: 13px; font-weight: 600">{{openUrlLabel}}</button>
 <button class="rr-hover" onClick="{{toggleOpen}}" style="height: 42px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">Cancel</button>
 </div>
+</div>
+</div>
 <sc-if value="{{hasOpenError}}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin: 0; font-size: 13px; color: var(--bad-fg); white-space: pre-wrap">{{openError}}</p></sc-if>
-<p style="margin: 0; font-size: 12px; line-height: 1.5; color: var(--ink2)">Opened files join the files on this page and the last one becomes the register on view. They live in memory only. A URL must allow cross-origin requests (GitHub Pages and raw.githubusercontent.com do); to share a register, link to it with <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">?src=</span> instead.</p>
+<p style="margin: 0; font-size: 12px; line-height: 1.5; color: var(--ink2)">Opened files join the files on this page and the last one becomes the register on view. They live in memory only; the last 10 are listed under Recent. A URL must allow cross-origin requests (GitHub Pages and raw.githubusercontent.com do); to share a register, link to it with <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">?src=</span> instead.</p>
 </div>
 </sc-if>
 <sc-if value="{{copyOpen}}" hint-placeholder-val="{{ false }}">
@@ -788,7 +803,15 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 <div role="tabpanel" id="rr-entry-panel" aria-labelledby="{{formEntry.tabId}}" style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
 <sc-if value="{{formEntry.hasToolbar}}" hint-placeholder-val="{{ true }}">
-<div style="display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 6px">
+<div style="display: flex; justify-content: flex-end; align-items: flex-end; flex-wrap: wrap; gap: 6px 12px">
+<sc-for list="{{formEntry.leads}}" as="ff" hint-placeholder-count="0">
+<div style="flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+<label for="{{ff.id}}" style="font-size: 13px; font-weight: 600">{{ff.label}}</label>
+<input id="{{ff.id}}" type="{{ff.type}}" value="{{ff.value}}" onChange="{{ff.onInput}}" spellcheck="false" autocomplete="off" style="height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; box-sizing: border-box; width: 100%">
+<sc-if value="{{ff.hasError}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 12px; color: var(--bad-fg)">{{ff.error}} — not saved yet</span></sc-if>
+</div>
+</sc-for>
+<sc-if value="{{formEntry.isList}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{formEntry.list.add}}" style="margin-right: auto; height: 32px; padding: 0 12px; border: 1px solid var(--ink); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">{{formEntry.list.addLabel}}</button></sc-if>
 <sc-if value="{{formAi.show}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{formAi.run}}" disabled="{{formAi.busy}}" title="{{formAi.hint}}" style="height: 32px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px; font-weight: 600; color: var(--accent)">✦ {{formAi.label}}</button></sc-if>
 <sc-if value="{{formEntry.canFold}}" hint-placeholder-val="{{ true }}">
 <button class="rr-hover" onClick="{{formEntry.list.expandAll}}" style="height: 32px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px">Expand all</button>
@@ -875,6 +898,36 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 </sc-if>
 <sc-if value="{{formEntry.isDetails}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label for="rr-f-related" style="font-size: 13px; font-weight: 600">Related</label>
+<div style="display: flex; gap: 8px; align-items: center; max-width: 520px">
+<select id="rr-f-related" value="" onChange="{{onFormRelated}}" style="flex: 1 1 auto; min-width: 0; font: inherit; height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-size: 14px; box-sizing: border-box">
+<option value="">Link a risk or opportunity…</option>
+<sc-for list="{{formRelatedOptions}}" as="ro" hint-placeholder-count="3"><option value="{{ro.id}}">{{ro.label}}</option></sc-for>
+</select>
+<button class="rr-hover" onClick="{{formSuggest}}" disabled="{{formSuggestBusy}}" aria-describedby="rr-f-suggest-note" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px; font-weight: 600; color: var(--accent)">✦ {{formSuggestLabel}}</button>
+</div>
+<sc-if value="{{formHasSuggestNote}}" hint-placeholder-val="{{ false }}"><span id="rr-f-suggest-note" role="status" style="font-size: 12px; color: {{formSuggestNoteFg}}">{{formSuggestNote}}</span></sc-if>
+<sc-if value="{{formHasSuggestions}}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-label="Suggested links" style="display: flex; flex-direction: column; max-width: 520px; border: 1px solid var(--rule-soft); border-radius: 6px; max-height: 320px; overflow-y: auto">
+<sc-for list="{{formSuggestions}}" as="sg" hint-placeholder-count="3">
+<button class="rr-hover" onClick="{{sg.add}}" aria-label="{{sg.aria}}" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 10px; border: 0; border-top: {{sg.rule}}; background: var(--card); cursor: pointer; text-align: left; font-size: 13px">
+<span style="display: flex; flex-direction: column; gap: 3px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600">{{sg.pct}}</span><span aria-hidden="true" style="height: 4px; border-radius: 2px; background: var(--rule-soft)"><span style="display: block; height: 4px; border-radius: 2px; width: {{sg.pct}}; background: var(--accent)"></span></span></span>
+<span style="min-width: 0">{{sg.label}}</span>
+<span style="font-size: 12px; font-weight: 600; color: var(--accent)">+ Link</span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{formHasRelated}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center">
+<sc-for list="{{formRelated}}" as="rel" hint-placeholder-count="2">
+<span style="display: inline-flex; align-items: center; gap: 2px; padding: 0 2px 0 10px; height: 30px; border-radius: 999px; background: var(--neutral-bg); color: var(--neutral-fg); font-size: 12px"><a href="{{rel.href}}" onClick="{{rel.open}}" aria-label="{{rel.openAria}}" style="color: inherit; text-decoration: none">{{rel.label}}</a><button class="rr-hover" onClick="{{rel.remove}}" aria-label="{{rel.aria}}" style="width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 999px; background: transparent; cursor: pointer"><svg width="10" height="10" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4 L12 12 M12 4 L4 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></button></span>
+</sc-for>
+</div>
+</sc-if>
+<span style="font-size: 12px; color: var(--ink3)">Other risks or opportunities in this register that bear on this one. A link shows on both entries.</span>
+</div>
 <div style="display: flex; flex-direction: column; gap: 4px">
 <span style="font-size: 13px; font-weight: 600">Stars</span>
 <div role="group" aria-label="Stars" style="display: inline-flex; gap: 2px"><sc-for list="{{formStars}}" as="sr" hint-placeholder-count="3"><button class="rr-hover" onClick="{{sr.pick}}" aria-pressed="{{sr.pressed}}" aria-label="{{sr.aria}}" title="{{sr.aria}}" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 6px; background: transparent; color: {{sr.fg}}; cursor: pointer"><svg width="20" height="20" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8 L9.9 5.9 L14.3 6.3 L11 9.3 L11.9 13.7 L8 11.4 L4.1 13.7 L5 9.3 L1.7 6.3 L6.1 5.9 Z" fill="{{sr.fill}}" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path></svg></button></sc-for></div>
@@ -908,36 +961,6 @@ button:disabled{opacity:.35;cursor:default}
 </sc-if>
 <span style="font-size: 12px; color: var(--ink3)">Tags that match this entry across registers. Enter, comma or ; adds one; text is turned into kebab-case. {{formSlugPreview}}</span>
 <sc-if value="{{formHasSlugError}}" hint-placeholder-val="{{ false }}"><span role="alert" style="font-size: 12px; color: var(--bad-fg)">{{formSlugError}}</span></sc-if>
-</div>
-<div style="display: flex; flex-direction: column; gap: 8px">
-<label for="rr-f-related" style="font-size: 13px; font-weight: 600">Related</label>
-<div style="display: flex; gap: 8px; align-items: center; max-width: 520px">
-<select id="rr-f-related" value="" onChange="{{onFormRelated}}" style="flex: 1 1 auto; min-width: 0; font: inherit; height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-size: 14px; box-sizing: border-box">
-<option value="">Link a risk or opportunity…</option>
-<sc-for list="{{formRelatedOptions}}" as="ro" hint-placeholder-count="3"><option value="{{ro.id}}">{{ro.label}}</option></sc-for>
-</select>
-<button class="rr-hover" onClick="{{formSuggest}}" disabled="{{formSuggestBusy}}" aria-describedby="rr-f-suggest-note" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px">{{formSuggestLabel}}</button>
-</div>
-<sc-if value="{{formHasSuggestNote}}" hint-placeholder-val="{{ false }}"><span id="rr-f-suggest-note" role="status" style="font-size: 12px; color: {{formSuggestNoteFg}}">{{formSuggestNote}}</span></sc-if>
-<sc-if value="{{formHasSuggestions}}" hint-placeholder-val="{{ false }}">
-<div role="group" aria-label="Suggested links" style="display: flex; flex-direction: column; max-width: 520px; border: 1px solid var(--rule-soft); border-radius: 6px; max-height: 320px; overflow-y: auto">
-<sc-for list="{{formSuggestions}}" as="sg" hint-placeholder-count="3">
-<button class="rr-hover" onClick="{{sg.add}}" aria-label="{{sg.aria}}" style="display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 10px; border: 0; border-top: {{sg.rule}}; background: var(--card); cursor: pointer; text-align: left; font-size: 13px">
-<span style="display: flex; flex-direction: column; gap: 3px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600">{{sg.pct}}</span><span aria-hidden="true" style="height: 4px; border-radius: 2px; background: var(--rule-soft)"><span style="display: block; height: 4px; border-radius: 2px; width: {{sg.pct}}; background: var(--accent)"></span></span></span>
-<span style="min-width: 0">{{sg.label}}</span>
-<span style="font-size: 12px; font-weight: 600; color: var(--accent)">+ Link</span>
-</button>
-</sc-for>
-</div>
-</sc-if>
-<sc-if value="{{formHasRelated}}" hint-placeholder-val="{{ true }}">
-<div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center">
-<sc-for list="{{formRelated}}" as="rel" hint-placeholder-count="2">
-<span style="display: inline-flex; align-items: center; gap: 2px; padding: 0 2px 0 10px; height: 30px; border-radius: 999px; background: var(--neutral-bg); color: var(--neutral-fg); font-size: 12px"><a href="{{rel.href}}" onClick="{{rel.open}}" aria-label="{{rel.openAria}}" style="color: inherit; text-decoration: none">{{rel.label}}</a><button class="rr-hover" onClick="{{rel.remove}}" aria-label="{{rel.aria}}" style="width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 999px; background: transparent; cursor: pointer"><svg width="10" height="10" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4 L12 12 M12 4 L4 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg></button></span>
-</sc-for>
-</div>
-</sc-if>
-<span style="font-size: 12px; color: var(--ink3)">Other risks or opportunities in this register that bear on this one. A link shows on both entries.</span>
 </div>
 </sc-if>
 <sc-if value="{{formEntry.isList}}" hint-placeholder-val="{{ false }}">
@@ -980,7 +1003,6 @@ button:disabled{opacity:.35;cursor:default}
 </sc-if>
 </div>
 </sc-for>
-<button class="rr-hover" onClick="{{formEntry.list.add}}" style="align-self: flex-start; height: 36px; padding: 0 12px; border: 1px solid var(--ink); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600">{{formEntry.list.addLabel}}</button>
 </sc-if>
 <sc-if value="{{formEntry.hasHint}}" hint-placeholder-val="{{ true }}"><span style="font-size: 12px; color: var(--ink3)">{{formEntry.hint}}</span></sc-if>
 </div>
@@ -2588,15 +2610,56 @@ async function saveFile(name, text) {
   FILE_HANDLES.set(name, handle);
   return handle.name;
 }
-/** Fetch one URL (absolute or relative to the page) as a file named after its last path segment. */
+/** Fetch one URL as a file named after its last path segment. */
+function fetchFile(url) {
+  return fetch(url).then((res) => {
+    if (!res.ok) throw new Error(url.href + ': HTTP ' + res.status);
+    return res.text().then((text) => ({ name: url.pathname.split('/').pop() || 'register.md', text, url: url.href }));
+  });
+}
+/** Fetch one URL (absolute or relative to the page). */
 function openUrl(raw, setState, addFiles) {
   let url;
   try { url = new URL(raw.trim(), location.href); } catch (e) { setState({ openError: '“' + raw.trim() + '” is not a URL' }); return; }
   setState({ openBusy: true, openError: '' });
-  addFiles([fetch(url).then((res) => {
-    if (!res.ok) throw new Error(url.href + ': HTTP ' + res.status);
-    return res.text().then((text) => ({ name: url.pathname.split('/').pop() || 'register.md', text }));
-  })], { openBusy: false, openUrl: '' });
+  addFiles([fetchFile(url)], { openBusy: false, openUrl: '' });
+}
+/**
+ * Open recent: the last RECENT_LIMIT opened files, newest first, in IndexedDB (unlike localStorage it can hold file handles).
+ * Each is { name, url } (refetched), { name, handle } (reread from disk) or, for files with neither, { name, text } as opened.
+ */
+const RECENT_LIMIT = 10;
+function recentStore(mode, fn) {
+  return new Promise((ok, fail) => {
+    const req = indexedDB.open('risk-register', 1);
+    req.onupgradeneeded = () => req.result.createObjectStore('kv');
+    req.onerror = () => fail(req.error);
+    req.onsuccess = () => {
+      const tx = req.result.transaction('kv', mode);
+      const r = fn(tx.objectStore('kv'));
+      tx.oncomplete = () => { req.result.close(); ok(r.result); };
+      tx.onerror = () => fail(tx.error);
+    };
+  });
+}
+const loadRecent = () => recentStore('readonly', (s) => s.get('recent')).then((v) => v ?? [], () => []);
+/* ponytail: keyed by url, else name, so two same-named files from different folders share one slot. */
+function withRecent(list, files) {
+  const fresh = files.slice().reverse().map((f) => (f.url ? { name: f.name, url: f.url } : f.handle ? { name: f.name, handle: f.handle } : { name: f.name, text: f.text }));
+  const key = (r) => r.url ?? r.name;
+  const keys = new Set(fresh.map(key));
+  const list2 = fresh.concat(list.filter((r) => !keys.has(key(r)))).slice(0, RECENT_LIMIT);
+  recentStore('readwrite', (s) => s.put(list2, 'recent')).catch(() => {});
+  return list2;
+}
+/** A recent entry → a promise of { name, text, … } read afresh where it can be. Asking for permission needs the click's user gesture. */
+function readRecent(r) {
+  if (r.url) return fetchFile(new URL(r.url));
+  if (!r.handle) return Promise.resolve(r);
+  return r.handle.requestPermission({ mode: 'read' }).then((p) => {
+    if (p !== 'granted') throw new Error('no permission to read ' + r.name);
+    return r.handle.getFile();
+  }).then((f) => f.text()).then((text) => ({ name: r.name, text, handle: r.handle }));
 }
 /** A file name the drafts can hold: lower-case, safe characters, .md, and not already taken. */
 function openedName(name, drafts) {
@@ -2683,6 +2746,11 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState, addFiles) {
         (err) => { if (err.name !== 'AbortError') setState({ openError: 'Could not open: ' + err.message }); },
       );
     },
+    hasRecent: st.recent.length > 0,
+    recent: st.recent.map((r) => ({
+      name: r.name, open: () => addFiles([readRecent(r)]),
+      where: r.url ? r.url.replace(/^https?:\/\//, '') : r.handle ? 'File on this computer' : 'Copy saved when opened',
+    })),
     openUrl: st.openUrl, hasOpenError: st.openError !== '', openError: st.openError,
     onOpenUrl: (e) => setState({ openUrl: e.target.value, openError: '' }),
     openUrlDisabled: st.openUrl.trim() === '' || st.openBusy, openUrlLabel: st.openBusy ? 'Opening…' : 'Open URL',
@@ -3196,7 +3264,9 @@ function buildForm(st, fr, name, text, go, setState, model) {
   const commit = (next, extra) => setState(Object.assign(reconcile(st, Object.freeze(Object.assign({}, st.drafts, { [name]: next }))), extra));
   const newEntry = (kind) => () => {
     const [a, b] = REQUIRED_FIELDS[kind];
-    commit(text.replace(/\s*$/, '\n') + '\n## New ' + LENS[kind].noun + '\n- ' + a + ': 3\n- ' + b + ': 3\n', { formIdx: n, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '' });
+    commit(text.replace(/\s*$/, '\n') + '\n## New ' + LENS[kind].noun + '\n- ' + a + ': 3\n- ' + b + ': 3\n', { formIdx: n, formEntryTab: 'details', formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '' });
+    /* After the render: focus the title with its text selected, so typing replaces it. */
+    setTimeout(() => { const el = document.getElementById('rr-f-title'); if (el) { el.focus(); el.select(); } });
   };
   const common = {
     isForm: true, formOk: true, formFailed: false,
@@ -3397,16 +3467,17 @@ function buildForm(st, fr, name, text, go, setState, model) {
       const count = (n, one, many) => (n === 0 ? '' : plural(n, one, many));
       const syn = KIND_SYNTAX[r.kind];
       const supportNoun = L.supportsLabel.toLowerCase().replace(/s$/, '');
-      const tab = (key, label, preview, panel) => Object.assign({ key, label, tabId: 'rr-f-' + key + '-tab', preview, fields: [], hint: '', isGrid: false, isDetails: false, isList: false }, panel);
+      const tab = (key, label, preview, panel) => Object.assign({ key, label, tabId: 'rr-f-' + key + '-tab', preview, leads: [], fields: [], hint: '', isGrid: false, isDetails: false, isList: false }, panel);
       const tabs = [
+        tab('details', 'Details', p.title, {
+          isDetails: true,
+          leads: [field('title', 'Title', 'text', p.title, '', true)],
+          fields: [field('description', 'Description', 'textarea', p.description, 'Blank lines separate paragraphs.', true)],
+        }),
         tab('rating', capitalise(L.noun), rated([r.impact, r.likelihood]), {
           isGrid: true, hint: 'Drag a marker to a new cell, or focus it and use the arrow keys.',
           grid: Object.assign(g, { markers, axes: L.xAxis + ' · ' + L.yAxis, ariaNow: markers[0].aria, ariaInherent: isRisk ? markers[1].aria : '', ariaTarget: markers[markers.length - 1].aria }),
           fields: FORM_DETAILS[r.kind].map(([k, label, type, hint]) => field(k, label, type, raw(k), hint)),
-        }),
-        tab('details', 'Details', p.title, {
-          isDetails: true,
-          fields: [field('title', 'Title', 'text', p.title, '', true), field('description', 'Description', 'textarea', p.description, 'Blank lines separate paragraphs.', true)],
         }),
         tab('daci', 'DACI', r.daci.A.map((x) => x.name).join(', '), {
           fields: FORM_DACI.map(([k, label]) => field(k, label, 'text', raw(k), 'Name (Role); separate several with ;', true)),
@@ -3433,7 +3504,7 @@ function buildForm(st, fr, name, text, go, setState, model) {
             bg: on ? 'var(--sel-bg)' : 'var(--card)', bd: on ? INK : 'var(--rule)', bar: on ? 'var(--accent)' : 'var(--rule)',
           };
         }),
-        formEntry: Object.assign(cur, { hasFields: cur.fields.length > 0, hasHint: cur.hint !== '', canFold: cur.isList && cur.list.canFold, hasToolbar: formAi.show || (cur.isList && cur.list.canFold) }),
+        formEntry: Object.assign(cur, { hasFields: cur.fields.length > 0, hasHint: cur.hint !== '', canFold: cur.isList && cur.list.canFold, hasToolbar: formAi.show || cur.isList || cur.leads.length > 0 }),
       };
     })(),
     formStars: starButtons(r.stars, (n) => commit(patchSection(text, r, { stars: starsField(n) }), { formPending: pend })),
@@ -3943,7 +4014,7 @@ function hrefWith(params) {
   return location.pathname + (q.size ? '?' + q.toString().replace(/=(?=&|$)/g, '').replace(/%2F/gi, '/').replace(/%3A/gi, ':') : '') + location.hash;
 }
 /** The form's tabs, in order; ?tab= picks one. */
-const FORM_TABS = ['rating', 'details', 'daci', 'controls', 'evidence'];
+const FORM_TABS = ['details', 'rating', 'daci', 'controls', 'evidence'];
 /**
  * Mirrors page, theme, kind and view into the URL (defaults left out) so the address bar is a shareable link.
  * On Data → Form, `form` adds the entry being edited (?entry=) and its tab (?tab=).
@@ -3962,7 +4033,7 @@ function initialState() {
   const a = analyseDrafts(ORIGINALS, src.cmpA, src.cmpB);
   const base = {
     drafts: ORIGINALS, dataFile: CURRENT_FILE, view: DEFAULT_CMP_B === null ? 'matrix' : 'compare', side: DEFAULT_SIDE, dataMode: 'form',
-    formIdx: 0, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', formEntryTab: 'rating', formListOpen: null, formRowDrag: null, miniDrag: null,
+    formIdx: 0, formPending: {}, formSlugDraft: '', formSlugError: '', formCatDraft: '', formEntryTab: 'details', formListOpen: null, formRowDrag: null, miniDrag: null,
     cellFilter: null, kindFilter: null, showMovement: true,
     categories: [], query: '', filtersOpen: false, minStars: 0,
     theme: 'paper', palette: 'heat', accentId: 'blue', themeOpen: false,
@@ -3972,7 +4043,7 @@ function initialState() {
     cmpFocus: null, cmpPeer: null, cmpSlugDraft: '', cmpSlugError: '', cmpFlash: '',
     cmpPickOpen: null, cmpPickQuery: '',
     copyOpen: false, copyMode: 'clone', copyName: '', copyError: '', dataFlash: '',
-    openOpen: false, openUrl: '', openError: '', openBusy: false, dropActive: false,
+    openOpen: false, openUrl: '', openError: '', openBusy: false, dropActive: false, recent: [],
     undo: [], redo: [], histAt: 0,
     lens: 'risk',
     ...queryPrefs(),
@@ -4031,6 +4102,7 @@ class Component extends DCLogic {
       this[dir]();
     };
     document.addEventListener('keydown', this.onKey);
+    loadRecent().then((recent) => this.setState({ recent }));
   }
   componentWillUnmount() { document.removeEventListener('keydown', this.onKey); }
 
@@ -4043,7 +4115,7 @@ class Component extends DCLogic {
       const names = files.map((f) => { const n = openedName(f.name, drafts); drafts[n] = f.text; if (f.handle) FILE_HANDLES.set(n, f.handle); return n; });
       const last = names[names.length - 1];
       this.setState(Object.assign(reconcile(Object.assign({}, st, { cmpB: last, cmpA: st.cmpA === last ? null : st.cmpA }), Object.freeze(drafts)), {
-        dataFile: last, formIdx: 0, formPending: {}, openOpen: false, openError: '', dropActive: false, dataFlash: 'Opened ' + names.join(', '),
+        recent: withRecent(st.recent, files), dataFile: last, formIdx: 0, formPending: {}, openOpen: false, openError: '', dropActive: false, dataFlash: 'Opened ' + names.join(', '),
       }, done));
     }, (e) => this.setState(Object.assign({ openError: 'Could not open: ' + e.message, dropActive: false }, done)));
   }
