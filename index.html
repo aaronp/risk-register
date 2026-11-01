@@ -328,7 +328,8 @@ button:disabled{opacity:.35;cursor:default}
 <span>{{movementLabel}}</span>
 </button></sc-if>
 </div>
-<div style="display: grid; grid-template-columns: 96px minmax(0, 1fr); grid-template-rows: auto auto; gap: 8px">
+<div style="display: grid; grid-template-columns: auto 96px minmax(0, 1fr); gap: 8px">
+<div style="writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2)">{{yAxisLabel}}</div>
 <div style="display: flex; flex-direction: column; gap: 3px">
 <sc-for list="{{rowLabels}}" as="rl" hint-placeholder-count="5">
 <div style="flex: 1 1 0; display: flex; flex-direction: column; justify-content: center; align-items: flex-end; text-align: right; gap: 1px; padding-right: 4px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600">{{rl.n}}</span><span style="font-size: 11px; color: var(--ink2); line-height: 1.2">{{rl.label}}</span></div>
@@ -360,12 +361,12 @@ button:disabled{opacity:.35;cursor:default}
 </sc-for>
 </div>
 </div>
-<div style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2); text-align: right; align-self: start; padding-right: 4px; display: flex; flex-direction: column; gap: 2px"><span>{{yAxisLabel}}</span><span>{{xAxisLabel}}</span></div>
-<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 3px">
+<div style="grid-column: 3; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 3px">
 <sc-for list="{{colLabels}}" as="cl" hint-placeholder-count="5">
 <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 1px"><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; font-weight: 600">{{cl.n}}</span><span style="font-size: 11px; color: var(--ink2); line-height: 1.2">{{cl.label}}</span></div>
 </sc-for>
 </div>
+<div style="text-align: center; grid-column: 3; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2)">{{xAxisLabel}}</div>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; font-size: 12px; color: var(--ink2); border-top: 1px solid var(--rule-soft); padding-top: 12px">
 <sc-for list="{{bandLegend}}" as="b" hint-placeholder-count="4">
@@ -613,7 +614,9 @@ button:disabled{opacity:.35;cursor:default}
 </sc-for>
 </dl>
 </div>
-<div style="display: flex; flex-direction: column; gap: 8px; flex: 0 0 168px">
+<div style="display: flex; flex-direction: column; gap: 8px; flex: 0 0 188px">
+<div style="display: grid; grid-template-columns: 16px 168px; gap: 4px">
+<div style="writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2)">{{sel.yAxis}}</div>
 <div style="position: relative; width: 168px; height: 168px">
 <div style="position: absolute; inset: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(5, minmax(0, 1fr)); gap: 2px">
 <sc-for list="{{sel.miniCells}}" as="m" hint-placeholder-count="25">
@@ -626,6 +629,8 @@ button:disabled{opacity:.35;cursor:default}
 <sc-if value="{{sel.hasTarget}}" hint-placeholder-val="{{ true }}"><circle cx="{{sel.targetX}}" cy="{{sel.targetY}}" r="5" fill="none" onPointerDown="{{sel.dragTarget}}" style="stroke: {{accent}}; pointer-events: all; cursor: {{sel.dragCursor}}" stroke-width="2.2"></circle></sc-if>
 <circle cx="{{sel.nowX}}" cy="{{sel.nowY}}" r="5.5" onPointerDown="{{sel.dragNow}}" style="fill: {{sel.nowFill}}; stroke: var(--card); cursor: {{sel.dragCursor}}" stroke-width="1.5"></circle>
 </svg>
+</div>
+<div style="text-align: center; grid-column: 2; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2)">{{sel.xAxis}}</div>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 11px; color: var(--ink2)">
 <span style="display: flex; align-items: center; gap: 4px"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><polygon points="5,0.5 9.5,5 5,9.5 0.5,5" style="fill: var(--card)" stroke="currentColor" stroke-width="1.2"></polygon></svg>{{sel.originLegend}}</span>
@@ -875,7 +880,8 @@ button:disabled{opacity:.35;cursor:default}
 </sc-if>
 <sc-if value="{{formEntry.isGrid}}" hint-placeholder-val="{{ true }}">
 <div style="display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: flex-start">
-<div style="display: flex; flex-direction: column; gap: 6px; flex: 0 0 240px">
+<div style="display: grid; grid-template-columns: 16px 240px; gap: 4px; flex: 0 0 260px">
+<div style="writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; white-space: nowrap; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2)">{{formEntry.grid.yAxis}}</div>
 <div style="position: relative; width: 240px; height: 240px">
 <div style="position: absolute; inset: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(5, minmax(0, 1fr)); gap: 2px">
 <sc-for list="{{formEntry.grid.miniCells}}" as="m" hint-placeholder-count="25">
@@ -888,7 +894,7 @@ button:disabled{opacity:.35;cursor:default}
 <sc-if value="{{formEntry.grid.hasTarget}}" hint-placeholder-val="{{ true }}"><circle class="rr-marker" tabindex="0" aria-label="{{formEntry.grid.ariaTarget}}" cx="{{formEntry.grid.targetX}}" cy="{{formEntry.grid.targetY}}" r="5" fill="none" onPointerDown="{{formEntry.grid.dragTarget}}" onKeyDown="{{formEntry.grid.keyTarget}}" style="stroke: var(--accent); pointer-events: stroke; cursor: {{formEntry.grid.dragCursor}}" stroke-width="2.2"></circle></sc-if>
 </svg>
 </div>
-<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: var(--ink2)">{{formEntry.grid.axes}}</span>
+<div style="text-align: center; grid-column: 2; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink2)">{{formEntry.grid.xAxis}}</div>
 </div>
 <div style="flex: 1 1 200px; min-width: 0; display: flex; flex-direction: column; gap: 8px">
 <sc-for list="{{formEntry.grid.markers}}" as="mk" hint-placeholder-count="3">
@@ -2022,7 +2028,7 @@ function buildMatrix(st, S, accent, go, risks) {
     clearFilter: go({ cellFilter: null }),
     listTitle: cellFilter === null ? 'Open ' + L.nouns + ' · ranked' : 'Cell ' + L.rating(cellFilter.i, cellFilter.l) + ' · ' + plural(rows.length, L.noun, L.nouns),
     matrixTitle: L.matrixTitle,
-    xAxisLabel: L.xAxis, yAxisLabel: L.yAxis,
+    xAxisLabel: L.xAxis, yAxisLabel: L.yName + ' →',
     isOppLens: L.id === 'opportunity',
     deltaHeader: S.length > 1 ? 'vs A' : '',
     showMovement,
@@ -2292,7 +2298,7 @@ function buildDetail(st, S, viewRisks, others, go, setState, saveDraft) {
     evidenceTitle: 'Evidence · ' + evidence.length, evidence,
   });
   if (lc === 'pending') {
-    return Object.assign({}, withLists, { score: '', bandFill: 'var(--card)', bandInk: INK, bandLabel: '', ixl: '', facts: [], miniCells: [], miniAria: '', pathPoints: '', inherentPts: '', targetX: 0, targetY: 0, hasTarget: false, nowX: 0, nowY: 0, nowFill: INK, nowLegend: '', originLegend: L.originLabel, canDrag: false, dragCursor: 'default', inherentCursor: 'default', dragNow: null, dragInherent: null, dragTarget: null, dragMove: null, dragEnd: null, dragCancel: null });
+    return Object.assign({}, withLists, { score: '', bandFill: 'var(--card)', bandInk: INK, bandLabel: '', ixl: '', facts: [], miniCells: [], xAxis: '', yAxis: '', miniAria: '', pathPoints: '', inherentPts: '', targetX: 0, targetY: 0, hasTarget: false, nowX: 0, nowY: 0, nowFill: INK, nowLegend: '', originLegend: L.originLabel, canDrag: false, dragCursor: 'default', inherentCursor: 'default', dragNow: null, dragInherent: null, dragTarget: null, dragMove: null, dragEnd: null, dragCancel: null });
   }
   const lastIdx = lastOpenIdxUpTo(r, toIdx);
   const now = positionAt(r, lastIdx);
@@ -2343,6 +2349,7 @@ function buildDetail(st, S, viewRisks, others, go, setState, saveDraft) {
     ixl: L.ratingLong(now.i, now.l),
     facts: [S.length > 1 ? change : null].concat(kindFacts).filter((f) => f !== null),
     originLegend: hasInherent ? L.originLabel : LENS.opportunity.originLabel,
+    xAxis: L.xAxis, yAxis: L.yName + ' →',
     miniAria: 'Path through the matrix: ' + (hasInherent ? L.originLabel : LENS.opportunity.originLabel).toLowerCase() + ' ' + iScore + ', now ' + now.score + (tScore === null ? '' : ', target ' + tScore),
     pathPoints: dedup.map((p) => { const c = cellCentre(p[0], p[1]); return c.x + ',' + c.y; }).join(' '),
     nowFill: lc === 'open' ? INK : 'var(--ink3)',
@@ -3613,7 +3620,7 @@ function buildForm(st, fr, name, text, go, setState, model) {
         }),
         tab('rating', capitalise(L.noun), rated([r.impact, r.likelihood]), {
           isGrid: true, hint: 'Drag a marker to a new cell, or focus it and use the arrow keys.',
-          grid: Object.assign(g, { markers, axes: L.xAxis + ' · ' + L.yAxis, ariaNow: markers[0].aria, ariaInherent: isRisk ? markers[1].aria : '', ariaTarget: markers[markers.length - 1].aria }),
+          grid: Object.assign(g, { markers, xAxis: L.xAxis, yAxis: L.yName + ' →', ariaNow: markers[0].aria, ariaInherent: isRisk ? markers[1].aria : '', ariaTarget: markers[markers.length - 1].aria }),
           fields: FORM_DETAILS[r.kind].map(([k, label, type, hint]) => field(k, label, type, raw(k), hint))
             .concat([field('clarification', 'Clarification', 'textarea', r.clarification, 'What the ratings mean here, e.g. what counts as high impact. Blank lines separate paragraphs.', true)]),
         }),
