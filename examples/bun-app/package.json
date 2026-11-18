@@ -1,0 +1,12 @@
+{
+  "name": "bun-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "bun index.ts",
+    "risks": "risk-register risks/risks.md"
+  },
+  "devDependencies": {
+    "@pritzlaff/risk-register": "^0.1.0"
+  }
+}
