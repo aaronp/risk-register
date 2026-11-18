@@ -78,6 +78,17 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 <sc-if value="{{canSearch}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{runSearch}}" disabled="{{searchDisabled}}" title="Rank entries by meaning with Jev" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 12px; font-weight: 600; color: var(--accent); white-space: nowrap">✦ {{searchLabel}}</button></sc-if>
 </div>
+<div style="position: relative; display: flex; align-items: center; gap: 10px">
+<span role="status" style="font-size: 12px; color: var(--ink2); max-width: 260px">{{fileFlash}}</span>
+<button class="rr-hover" onClick="{{toggleFileMenu}}" aria-expanded="{{fileMenuExpanded}}" aria-haspopup="menu" aria-controls="rr-file-menu" style="display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 12px; border: 1px solid var(--control); border-radius: 8px; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 600"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4.5h4l1.5 1.5H14v6.5H2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path></svg>File<svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6 L8 10 L12 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+<sc-if value="{{fileMenuOpen}}" hint-placeholder-val="{{ false }}">
+<div id="rr-file-menu" role="menu" aria-label="File" style="position: absolute; right: 0; top: calc(100% + 8px); z-index: 30; min-width: 230px; box-sizing: border-box; background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: 10px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22); padding: 6px; display: flex; flex-direction: column; animation: rr-drop 160ms ease-out">
+<sc-for list="{{fileItems}}" as="fi" hint-placeholder-count="6">
+<button class="rr-hover" role="menuitem" onClick="{{fi.run}}" disabled="{{fi.disabled}}" title="{{fi.title}}" style="display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 10px; border: 0; border-radius: 6px; background: transparent; color: var(--ink); cursor: pointer; font-size: 13px; text-align: left; white-space: nowrap"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" style="flex: 0 0 16px"><path d="{{fi.icon}}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{fi.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+</div>
 <div role="group" aria-label="Side" style="display: flex; gap: 4px; padding: 3px; border: 1px solid var(--ink); border-radius: 8px; background: var(--card)">
 <sc-for list="{{sides}}" as="sd" hint-placeholder-count="3">
 <button class="rr-hover" onClick="{{sd.pick}}" aria-pressed="{{sd.pressed}}" style="border: 0; border-radius: 5px; padding: 0 14px; height: 34px; font-size: 13px; font-weight: 600; cursor: pointer; background: {{sd.bg}}; color: {{sd.fg}}">{{sd.label}}</button>
@@ -712,6 +723,69 @@ button:disabled{opacity:.35;cursor:default}
 </div>
 </sc-if>
 
+<sc-if value="{{isCard}}" hint-placeholder-val="{{ false }}">
+<section aria-label="Card designer" style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h2 style="margin: 0; font-size: 24px; font-weight: 600">Design card</h2>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink2); max-width: 760px">A summary card (<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">card.json</span>) and badge (<span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">badge.svg</span>) for <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">{{cardFor}}</span>. What they say is kept in <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">{{cardSidecar}}</span> beside the register; <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">risk-register card</span> and <span style="font-family: 'IBM Plex Mono', ui-monospace, monospace">risk-register badge</span> read it to write both files. Blank fields follow the register.</p>
+</div>
+<sc-if value="{{hasCardError}}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin: 0; font-size: 13px; color: var(--bad-fg)">{{cardError}}</p></sc-if>
+<sc-if value="{{hasCardProblem}}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin: 0; padding: 14px 16px; background: var(--card); border: 2px solid var(--bad-fg); border-radius: 8px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: var(--bad-fg); white-space: pre-wrap">{{cardProblem}}</p></sc-if>
+<sc-if value="{{cardOk}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+<div style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 10px; padding: 16px; background: var(--card); border: 1px solid var(--rule); border-radius: 8px; box-sizing: border-box">
+<span style="font-size: 13px; font-weight: 600">Counts</span>
+<div role="group" aria-label="Card counts" style="align-self: flex-start; display: flex; gap: 4px; padding: 3px; border: 1px solid var(--ink); border-radius: 999px; background: var(--card)">
+<sc-for list="{{cardKinds}}" as="ck" hint-placeholder-count="2">
+<button class="rr-hover" onClick="{{ck.pick}}" aria-pressed="{{ck.pressed}}" style="height: 34px; padding: 0 14px; border: 0; border-radius: 999px; background: {{ck.bg}}; color: {{ck.fg}}; cursor: pointer; font-size: 13px; font-weight: 600">{{ck.label}}</button>
+</sc-for>
+</div>
+<label for="rr-card-title" style="font-size: 13px; font-weight: 600">Title</label>
+<input id="rr-card-title" type="text" value="{{cardTitle}}" placeholder="{{cardTitlePh}}" onChange="{{onCardTitle}}" spellcheck="false" autocomplete="off" style="height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-family: inherit; font-size: 14px; box-sizing: border-box; width: 100%">
+<label for="rr-card-subtitle" style="font-size: 13px; font-weight: 600">Subtitle</label>
+<input id="rr-card-subtitle" type="text" value="{{cardSubtitle}}" placeholder="{{cardSubtitlePh}}" onChange="{{onCardSubtitle}}" spellcheck="false" autocomplete="off" style="height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-family: inherit; font-size: 14px; box-sizing: border-box; width: 100%">
+<label for="rr-card-heading" style="font-size: 13px; font-weight: 600">Number label</label>
+<input id="rr-card-heading" type="text" value="{{cardHeading}}" placeholder="{{cardHeadingPh}}" onChange="{{onCardHeading}}" spellcheck="false" autocomplete="off" style="height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-family: inherit; font-size: 14px; box-sizing: border-box; width: 100%">
+<label for="rr-card-source" style="font-size: 13px; font-weight: 600">Source label</label>
+<input id="rr-card-source" type="text" value="{{cardSource}}" placeholder="{{cardSourcePh}}" onChange="{{onCardSource}}" spellcheck="false" autocomplete="off" style="height: 40px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-family: inherit; font-size: 14px; box-sizing: border-box; width: 100%">
+<span style="font-size: 13px; font-weight: 600; margin-top: 4px">Legend</span>
+<sc-for list="{{cardBands}}" as="cb" hint-placeholder-count="4">
+<div style="display: flex; gap: 8px; align-items: center">
+<input type="checkbox" checked="{{cb.shown}}" onChange="{{cb.onShown}}" aria-label="Show {{cb.labelPh}}" style="width: 18px; height: 18px; margin: 0">
+<input type="color" value="{{cb.color}}" onChange="{{cb.onColor}}" disabled="{{cb.disabled}}" aria-label="{{cb.labelPh}} colour" style="width: 40px; height: 36px; padding: 2px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); cursor: pointer">
+<input type="text" value="{{cb.label}}" placeholder="{{cb.labelPh}}" onChange="{{cb.onLabel}}" disabled="{{cb.disabled}}" aria-label="{{cb.labelPh}} label" spellcheck="false" autocomplete="off" style="flex: 1 1 auto; min-width: 0; height: 36px; padding: 0 10px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); font-family: inherit; font-size: 14px">
+</div>
+</sc-for>
+<label style="display: flex; gap: 8px; align-items: center; font-size: 13px"><input type="checkbox" checked="{{cardHideZero}}" onChange="{{onCardHideZero}}" style="width: 18px; height: 18px; margin: 0">Leave out bands with nothing in them</label>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 6px">
+<sc-if value="{{canSaveSidecar}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" onClick="{{saveSidecar}}" title="{{saveSidecarTitle}}" style="height: 40px; padding: 0 14px; border: 1px solid var(--ink); border-radius: 6px; background: var(--ink); color: var(--on-ink); cursor: pointer; font-size: 13px; font-weight: 600">Save {{cardSidecar}}</button></sc-if>
+<button class="rr-hover" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer; font-size: 13px; font-weight: 600" onClick="{{downloadSidecar}}">Download {{cardSidecar}}</button>
+<button class="rr-hover" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer; font-size: 13px; font-weight: 600" onClick="{{resetCard}}">Reset</button>
+<span role="status" style="font-size: 12px; color: var(--ink2)">{{cardFlash}}</span>
+</div>
+</div>
+<div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+<article aria-label="Card preview" style="display: flex; flex-direction: column; gap: 14px; padding: 18px; background: var(--card); border: 1px solid var(--rule); border-radius: 10px">
+<div style="display: flex; justify-content: space-between; gap: 12px; align-items: flex-start">
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span style="font-size: 18px; font-weight: 600">{{pvTitle}}</span><span style="font-size: 13px; color: var(--ink2)">{{pvSubtitle}}</span></div>
+<span style="flex: 0 0 auto; padding: 4px 10px; border-radius: 999px; background: {{pvStatusBg}}; color: {{pvStatusFg}}; font-size: 12px; font-weight: 600">{{pvStatus}}</span>
+</div>
+<div style="display: flex; align-items: baseline; gap: 10px"><span style="font-size: 44px; line-height: 1; font-weight: 600">{{pvPrimary}}</span><span style="font-size: 14px; color: var(--ink2)">{{pvHeading}}</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{pvLegend}}" as="pl" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 8px; font-size: 14px"><span aria-hidden="true" style="width: 10px; height: 10px; border-radius: 50%; background: {{pl.color}}"></span><span style="flex: 1 1 auto">{{pl.label}}</span><span style="font-family: 'IBM Plex Mono', ui-monospace, monospace; font-weight: 600">{{pl.count}}</span></div>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: var(--ink2); border-top: 1px solid var(--rule-soft); padding-top: 10px"><a href="{{pvSourceUrl}}" style="font-family: 'IBM Plex Mono', ui-monospace, monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{pvSource}}</a><span style="flex: 0 0 auto">{{pvUpdated}}</span></div>
+</article>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center"><img src="{{badgeSrc}}" alt="Badge preview" style="height: 20px"><button class="rr-hover" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer; font-size: 13px; font-weight: 600" onClick="{{downloadBadge}}">Download badge.svg</button><button class="rr-hover" style="height: 40px; padding: 0 14px; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer; font-size: 13px; font-weight: 600" onClick="{{downloadCard}}">Download card.json</button></div>
+<pre aria-label="card.json" style="margin: 0; padding: 12px 14px; max-height: 360px; overflow: auto; background: var(--card); border: 1px solid var(--rule); border-radius: 8px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; line-height: 1.5; white-space: pre-wrap; word-break: break-all">{{cardJson}}</pre>
+</div>
+</div>
+</sc-if>
+</section>
+</sc-if>
+
 <sc-if value="{{isBack}}" hint-placeholder-val="{{ false }}">
 <section aria-label="Register data" style="display: flex; flex-direction: column; gap: 14px; animation: {{flipAnim}}; transform-origin: 50% 0">
 <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between">
@@ -735,11 +809,7 @@ button:disabled{opacity:.35;cursor:default}
 <button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{undo}}" disabled="{{undoDisabled}}" title="{{undoTitle}}" aria-label="{{undoTitle}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3 L2.5 6 L5.5 9 M2.5 6 H10 A3.5 3.5 0 0 1 10 13 H7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
 <button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{redo}}" disabled="{{redoDisabled}}" title="{{redoTitle}}" aria-label="{{redoTitle}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 3 L13.5 6 L10.5 9 M13.5 6 H6 A3.5 3.5 0 0 0 6 13 H9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
 <span aria-hidden="true" style="width: 1px; height: 24px; margin: 0 4px; background: var(--rule)"></span>
-<button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{toggleOpen}}" aria-expanded="{{openExpanded}}" title="Open a file" aria-label="Open a file"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.75 4 A1.25 1.25 0 0 1 3 2.75 H6.25 L7.75 4.25 H13 A1.25 1.25 0 0 1 14.25 5.5 V12 A1.25 1.25 0 0 1 13 13.25 H3 A1.25 1.25 0 0 1 1.75 12 Z M1.75 6.75 H14.25" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path></svg></button>
-<button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{openNew}}" aria-expanded="{{newExpanded}}" title="New file" aria-label="New file"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M9 1.75 H4 A1.25 1.25 0 0 0 2.75 3 V13 A1.25 1.25 0 0 0 4 14.25 H12 A1.25 1.25 0 0 0 13.25 13 V6 Z M9 1.75 V6 H13.25 M8 8 V12.5 M5.75 10.25 H10.25" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
 <button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{copyToClipboard}}" title="Copy {{copySource}} to the clipboard" aria-label="Copy {{copySource}} to the clipboard"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2.5" width="10" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"></rect><path d="M6 2.5 V1.75 H10 V2.5 M5.5 7 H10.5 M5.5 10 H10.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></button>
-<sc-if value="{{canSave}}" hint-placeholder-val="{{ false }}"><button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{saveFile}}" disabled="{{saveDisabled}}" title="{{saveTitle}}" aria-label="{{saveTitle}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 3.5 A1 1 0 0 1 3.5 2.5 H11 L13.5 5 V12.5 A1 1 0 0 1 12.5 13.5 H3.5 A1 1 0 0 1 2.5 12.5 Z M5 2.5 V6 H10.5 V2.5 M5 13.5 V9.5 H11 V13.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path></svg></button></sc-if>
-<button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{downloadFile}}" title="Download {{copySource}}" aria-label="Download {{copySource}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 V10 M4.5 6.5 L8 10 L11.5 6.5 M2.5 11 V13.5 H13.5 V11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
 <button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--ink); cursor: pointer" onClick="{{openCopy}}" aria-expanded="{{copyExpanded}}" title="Clone {{copySource}} as a new file" aria-label="Clone {{copySource}} as a new file"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"></rect><path d="M10.5 3 H4 A1.5 1.5 0 0 0 2.5 4.5 V10.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg></button>
 <button class="rr-hover" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--control); border-radius: 6px; background: var(--card); color: var(--bad-fg); cursor: pointer" onClick="{{deleteFile}}" disabled="{{deleteDisabled}}" title="{{deleteTitle}}" aria-label="{{deleteTitle}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 4 H13.5 M6 4 V2.5 H10 V4 M4 4 L4.75 13.5 H11.25 L12 4 M6.75 6.75 V11 M9.25 6.75 V11" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
 <span role="status" style="font-size: 12px; color: var(--ink2); padding-left: 4px">{{dataFlash}}</span>
@@ -2593,7 +2663,7 @@ function buildSettings(st, go, setState) {
     autoClear: () => setState({ autoLink: null, autoPicks: {} }),
     settingsOpen: st.settingsOpen, settingsExpanded: String(st.settingsOpen),
     toggleSettings: () => {
-      setState({ settingsOpen: !st.settingsOpen, themeOpen: false, jevDraft: '', jevNote: '', orDraft: '', orNote: '' });
+      setState({ settingsOpen: !st.settingsOpen, themeOpen: false, fileMenuOpen: false, jevDraft: '', jevNote: '', orDraft: '', orNote: '' });
       /* The model box suggests OpenRouter's current models; without the list it still takes any id. */
       if (!st.settingsOpen && st.orModels.length === 0) fetch('https://openrouter.ai/api/v1/models').then((r) => r.json())
         .then((b) => setState({ orModels: b.data.map((m) => m.id).sort() }), () => {});
@@ -2619,7 +2689,7 @@ function buildThemePicker(st, go, setState) {
   return {
     themeId: st.theme, paletteId: st.palette, accentId: st.accentId,
     themeOpen: st.themeOpen, themeExpanded: String(st.themeOpen),
-    toggleTheme: go({ themeOpen: !st.themeOpen, settingsOpen: false }), closeTheme: go({ themeOpen: false }),
+    toggleTheme: go({ themeOpen: !st.themeOpen, settingsOpen: false, fileMenuOpen: false }), closeTheme: go({ themeOpen: false }),
     themeOptions: THEMES.map((t) => ({ label: t.label, bg: t.bg, card: t.card, ink: t.ink, rule: t.rule, pressed: String(t.id === st.theme), ring: ring(t.id === st.theme), pick: pickLook('theme', { theme: t.id }) })),
     paletteOptions: PALETTES.map((p) => ({ label: p.label, note: p.note, c1: p.colors[0], c2: p.colors[1], c3: p.colors[2], c4: p.colors[3], pressed: String(p.id === st.palette), ring: ring(p.id === st.palette), pick: pickLook('palette', { palette: p.id }) })),
     accentOptions: ACCENTS.map((a) => ({ hex: a.hex, aria: 'Accent ' + a.label, pressed: String(a.id === st.accentId), ring: a.id === st.accentId ? 'var(--ink)' : 'transparent', pick: pickLook('accent', { accentId: a.id }) })),
@@ -2675,8 +2745,24 @@ function unsaved(name, drafts) {
   const base = SAVED_TEXT.has(name) ? SAVED_TEXT.get(name) : ORIGINALS[name];
   return base !== drafts[name];
 }
+/**
+ * Files served by `make dev` or the CLI that accept a PUT back to the same URL (they answer with x-rr-writable: 1), by document name.
+ * The loader records ?src= here; Open → URL adds more.
+ */
+const PUT_URLS = new Map((window.RR_FILES ?? []).filter((f) => f.writable).map((f) => [f.name, f.url]));
+/** Somewhere Save can write `name` without asking where. */
+function canSaveInPlace(name) { return FILE_HANDLES.has(name) || PUT_URLS.has(name); }
+async function putText(url, text, type = 'text/markdown;charset=utf-8') {
+  const res = await fetch(url, { method: 'PUT', body: text, headers: { 'content-type': type } });
+  if (!res.ok) throw new Error('HTTP ' + res.status + (res.statusText ? ' ' + res.statusText : ''));
+}
 /** Save over the file `name` was opened from (or last saved to); asks for write permission on the first save. */
 async function saveInPlace(name, text, ask = true) {
+  if (PUT_URLS.has(name) && !FILE_HANDLES.has(name)) {
+    await putText(PUT_URLS.get(name), text);
+    SAVED_TEXT.set(name, text);
+    return PUT_URLS.get(name).replace(/^https?:\/\/[^/]+\//, '');
+  }
   const handle = FILE_HANDLES.get(name);
   if (handle === undefined) throw new Error('bug: ' + name + ' has no file to save to');
   /* Asking needs a click, so autosave (ask = false) skips a file until a Save has been allowed. */
@@ -2713,8 +2799,134 @@ async function saveFile(name, text) {
 function fetchFile(url) {
   return fetch(url).then((res) => {
     if (!res.ok) throw new Error(url.href + ': HTTP ' + res.status);
-    return res.text().then((text) => ({ name: url.pathname.split('/').pop() || 'register.md', text, url: url.href }));
+    return res.text().then((text) => ({ name: url.pathname.split('/').pop() || 'register.md', text, url: url.href, writable: res.headers.get('x-rr-writable') === '1' }));
   });
+}
+function downloadText(name, text, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type }));
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 0);
+}
+
+/* ---------- Share links: a register carried in the URL's #data= fragment, deflated and base64url-encoded ---------- */
+async function pipeBytes(bytes, stream) {
+  return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer());
+}
+async function packText(text) {
+  const bytes = await pipeBytes(new TextEncoder().encode(text), new CompressionStream('deflate-raw'));
+  let bin = '';
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+/** The loader has its own copy of this, since it runs before this script; test/card.test.mjs checks they agree. */
+async function unpackText(packed) {
+  const bin = atob(packed.replace(/-/g, '+').replace(/_/g, '/'));
+  return new TextDecoder().decode(await pipeBytes(Uint8Array.from(bin, (c) => c.charCodeAt(0)), new DecompressionStream('deflate-raw')));
+}
+/** This page with `name`'s text in #data= and no ?src/?ours/?theirs (the link carries the register itself). */
+async function shareLink(name, text) {
+  const q = new URLSearchParams(location.search);
+  ['src', 'ours', 'theirs', 'entry'].forEach((k) => q.delete(k));
+  if (name !== 'risks.md') q.set('name', name); else q.delete('name');
+  return location.origin + location.pathname + (q.size ? '?' + q.toString() : '') + '#data=' + (await packText(text));
+}
+
+/* ---------- Summary card (card.json) and badge (badge.svg) ----------
+   The card is tool-neutral data (the same version-1 format as the adr project's): title, a status pill, one big number,
+   a legend with a count per item, and a source link. What it says comes from an optional sidecar, <name>.card.json:
+   { title, subtitle, kind: risk|opportunity, heading: { label }, legend: [{ id: low|medium|high|critical, label, color }], hideZero, source: { label } }.
+   The CLI (bin/risk-register.mjs) runs this same script to write both files. */
+const RR_HOST = 'https://aaronp.github.io/risk-register/';
+/** Solid colours that read under white badge text, by lens and band. */
+const CARD_COLORS = Object.freeze({
+  risk: { low: '#4D7C3A', medium: '#B7791F', high: '#C2410C', critical: '#9E2F27' },
+  opportunity: { low: '#6B7280', medium: '#3D8A7E', high: '#1F6E8C', critical: '#43307E' },
+});
+const CARD_KEYS = ['title', 'subtitle', 'kind', 'heading', 'legend', 'hideZero', 'source'];
+/** Checks a parsed sidecar; throws a readable message on the first thing it can't use. */
+function parseCardPrefs(json) {
+  const isObj = (o) => typeof o === 'object' && o !== null && !Array.isArray(o);
+  const str = (v, where) => { if (v !== undefined && typeof v !== 'string') throw new Error(where + ' must be a string'); };
+  if (!isObj(json)) throw new Error('card settings must be a JSON object');
+  Object.keys(json).forEach((k) => { if (!CARD_KEYS.includes(k)) throw new Error('unknown card setting "' + k + '" (expected ' + CARD_KEYS.join(', ') + ')'); });
+  str(json.title, 'title'); str(json.subtitle, 'subtitle');
+  if (json.kind !== undefined && !['risk', 'opportunity'].includes(json.kind)) throw new Error('kind must be "risk" or "opportunity"');
+  if (json.heading !== undefined) { if (!isObj(json.heading)) throw new Error('heading must be an object'); str(json.heading.label, 'heading.label'); }
+  if (json.source !== undefined) { if (!isObj(json.source)) throw new Error('source must be an object'); str(json.source.label, 'source.label'); }
+  if (json.hideZero !== undefined && typeof json.hideZero !== 'boolean') throw new Error('hideZero must be true or false');
+  if (json.legend !== undefined) {
+    if (!Array.isArray(json.legend)) throw new Error('legend must be a list');
+    json.legend.forEach((l, k) => {
+      if (!isObj(l) || !BANDS.some((b) => b.id === l.id)) throw new Error('legend[' + k + '].id must be one of ' + BANDS.map((b) => b.id).join(', '));
+      str(l.label, 'legend[' + k + '].label'); str(l.color, 'legend[' + k + '].color');
+    });
+  }
+  return json;
+}
+/**
+ * `text` is register `name`'s markdown; `at.src` is where the viewer can fetch it (?src=, a URL or a path relative to `host`),
+ * `at.label` the default source label. Throws the parse error when the register doesn't read.
+ */
+function buildCard(name, text, prefs, today, at, host = RR_HOST) {
+  const a = analyseDrafts({ [name]: text }, null, name);
+  if (!a.model.ok) throw new Error(a.model.error);
+  const L = lensOf(prefs.kind ?? 'risk');
+  const open = a.model.model.risks.map((r) => viewRisk(r, 0)).filter((r) => r.kind === L.id && positionAt(r, 0) !== null);
+  const count = (id) => open.filter((r) => bandOf(positionAt(r, 0).score).id === id).length;
+  const outside = open.filter((r) => L.outside(positionAt(r, 0).score, r.limit)).length;
+  const top = open.filter((r) => bandOf(positionAt(r, 0).score).id === 'critical').length;
+  const url = host + '?src=' + encodeURIComponent(at.src).replace(/%2F/gi, '/').replace(/%3A/gi, ':') + (L.id === 'risk' ? '' : '&kind=' + L.id);
+  const items = prefs.legend ?? BANDS.map((b) => ({ id: b.id }));
+  const legend = items.filter((l) => !prefs.hideZero || count(l.id) > 0)
+    .map((l) => ({ id: l.id, label: l.label ?? bandName(L, byId(BANDS, l.id, 'band')), color: l.color ?? CARD_COLORS[L.id][l.id] }));
+  const status = outside > 0 ? { label: outside + ' ' + L.outsideWord, tone: L.higherIsBetter ? 'warn' : 'bad', url }
+    : !L.higherIsBetter && top > 0 ? { label: top + ' critical', tone: 'warn', url }
+      : { label: open.length === 0 ? 'None open' : capitalise(L.insideWord), tone: 'good' };
+  return {
+    version: 1,
+    title: prefs.title ?? L.Nouns,
+    subtitle: prefs.subtitle ?? a.files[name].file.register,
+    status,
+    heading: { primary: String(open.length), label: prefs.heading?.label ?? 'open ' + L.nouns },
+    legend,
+    report: Object.fromEntries(legend.map((l) => [l.id, count(l.id)])),
+    source: { label: prefs.source?.label ?? at.label, url },
+    updated: today,
+  };
+}
+/** A GitHub-style badge, ( Title | Low 3 | High 1 ), one segment per legend item with a non-zero count. */
+function badgeSvg(card) {
+  const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  /* ponytail: ~7px a character for 11px Verdana, as shields.io estimates; measure text if badges look off. */
+  const width = (t) => [...t].length * 7 + 12;
+  const items = card.legend.map((l) => Object.assign({}, l, { n: card.report[l.id] ?? 0 })).filter((l) => l.n > 0);
+  const parts = [{ text: card.title, bg: '#555' }].concat(items.map((l) => ({ text: l.label + ' ' + l.n, bg: l.color ?? '#6B7280' })));
+  let x = 0;
+  const segs = parts.map((p) => {
+    const w = width(p.text);
+    const seg = '<rect x="' + x + '" width="' + w + '" height="20" fill="' + esc(p.bg) + '"/><text x="' + (x + w / 2) + '" y="14" fill="#fff">' + esc(p.text) + '</text>';
+    x += w;
+    return seg;
+  });
+  const title = esc(card.title + ': ' + (items.length === 0 ? 'none' : items.map((l) => l.n + ' ' + l.label.toLowerCase()).join(', ')));
+  return ['<svg xmlns="http://www.w3.org/2000/svg" width="' + x + '" height="20" role="img" aria-label="' + title + '">', '<title>' + title + '</title>',
+    '<clipPath id="r"><rect width="' + x + '" height="20" rx="4"/></clipPath>',
+    '<g clip-path="url(#r)" font-family="Verdana,DejaVu Sans,sans-serif" font-size="11" text-anchor="middle">', ...segs, '</g>', '</svg>', ''].join('\n');
+}
+/** risks.md → risks.card.json */
+function sidecarName(name) { return name.replace(/\.md$/i, '') + '.card.json'; }
+/** Prefs as saved: blanks left out, so defaults keep following the register. */
+function trimPrefs(p) {
+  const out = {};
+  ['title', 'subtitle'].forEach((k) => { if (p[k]) out[k] = p[k]; });
+  if (p.kind && p.kind !== 'risk') out.kind = p.kind;
+  if (p.heading?.label) out.heading = { label: p.heading.label };
+  if (p.hideZero) out.hideZero = true;
+  if (p.source?.label) out.source = { label: p.source.label };
+  if (p.legend) out.legend = p.legend.map((l) => Object.fromEntries(Object.entries(l).filter(([, v]) => v)));
+  return out;
 }
 /** Fetch one URL (absolute or relative to the page). */
 function openUrl(raw, setState, addFiles) {
@@ -2816,9 +3028,8 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState, addFiles) {
       const rest = Object.freeze(Object.fromEntries(Object.entries(st.drafts).filter(([n]) => n !== name)));
       setState(Object.assign(reconcile(st, rest), { dataFlash: 'Deleted ' + name, copyOpen: false }));
     },
-    copyOpen: st.copyOpen, copyExpanded: String(st.copyOpen && st.copyMode === 'clone'), newExpanded: String(st.copyOpen && st.copyMode === 'new'),
+    copyOpen: st.copyOpen, copyExpanded: String(st.copyOpen && st.copyMode === 'clone'),
     openCopy: go(st.copyOpen && st.copyMode === 'clone' ? { copyOpen: false, copyName: '', copyError: '' } : { openOpen: false, copyOpen: true, copyMode: 'clone', copyName: suggestCopyName(name, st.drafts), copyError: '' }),
-    openNew: go(st.copyOpen && st.copyMode === 'new' ? { copyOpen: false, copyName: '', copyError: '' } : { openOpen: false, copyOpen: true, copyMode: 'new', copyName: suggestCopyName('register.md', st.drafts, ''), copyError: '' }),
     copyPrompt: st.copyMode === 'new' ? 'New file name' : 'Clone ' + name + ' as',
     copyCreateLabel: st.copyMode === 'new' ? 'Create file' : 'Create clone',
     copyNoun: st.copyMode === 'new' ? 'The new file' : 'The clone',
@@ -2859,16 +3070,6 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState, addFiles) {
       () => setState({ dataFlash: 'Copied ' + name }),
       (e) => setState({ dataFlash: 'Copy failed: ' + e.message }),
     ),
-    canSave: FILE_HANDLES.has(name), saveDisabled: !unsaved(name, st.drafts),
-    saveTitle: FILE_HANDLES.has(name) ? 'Save ' + name + ' to ' + FILE_HANDLES.get(name).name : '',
-    saveFile: () => saveInPlace(name, text).then(
-      (saved) => setState({ dataFlash: 'Saved ' + saved }),
-      (e) => setState({ dataFlash: 'Save failed: ' + e.message }),
-    ),
-    downloadFile: () => saveFile(name, text).then(
-      (saved) => setState({ dataFlash: saved === null ? 'Downloaded ' + name : 'Saved ' + name + ' as ' + saved }),
-      (e) => { if (e.name !== 'AbortError') setState({ dataFlash: 'Save failed: ' + e.message }); },
-    ),
     cancelCopy: go({ copyOpen: false, copyName: '', copyError: '' }),
     copyName: st.copyName, copySource: name,
     onCopyName: (e) => setState({ copyName: e.target.value, copyError: '' }),
@@ -2883,6 +3084,119 @@ function buildDataSide(st, a, go, applyDrafts, onEdit, setState, addFiles) {
       setState(Object.assign(reconcile(st, drafts), { dataFile: newName, dataMode: 'form', formIdx: 0, copyOpen: false, copyName: '', copyError: '' }));
     },
     onCopyKey: (e) => { if (e.key === 'Escape') setState({ copyOpen: false, copyName: '', copyError: '' }); },
+  };
+}
+
+/** Icons for the File menu, as 16×16 stroke paths. */
+const FILE_ICONS = Object.freeze({
+  new: 'M8 3v10M3 8h10',
+  open: 'M2 4.5h4l1.5 1.5H14v6.5H2z',
+  save: 'M3 8.5l3 3 7-7',
+  download: 'M8 2.5v8M4.5 7 8 10.5 11.5 7M3 13.5h10',
+  link: 'M6.5 9.5l3-3M7 4.5l1-1a2.5 2.5 0 0 1 3.5 3.5l-1 1M9 11.5l-1 1A2.5 2.5 0 0 1 4.5 9l1-1',
+  card: 'M2.5 3.5h11v9h-11zM5 6.5h4M5 9.5h6',
+});
+/** The header's File menu: New, Open, Save (when the file can be written back), Download, Copy link and Design card, on the file on view. */
+function buildFileMenu(st, setState) {
+  const name = st.side === 'back' ? st.dataFile : st.cmpB;
+  const text = st.drafts[name];
+  const flash = (msg) => setState({ dataFlash: msg });
+  const close = { fileMenuOpen: false, themeOpen: false, settingsOpen: false };
+  const item = (icon, label, run, extra = {}) => ({ icon: FILE_ICONS[icon], label, title: extra.title ?? label, disabled: extra.disabled ?? false, run: () => { setState(close); run(); } });
+  const items = [
+    item('new', 'New register…', () => setState({ side: 'back', openOpen: false, copyOpen: true, copyMode: 'new', copyName: suggestCopyName('register.md', st.drafts, ''), copyError: '' })),
+    item('open', 'Open…', () => setState({ side: 'back', openOpen: true, openError: '', copyOpen: false })),
+  ];
+  if (canSaveInPlace(name)) {
+    items.push(item('save', 'Save ' + name, () => saveInPlace(name, text).then((saved) => flash('Saved ' + saved), (e) => flash('Save failed: ' + e.message)),
+      { disabled: !unsaved(name, st.drafts), title: unsaved(name, st.drafts) ? 'Write ' + name + ' back where it came from' : name + ' has no unsaved changes' }));
+  }
+  items.push(
+    item('download', 'Download ' + name, () => saveFile(name, text).then(
+      (saved) => flash(saved === null ? 'Downloaded ' + name : 'Saved ' + name + ' as ' + saved),
+      (e) => { if (e.name !== 'AbortError') flash('Save failed: ' + e.message); },
+    )),
+    item('link', 'Copy link', () => shareLink(name, text).then((url) => navigator.clipboard.writeText(url).then(() => url)).then(
+      (url) => flash('Link copied: ' + name + ' in ' + url.length.toLocaleString() + ' characters'),
+      (e) => flash('Copy failed: ' + e.message),
+    ), { title: 'Copy a link that carries ' + name + ' itself, so it opens without a server' }),
+    item('card', 'Design card…', () => setState({ side: 'card' })),
+  );
+  return {
+    fileMenuOpen: st.fileMenuOpen, fileMenuExpanded: String(st.fileMenuOpen), fileItems: items,
+    toggleFileMenu: () => setState({ fileMenuOpen: !st.fileMenuOpen, themeOpen: false, settingsOpen: false }),
+    fileFlash: st.side === 'back' ? '' : st.dataFlash,
+  };
+}
+
+/** The card settings the page opened with: the sidecar beside ?src, if it read. */
+function initialCard() {
+  const c = window.RR_CARD;
+  if (!c || c.json === null) return { card: {}, cardError: '' };
+  try { return { card: parseCardPrefs(c.json), cardError: '' }; } catch (e) { return { card: {}, cardError: sidecarName(CURRENT_FILE) + ': ' + e.message + ' (ignored)' }; }
+}
+const TONES = Object.freeze({
+  good: { bg: 'var(--ok-bg)', fg: 'var(--ok-fg)' }, warn: { bg: 'var(--warn-bg)', fg: 'var(--warn-fg)' },
+  bad: { bg: 'var(--bad-bg)', fg: 'var(--bad-fg)' }, neutral: { bg: 'var(--neutral-bg)', fg: 'var(--neutral-fg)' },
+});
+/** File → Design card: edit the sidecar with a live preview of card.json and badge.svg for the register on view. */
+function buildCardDesigner(st, setState) {
+  if (st.side !== 'card') return { isCard: false };
+  const name = st.cmpB;
+  const p = st.card;
+  const src = name === CURRENT_FILE && window.RR_FILES[0].url ? window.RR_FILES[0].url : name;
+  const at = { label: name, src };
+  const set = (patch) => setState({ card: Object.assign({}, p, patch), cardFlash: '' });
+  let card;
+  let defaults;
+  try {
+    card = buildCard(name, st.drafts[name], p, todayIso(), at);
+    defaults = buildCard(name, st.drafts[name], { kind: p.kind }, todayIso(), at);
+  } catch (e) {
+    return { isCard: true, cardOk: false, hasCardProblem: true, cardProblem: e.message };
+  }
+  const legend = p.legend ?? BANDS.map((b) => ({ id: b.id }));
+  const L = lensOf(p.kind ?? 'risk');
+  const setBand = (id, patch) => set({ legend: BANDS.map((b) => legend.find((l) => l.id === b.id) ?? null).map((l, k) => (BANDS[k].id === id ? (l === null ? null : Object.assign({}, l, patch)) : l)).filter((l) => l !== null) });
+  const prefsText = JSON.stringify(trimPrefs(p), null, 2) + '\n';
+  const sidecar = sidecarName(name);
+  const canSaveSidecar = name === CURRENT_FILE && window.RR_CARD?.writable === true;
+  const cardText = JSON.stringify(card, null, 2) + '\n';
+  const svg = badgeSvg(card);
+  const tone = lookup(TONES, card.status.tone, 'tone');
+  return {
+    isCard: true, cardOk: true, hasCardProblem: false, cardProblem: '',
+    cardFor: name, cardSidecar: sidecar,
+    cardTitle: p.title ?? '', cardTitlePh: defaults.title, onCardTitle: (e) => set({ title: e.target.value }),
+    cardSubtitle: p.subtitle ?? '', cardSubtitlePh: defaults.subtitle, onCardSubtitle: (e) => set({ subtitle: e.target.value }),
+    cardHeading: p.heading?.label ?? '', cardHeadingPh: defaults.heading.label, onCardHeading: (e) => set({ heading: { label: e.target.value } }),
+    cardSource: p.source?.label ?? '', cardSourcePh: defaults.source.label, onCardSource: (e) => set({ source: { label: e.target.value } }),
+    cardHideZero: p.hideZero === true, onCardHideZero: (e) => set({ hideZero: e.target.checked }),
+    cardKinds: ['risk', 'opportunity'].map((k) => {
+      const on = k === L.id;
+      return { label: LENS[k].Nouns, pressed: String(on), bg: on ? INK : 'transparent', fg: on ? 'var(--on-ink)' : INK, pick: () => set({ kind: k, legend: undefined }) };
+    }),
+    cardBands: BANDS.map((b) => {
+      const l = legend.find((x) => x.id === b.id);
+      return {
+        id: b.id, shown: l !== undefined, labelPh: bandName(L, b), label: l?.label ?? '', color: l?.color ?? CARD_COLORS[L.id][b.id],
+        onShown: (e) => set({ legend: BANDS.filter((x) => (x.id === b.id ? e.target.checked : legend.some((y) => y.id === x.id))).map((x) => legend.find((y) => y.id === x.id) ?? { id: x.id }) }),
+        onLabel: (e) => setBand(b.id, { label: e.target.value }), onColor: (e) => setBand(b.id, { color: e.target.value }),
+        disabled: l === undefined,
+      };
+    }),
+    pvTitle: card.title, pvSubtitle: card.subtitle, pvStatus: card.status.label, pvStatusBg: tone.bg, pvStatusFg: tone.fg,
+    pvPrimary: card.heading.primary, pvHeading: card.heading.label, pvSource: card.source.label, pvSourceUrl: card.source.url, pvUpdated: 'Updated ' + formatDate(card.updated),
+    pvLegend: card.legend.map((l) => ({ label: l.label, color: l.color, count: card.report[l.id] })),
+    badgeSrc: 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg),
+    cardJson: cardText,
+    cardFlash: st.cardFlash, cardError: st.cardError, hasCardError: st.cardError !== '',
+    canSaveSidecar, saveSidecarTitle: canSaveSidecar ? 'Write ' + window.RR_CARD.url : '',
+    saveSidecar: () => putText(window.RR_CARD.url, prefsText, 'application/json').then(() => setState({ cardFlash: 'Saved ' + sidecar }), (e) => setState({ cardFlash: 'Save failed: ' + e.message })),
+    downloadSidecar: () => { downloadText(sidecar, prefsText, 'application/json'); setState({ cardFlash: 'Downloaded ' + sidecar }); },
+    downloadCard: () => { downloadText('card.json', cardText, 'application/json'); setState({ cardFlash: 'Downloaded card.json' }); },
+    downloadBadge: () => { downloadText('badge.svg', svg, 'image/svg+xml'); setState({ cardFlash: 'Downloaded badge.svg' }); },
+    resetCard: () => setState({ card: {}, cardFlash: 'Back to defaults' }),
   };
 }
 
@@ -4139,7 +4453,7 @@ function buildCompare(st, an, go, applyDrafts, setState) {
 }
 
 /** ?page= names the side; the landing page (no ?src) opens on Data, a register on Register. */
-const PAGES = { register: 'front', data: 'back' };
+const PAGES = { register: 'front', data: 'back', card: 'card' };
 const DEFAULT_SIDE = window.RR_LANDING ? 'back' : 'front';
 const pageOf = (side) => Object.keys(PAGES).find((k) => PAGES[k] === side);
 /** ?page=, ?theme=, ?kind= (risk | opportunity), ?view= and ?tab= preset those controls; unknown values are ignored. A view without a page opens Register. */
@@ -4191,6 +4505,7 @@ function initialState() {
     copyOpen: false, copyMode: 'clone', copyName: '', copyError: '', dataFlash: '',
     openOpen: false, openUrl: '', openError: '', openBusy: false, dropActive: false, recent: [],
     undo: [], redo: [], histAt: 0,
+    fileMenuOpen: false, cardFlash: '', ...initialCard(),
     lens: 'risk',
     ...queryPrefs(),
   };
@@ -4246,6 +4561,7 @@ class Component extends DCLogic {
   /* ⌘/Ctrl+Z and ⇧⌘/Ctrl+Shift+Z (or Ctrl+Y) outside text fields; inside them the browser's own undo applies. Arrows step through Balance. */
   componentDidMount() {
     this.onKey = (e) => {
+      if (e.key === 'Escape' && this.state.fileMenuOpen) { this.setState({ fileMenuOpen: false }); return; }
       if (e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
       /* Plain arrow keys step through the Balance view's entries. */
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key) && !(e.metaKey || e.ctrlKey || e.altKey || e.shiftKey)) {
@@ -4270,7 +4586,7 @@ class Component extends DCLogic {
     Promise.all(pending).then((files) => {
       const st = this.state;
       const drafts = Object.assign({}, st.drafts);
-      const names = files.map((f) => { const n = openedName(f.name, drafts); drafts[n] = f.text; SAVED_TEXT.set(n, f.text); if (f.handle) FILE_HANDLES.set(n, f.handle); return n; });
+      const names = files.map((f) => { const n = openedName(f.name, drafts); drafts[n] = f.text; SAVED_TEXT.set(n, f.text); if (f.handle) FILE_HANDLES.set(n, f.handle); if (f.writable) PUT_URLS.set(n, f.url); return n; });
       const last = names[names.length - 1];
       this.setState(Object.assign(reconcile(Object.assign({}, st, { cmpB: last, cmpA: st.cmpA === last ? null : st.cmpA }), Object.freeze(drafts)), {
         recent: withRecent(st.recent, files), dataFile: last, formIdx: 0, formPending: {}, openOpen: false, openError: '', dropActive: false, dataFlash: 'Opened ' + names.join(', '),
@@ -4292,7 +4608,7 @@ class Component extends DCLogic {
   renderVals() {
     const st = this.state;
     const go = (patch) => () => this.setState(patch);
-    if (!['front', 'back'].includes(st.side)) throw new Error('bug: unknown side "' + st.side + '"');
+    if (!['front', 'back', 'card'].includes(st.side)) throw new Error('bug: unknown side "' + st.side + '"');
     const isBack = st.side === 'back';
     const a = analyseDrafts(st.drafts, st.cmpA, st.cmpB);
     const errLoc = a.model.ok ? null : errorLocation(a.model.error);
@@ -4304,13 +4620,13 @@ class Component extends DCLogic {
     else if (this.flipLayout !== st.cmpLayout) this.flipAnim = 'none';
     this.flipSide = st.side;
     this.flipLayout = st.cmpLayout;
-    const shell = Object.assign({}, buildThemePicker(st, go, (p) => this.setState(p)), buildSettings(st, go, (p) => this.setState(p)), buildPickers(st, a, go, (p) => this.setState(p)), buildDataSide(st, a, go, applyDrafts, onEdit, (p) => this.setState(p), (pending, done = {}) => this.addFiles(pending, done)), {
+    const shell = Object.assign({}, buildThemePicker(st, go, (p) => this.setState(p)), buildSettings(st, go, (p) => this.setState(p)), buildPickers(st, a, go, (p) => this.setState(p)), buildDataSide(st, a, go, applyDrafts, onEdit, (p) => this.setState(p), (pending, done = {}) => this.addFiles(pending, done)), buildFileMenu(st, (p) => this.setState(p)), buildCardDesigner(st, (p) => this.setState(p)), {
       lensAttr: st.lens, flipAnim: this.flipAnim,
       undo: () => this.undo(), redo: () => this.redo(),
       undoDisabled: st.undo.length === 0, redoDisabled: st.redo.length === 0,
       undoTitle: 'Undo' + (st.undo.length === 0 ? '' : ' (' + st.undo.length + ')') + ' — ⌘Z / Ctrl+Z',
       redoTitle: 'Redo' + (st.redo.length === 0 ? '' : ' (' + st.redo.length + ')') + ' — ⇧⌘Z / Ctrl+Y',
-      isBack, showSources: !isBack,
+      isBack, showSources: st.side === 'front',
       modelOk: a.model.ok,
       showModelError: !a.model.ok && !isBack,
       showDataBack: !a.model.ok,
@@ -4488,29 +4804,52 @@ class Component extends DCLogic {
 /* Loader: fetch the register markdown named in the query string, then boot the runtime.
    ?src=<url> (alias ?ours=) is the register.
    ?theirs=<url> adds a second document and opens the Compare view on ours vs theirs.
-   With neither, the page opens on Data → Form with a blank register, untitled.md. */
+   #data=<packed> is a register carried in the link (File → Copy link), named by ?name= (default risks.md).
+   With none, the page opens on Data → Form with a blank register, untitled.md.
+   The card settings sidecar (risks.md → risks.card.json) is fetched beside ?src when there is one. */
 (async () => {
   const q = new URLSearchParams(location.search);
   const ours = q.get('src') ?? q.get('ours');
   const theirs = q.get('theirs');
+  const packed = /^#data=([A-Za-z0-9_-]+)$/.exec(location.hash);
   const get = async (url) => {
-    const res = await fetch(url);
+    const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) throw new Error(url + ': HTTP ' + res.status);
-    return res.text();
+    return { text: await res.text(), url: url.href, writable: res.headers.get('x-rr-writable') === '1' };
+  };
+  /* Same as unpackText in the page script, which isn't loaded yet. */
+  const unpack = async (p) => {
+    try {
+      const bin = atob(p.replace(/-/g, '+').replace(/_/g, '/'));
+      const out = new Blob([Uint8Array.from(bin, (c) => c.charCodeAt(0))]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+      return await new Response(out).text();
+    } catch (e) {
+      throw new Error('the shared link is damaged or incomplete');
+    }
   };
   try {
-    window.RR_LANDING = ours === null;
+    window.RR_LANDING = ours === null && packed === null;
     const mdName = (url, fallback) => { const base = decodeURIComponent(url.pathname.split('/').pop()); return /^[a-z0-9][a-z0-9._-]*\.md$/i.test(base) ? base : fallback; };
     const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-    const files = ours === null
-      ? [{ name: 'untitled.md', text: '---\nregister: Untitled\nas_at: ' + today + '\n---\n' }]
-      : [{ name: mdName(new URL(ours, location.href), 'risks.md'), text: await get(new URL(ours, location.href)) }];
+    let files;
+    if (packed !== null) {
+      const name = q.get('name') ?? '';
+      files = [{ name: /^[a-z0-9][a-z0-9._-]*\.md$/.test(name) ? name : 'risks.md', text: await unpack(packed[1]) }];
+    } else if (ours === null) {
+      files = [{ name: 'untitled.md', text: '---\nregister: Untitled\nas_at: ' + today + '\n---\n' }];
+    } else {
+      const url = new URL(ours, location.href);
+      files = [Object.assign({ name: mdName(url, 'risks.md') }, await get(url))];
+      /* Card settings are optional: a missing or unreadable sidecar just means defaults. */
+      const card = new URL(url.pathname.replace(/\.md$/i, '') + '.card.json' + url.search, url);
+      window.RR_CARD = await get(card).then((r) => ({ json: JSON.parse(r.text), url: card.href, writable: files[0].writable }), () => ({ json: null, url: card.href, writable: files[0].writable }));
+    }
     let theirsName = null;
     if (theirs !== null) {
       const theirsUrl = new URL(theirs, location.href);
       const base = mdName(theirsUrl, 'theirs.md');
       theirsName = files.some((f) => f.name === base) ? 'theirs.md' : base;
-      files.push({ name: theirsName, text: await get(theirsUrl) });
+      files.push(Object.assign({ name: theirsName }, await get(theirsUrl)));
     }
     window.RR_FILES = files;
     window.RR_THEIRS = theirsName;

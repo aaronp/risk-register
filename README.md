@@ -13,6 +13,7 @@ at with query parameters.
 | _(none)_ | Data → Form on a blank register, `untitled.md`, ready to fill in. |
 | `?src=<url>` | The register on its own; Compare lets you pick a second source in the page. |
 | `?ours=<url>&theirs=<url>` | The Compare view from A = ours to B = theirs. |
+| `#data=<packed>` | A register carried in the link itself (File → Copy link): the markdown, deflated and base64url-encoded; `?name=` names it (default `risks.md`). |
 
 Add any of these to preset the controls (unknown values are ignored):
 
@@ -20,7 +21,7 @@ Add any of these to preset the controls (unknown values are ignored):
 |-------|--------|
 | `theme` | `paper` (default), `slate`, `night`, `contrast` |
 | `kind` | `risk` (default), `opportunity` |
-| `page` | `register`, `data`; defaults to `data` with no source, else `register` |
+| `page` | `register`, `data`, `card`; defaults to `data` with no source, else `register` |
 | `view` | `matrix` (default), `distribution`, `balance`, `table`, `compare`, `trajectories`; opens `register` unless `page` says otherwise |
 
 The address bar keeps up with these as you change them, so you can copy it to share the current view.
@@ -54,10 +55,16 @@ entry's lines in the markdown (tables are edited in Data → Source).
 standalone data repo; `examples/partenaire.md` is a second register to compare
 it with, and `examples/minimal.md` is the smallest valid one.
 
+**File** (top right) works on the register on view: New register…, Open…, Save (when it
+can be written back: a file opened from disk in Chromium, or one served by `make dev` / the CLI),
+Download, Copy link and Design card….
+
 ## Viewing locally
 
 `make dev` serves the folder with Bun on http://localhost:8000 and prints the
-example's URL; some browsers block the scripts over file://. It also proxies
+example's URL; some browsers block the scripts over file://. **File → Save**
+writes the `?src=` file back to disk (only existing `.md` files in the repo,
+plus `.card.json` card settings beside them; loopback only). It also proxies
 `/typesafe/*` to the TypeSafe API, which the page can't call directly (no CORS):
 that's what Data → Form → Related → **Suggest** uses, with the Jev API key set
 under the settings cog. Suggest only works when served this way.
@@ -68,6 +75,37 @@ rows, and web-searched sources (only links the search actually cited), shown
 in a dialog where you add them one by one or all at once. The
 model is a setting; the default `openrouter/auto` picks one that can answer in
 JSON. Keys stay in this browser's localStorage.
+
+## The `risk-register` CLI
+
+```sh
+bunx @pritzlaff/risk-register risks.md   # or npx; serves the viewer and that file, opens the browser
+```
+
+The file is re-read on each reload and **File → Save** writes it back. `PORT=8000` fixes the port;
+`NO_OPEN=1` skips opening a browser. [examples/bun-app](examples/bun-app) is a Bun project using it as a
+dev dependency (`bun run risks`), with a Pages workflow that publishes its register, badge and card.
+
+### Card and badge
+
+```sh
+risk-register card risks.md [out-dir]    # → card.json: open entries per score band, as data
+risk-register badge risks.md [out-dir]   # → badge.svg: drawn from the same card
+risk-register card risks.md --kind opportunity    # → card-opportunity.json (badge: badge-opportunity.svg)
+```
+
+`card.json` uses the same tool-neutral format as the adr project (title, status pill, big number,
+legend with counts, source link). The status is "N outside appetite", else "N critical", else
+"Within appetite". What it says (title, risks or opportunities, labels, colours, which bands) comes from
+an optional `risks.card.json` beside the markdown: design it with **File → Design card…**
+(`?page=card`), which previews both and saves or downloads the file. Links open the viewer at
+`RR_HOST` (default `https://aaronp.github.io/risk-register/`) on `RR_SRC` (where your markdown is
+published); set both as environment variables.
+
+### Releasing
+
+`make bump-patch` (or `bump-minor` / `bump-major`; commits and tags), then `make publish` (tests, then
+`npm publish`). `make dist` packs the same thing into a local `.tgz`. `make test` runs `test/`.
 
 ## Hosting & external data
 
@@ -118,4 +156,6 @@ your `risks.md`, passing on any other query params
 - `index.html` — the page: an `<x-dc>` template, its logic class, and the loader
   that fetches the markdown before booting.
 - `support.js`, `vendor/react*.js` — the runtime that renders the component.
-- `dev.js` — the local server behind `make dev`, including the TypeSafe proxy.
+- `dev.js` — the local server behind `make dev`: File → Save (PUT) and the TypeSafe proxy.
+- `bin/risk-register.mjs` — the npm CLI: serve a file, or write `card.json` / `badge.svg` by running the page's own script in Node.
+- `test/card.test.mjs` — card, badge and share-link checks (`make test`).
