@@ -53,3 +53,18 @@ test('share links round-trip, and the loader unpacks what the page packs', async
   assert.equal(await unpack(packed), md);
   await assert.rejects(unpack(packed.slice(0, 40)), /damaged or incomplete/);
 });
+
+test('--kind writes risk and opportunity cards and badges side by side', () => {
+  const out = mkdtempSync(join(tmpdir(), 'rr-'));
+  for (const cmd of ['card', 'badge']) {
+    assert.equal(cli(cmd, example, out, '--kind', 'risk').status, 0);
+    assert.equal(cli(cmd, example, '--kind', 'opportunity', out).status, 0);
+  }
+  const risk = JSON.parse(readFileSync(join(out, 'card.json'), 'utf8'));
+  const opp = JSON.parse(readFileSync(join(out, 'card-opportunity.json'), 'utf8'));
+  assert.equal(risk.title, 'Risks');
+  assert.equal(opp.title, 'Opportunities');
+  assert.match(opp.source.url, /&kind=opportunity$/);
+  assert.ok(readFileSync(join(out, 'badge-opportunity.svg'), 'utf8').startsWith('<svg'));
+  assert.notEqual(cli('card', example, '--kind', 'bogus').status, 0);
+});

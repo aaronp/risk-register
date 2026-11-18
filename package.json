@@ -1,6 +1,6 @@
 {
   "name": "@pritzlaff/risk-register",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A risk and opportunity register driven by a markdown file: a static viewer, a local server that saves back, and a summary card and badge.",
   "license": "MIT",
   "repository": {

@@ -91,6 +91,7 @@ dev dependency (`bun run risks`), with a Pages workflow that publishes its regis
 ```sh
 risk-register card risks.md [out-dir]    # → card.json: open entries per score band, as data
 risk-register badge risks.md [out-dir]   # → badge.svg: drawn from the same card
+risk-register card risks.md --kind opportunity    # → card-opportunity.json (badge: badge-opportunity.svg)
 ```
 
 `card.json` uses the same tool-neutral format as the adr project (title, status pill, big number,

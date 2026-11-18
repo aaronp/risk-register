@@ -4,6 +4,7 @@
 // risk-register card <risks.md> [out-dir]: writes card.json, the register as a dashboard card (out-dir defaults to the file's folder).
 // risk-register badge <risks.md> [out-dir]: writes badge.svg, drawn from the same card.
 // Both read the optional sidecar <name>.card.json beside the markdown (title, kind, legend labels, colours).
+// --kind risk|opportunity overrides the sidecar's kind; --kind opportunity writes card-opportunity.json / badge-opportunity.svg.
 // The card's links open the viewer at RR_HOST (default https://aaronp.github.io/risk-register/) with ?src=RR_SRC,
 // where RR_SRC is where the published markdown lives (default: the path given, relative to RR_HOST).
 import { createServer } from 'node:http';
@@ -27,8 +28,11 @@ async function pageScript() {
 
 const cmd = process.argv[2];
 if (cmd === 'card' || cmd === 'badge') {
-  const [md, out = dirname(md ?? '')] = process.argv.slice(3);
-  if (!md) { console.error(`Usage: risk-register ${cmd} <risks.md> [out-dir]`); process.exit(1); }
+  const args = process.argv.slice(3);
+  const k = args.indexOf('--kind');
+  const kind = k < 0 ? undefined : args.splice(k, 2)[1];
+  const [md, out = dirname(md ?? '')] = args;
+  if (!md || (k >= 0 && !['risk', 'opportunity'].includes(kind))) { console.error(`Usage: risk-register ${cmd} <risks.md> [out-dir] [--kind risk|opportunity]`); process.exit(1); }
   const fail = (where, e) => { console.error(`risk-register: ${where}: ${e.message ?? e}`); process.exit(1); };
   const rr = await pageScript();
   const sidecar = sidecarOf(md);
@@ -38,12 +42,14 @@ if (cmd === 'card' || cmd === 'badge') {
   } catch (e) {
     if (e.code !== 'ENOENT') fail(sidecar, e);
   }
+  if (kind) prefs.kind = kind;
+  const suffix = kind === 'opportunity' ? '-opportunity' : '';
   try {
     /* The parser wants a lower-case .md name; it only shows up in error messages. */
     const name = /^[a-z0-9][a-z0-9._-]*\.md$/.test(basename(md)) ? basename(md) : 'risks.md';
     const today = new Date().toLocaleDateString('en-CA');
     const c = rr.buildCard(name, await readFile(md, 'utf8'), prefs, today, { label: md, src: process.env.RR_SRC || md }, process.env.RR_HOST || undefined);
-    const [file, body] = cmd === 'card' ? ['card.json', JSON.stringify(c, null, 2) + '\n'] : ['badge.svg', rr.badgeSvg(c)];
+    const [file, body] = cmd === 'card' ? [`card${suffix}.json`, JSON.stringify(c, null, 2) + '\n'] : [`badge${suffix}.svg`, rr.badgeSvg(c)];
     await writeFile(join(out, file), body);
     console.log(`Wrote ${join(out, file)}`);
   } catch (e) {
@@ -55,8 +61,8 @@ if (cmd === 'card' || cmd === 'badge') {
 const file = cmd;
 if (!file || file === '-h' || file === '--help') {
   console.error('Usage: risk-register <risks.md>   (PORT=8000 to pick the port, NO_OPEN=1 to skip opening a browser)');
-  console.error('       risk-register card <risks.md> [out-dir]    (writes card.json)');
-  console.error('       risk-register badge <risks.md> [out-dir]   (writes badge.svg)');
+  console.error('       risk-register card <risks.md> [out-dir] [--kind risk|opportunity]    (writes card.json, or card-opportunity.json)');
+  console.error('       risk-register badge <risks.md> [out-dir] [--kind risk|opportunity]   (writes badge.svg, or badge-opportunity.svg)');
   process.exit(file ? 0 : 1);
 }
 const path = resolve(file);

@@ -4,7 +4,10 @@
 RR_SRC ?= $(shell git remote get-url origin 2>/dev/null | sed -nE 's|^.*github\.com[:/]([^/]+)/([^/]+)$$|https://\1.github.io/\2/risks.md|p' | sed 's|\.git/risks|/risks|')
 
 .PHONY: snapshot
-# Regenerates risks/badge.svg and risks/card.json from risks/risks.md (and risks/risks.card.json, if present).
+# Regenerates the risk and opportunity badges and cards from risks/risks.md (and risks/risks.card.json, if present):
+# risks/badge.svg, risks/card.json, risks/badge-opportunity.svg, risks/card-opportunity.json.
 snapshot:
-	RR_SRC=$(RR_SRC) bunx risk-register badge risks/risks.md
-	RR_SRC=$(RR_SRC) bunx risk-register card risks/risks.md
+	for k in risk opportunity; do \
+	  RR_SRC=$(RR_SRC) bunx risk-register badge risks/risks.md --kind $$k && \
+	  RR_SRC=$(RR_SRC) bunx risk-register card risks/risks.md --kind $$k || exit 1; \
+	done

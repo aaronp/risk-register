@@ -1,5 +1,5 @@
 # Publishes risks/ to GitHub Pages (no Jekyll, so risks.md is
-# served raw for the viewer to fetch), with a fresh badge.svg and card.json.
+# served raw for the viewer to fetch), with fresh risk and opportunity badges and cards.
 # One-time setup: Settings → Pages → Source: "GitHub Actions".
 name: Pages
 on:
