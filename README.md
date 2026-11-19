@@ -8,6 +8,58 @@ only the presentation; the content lives in its own repo (see
 [Publishing your own register](#publishing-your-own-register)) and is pointed
 at with query parameters.
 
+## Adding it to your project
+
+From your project's root (Bun shown; `npm i -D`, `npm pkg set` and `npm run` work the same):
+
+```sh
+bun add -d @pritzlaff/risk-register
+bun pm pkg set scripts.risks="risk-register docs/risks/risks.md"
+mkdir -p docs/risks
+cat > docs/risks/risks.md <<'EOF'
+---
+register: My app risks
+as_at: 2026-11-19
+---
+
+## R01 · Payment provider fails
+- impact: 4
+- likelihood: 2
+- target: 4x1
+- appetite: 6
+- category: Operations
+- driver: Priya (Ops lead)
+- approver: Tom (CTO)
+- related: O01
+
+Our only payment provider has a long outage or goes under.
+
+### Controls
+| Control | Type | Effectiveness |
+|---|---|---|
+| Second provider on standby | Preventive | Partial |
+
+## O01 · Partner bundle
+- value: 4
+- effort: 2
+- realisation: 2027-03-01
+
+Bundle with a partner's onboarding to reach their users.
+EOF
+bun run risks    # opens it on localhost
+```
+
+**File → Save** writes your edits back to `docs/risks/risks.md`; commit it like any other source. An entry
+needs only a `##` title and its two scores (`impact`/`likelihood` for a risk, `value`/`effort` for an
+opportunity). The full format is in **[spec.md](spec.md)**, also published at <https://aaronp.github.io/risk-register/spec.md> and shipped in the package as `node_modules/@pritzlaff/risk-register/spec.md`, so people and agents working in your repo can read the version they run.
+
+`risk-register card docs/risks/risks.md` and `risk-register badge docs/risks/risks.md` write `card.json`
+and `badge.svg` beside it, for a dashboard or a README badge ([Card and badge](#card-and-badge)).
+To publish it on GitHub Pages as well, copy `risks/index.html` and `.github/workflows/pages.yml` from
+[examples/bun-app](examples/bun-app), which is this setup end to end with the file in `risks/`
+(change that path in the workflow to match yours).
+[aaronp/template](https://github.com/aaronp/template) is a project with this and its sibling tools (goals, architecture, decisions, risks, schedule, delivery) set up together behind one dashboard.
+
 | Query | Shows |
 |-------|-------|
 | _(none)_ | Data → Form on a blank register, `untitled.md`, ready to fill in. |
